@@ -262,7 +262,7 @@ code_1C81CD:
 code_1C81E5:
   LDA #$71                                  ; $1C81E5 |
 code_1C81E7:
-  JSR code_1FF835                           ; $1C81E7 |
+  JSR reset_sprite_anim                     ; $1C81E7 |
   LDA #$00                                  ; $1C81EA |
   STA $0480,x                               ; $1C81EC |
   LDA $0320,x                               ; $1C81EF |
@@ -581,7 +581,7 @@ code_1C85D9:
   BCC code_1C8628                           ; $1C85FE |
 code_1C8600:
   LDA #$71                                  ; $1C8600 |
-  JSR code_1FF835                           ; $1C8602 |
+  JSR reset_sprite_anim                     ; $1C8602 |
   LDA #$00                                  ; $1C8605 |
   STA $0320,x                               ; $1C8607 |
   LDA $0360,x                               ; $1C860A |
@@ -717,7 +717,7 @@ code_1C86FC:
   LSR                                       ; $1C8709 |
   TAY                                       ; $1C870A |
   LDA $8718,y                               ; $1C870B |
-  JSR code_1FF835                           ; $1C870E |
+  JSR reset_sprite_anim                     ; $1C870E |
   RTS                                       ; $1C8711 |
 
 code_1C8712:
@@ -759,7 +759,7 @@ code_1C874B:
   AND #$FC                                  ; $1C875C |
   STA $0580,x                               ; $1C875E |
   LDA #$13                                  ; $1C8761 |
-  JSR code_1FF835                           ; $1C8763 |
+  JSR reset_sprite_anim                     ; $1C8763 |
   LDA #$04                                  ; $1C8766 |
   STA $05A0,x                               ; $1C8768 |
 code_1C876B:
@@ -1029,7 +1029,7 @@ code_1C8961:
   CMP #$04                                  ; $1C8964 |
   BNE code_1C89C1                           ; $1C8966 |
   LDA #$AF                                  ; $1C8968 |
-  JSR code_1FF835                           ; $1C896A |
+  JSR reset_sprite_anim                     ; $1C896A |
 code_1C896D:
   LDA $0420,x                               ; $1C896D |
   CMP #$03                                  ; $1C8970 |
@@ -1328,7 +1328,7 @@ code_1C8B92:
   JSR code_1C8BA9                           ; $1C8BA0 |
   LDA #$24                                  ; $1C8BA3 |
 code_1C8BA5:
-  JSR code_1FF835                           ; $1C8BA5 |
+  JSR reset_sprite_anim                     ; $1C8BA5 |
 code_1C8BA8:
   RTS                                       ; $1C8BA8 |
 
@@ -1366,7 +1366,7 @@ code_1C8BEB:
   JSR code_1FF67C                           ; $1C8BED |
   BCC code_1C8BFC                           ; $1C8BF0 |
   LDA #$71                                  ; $1C8BF2 |
-  JSR code_1FF835                           ; $1C8BF4 |
+  JSR reset_sprite_anim                     ; $1C8BF4 |
   LDA #$00                                  ; $1C8BF7 |
   STA $0320,x                               ; $1C8BF9 |
 code_1C8BFC:
@@ -1512,7 +1512,7 @@ code_1C8D0D:
   BCS code_1C8D23                           ; $1C8D19 |
   INC $0300,x                               ; $1C8D1B |
   LDA #$6A                                  ; $1C8D1E |
-  JSR code_1FF835                           ; $1C8D20 |
+  JSR reset_sprite_anim                     ; $1C8D20 |
 code_1C8D23:
   LDA $05C0,x                               ; $1C8D23 |
   CMP #$6A                                  ; $1C8D26 |
@@ -1521,7 +1521,7 @@ code_1C8D23:
   CMP #$02                                  ; $1C8D2D |
   BNE code_1C8D9C                           ; $1C8D2F |
   LDA #$6B                                  ; $1C8D31 |
-  JSR code_1FF835                           ; $1C8D33 |
+  JSR reset_sprite_anim                     ; $1C8D33 |
   LDA $0480,x                               ; $1C8D36 |
   EOR #$60                                  ; $1C8D39 |
   STA $0480,x                               ; $1C8D3B |
@@ -1573,7 +1573,7 @@ code_1C8D9C:
   AND #$01                                  ; $1C8DA5 |
   BEQ code_1C8DC3                           ; $1C8DA7 |
   LDA #$6D                                  ; $1C8DA9 |
-  JSR code_1FF835                           ; $1C8DAB |
+  JSR reset_sprite_anim                     ; $1C8DAB |
   JSR code_1FF869                           ; $1C8DAE |
   LDA #$00                                  ; $1C8DB1 |
   STA $0400,x                               ; $1C8DB3 |
@@ -1710,7 +1710,7 @@ code_1C8EAD:
   LDA #$02                                  ; $1C8EC8 |
   STA $0420,x                               ; $1C8ECA |
   LDA #$48                                  ; $1C8ECD |
-  JSR code_1FF835                           ; $1C8ECF |
+  JSR reset_sprite_anim                     ; $1C8ECF |
 code_1C8ED2:
   RTS                                       ; $1C8ED2 |
 
@@ -1725,7 +1725,7 @@ code_1C8ED3:
   ORA $05A0,x                               ; $1C8EE4 |
   BNE code_1C8EF6                           ; $1C8EE7 |
   LDA #$49                                  ; $1C8EE9 |
-  JSR code_1FF835                           ; $1C8EEB |
+  JSR reset_sprite_anim                     ; $1C8EEB |
   LDA $0480,x                               ; $1C8EEE |
   ORA #$C3                                  ; $1C8EF1 |
   STA $0480,x                               ; $1C8EF3 |
@@ -1969,7 +1969,7 @@ code_1C9116:
   BNE code_1C9142                           ; $1C911A |
 code_1C911C:
   LDA #$4F                                  ; $1C911C |
-  JSR code_1FF835                           ; $1C911E |
+  JSR reset_sprite_anim                     ; $1C911E |
   LDA #$80                                  ; $1C9121 |
   STA $0440,x                               ; $1C9123 |
   LDA #$01                                  ; $1C9126 |
@@ -1984,7 +1984,7 @@ code_1C912C:
   JSR code_1FF869                           ; $1C9136 |
   JSR code_1FF81B                           ; $1C9139 |
   LDA #$4E                                  ; $1C913C |
-  JSR code_1FF835                           ; $1C913E |
+  JSR reset_sprite_anim                     ; $1C913E |
 code_1C9141:
   RTS                                       ; $1C9141 |
 
@@ -2109,7 +2109,7 @@ code_1C922E:
   STA $0520,x                               ; $1C9237 |
   INC $0300,x                               ; $1C923A |
   LDA #$C2                                  ; $1C923D |
-  JMP code_1FF835                           ; $1C923F |
+  JMP reset_sprite_anim                     ; $1C923F |
 
 code_1C9242:
   LDA #$CA                                  ; $1C9242 |
@@ -2119,7 +2119,7 @@ code_1C9242:
   CMP #$1E                                  ; $1C924D |
   BNE code_1C9285                           ; $1C924F |
   LDA #$BC                                  ; $1C9251 |
-  JMP code_1FF835                           ; $1C9253 |
+  JMP reset_sprite_anim                     ; $1C9253 |
 
 code_1C9256:
   JSR code_1FF8B3                           ; $1C9256 |
@@ -2140,7 +2140,7 @@ code_1C926E:
   BCC code_1C9285                           ; $1C9273 |
   DEC $0300,x                               ; $1C9275 |
   LDA #$BB                                  ; $1C9278 |
-  JSR code_1FF835                           ; $1C927A |
+  JSR reset_sprite_anim                     ; $1C927A |
   JSR code_1FF869                           ; $1C927D |
   LDA #$00                                  ; $1C9280 |
   STA $0500,x                               ; $1C9282 |
@@ -2522,7 +2522,7 @@ code_1C9621:
 code_1C962C:
   LDA #$D5                                  ; $1C962C |
 code_1C962E:
-  JSR code_1FF835                           ; $1C962E |
+  JSR reset_sprite_anim                     ; $1C962E |
   JSR code_1C9659                           ; $1C9631 |
   LDA #$10                                  ; $1C9634 |
   STA $0520,x                               ; $1C9636 |
@@ -2546,7 +2546,7 @@ code_1C9643:
 code_1C9653:
   LDA #$D4                                  ; $1C9653 |
 code_1C9655:
-  JSR code_1FF835                           ; $1C9655 |
+  JSR reset_sprite_anim                     ; $1C9655 |
 code_1C9658:
   RTS                                       ; $1C9658 |
 
@@ -2749,7 +2749,7 @@ code_1C97D1:
   LDA #$1D                                  ; $1C97D1 |
   CMP $05C0,x                               ; $1C97D3 |
   BEQ code_1C97DB                           ; $1C97D6 |
-  JSR code_1FF835                           ; $1C97D8 |
+  JSR reset_sprite_anim                     ; $1C97D8 |
 code_1C97DB:
   LDY #$00                                  ; $1C97DB |
   JSR code_1FF67C                           ; $1C97DD |
@@ -2769,7 +2769,7 @@ code_1C97F6:
 
 code_1C97FB:
   LDA #$1C                                  ; $1C97FB |
-  JSR code_1FF835                           ; $1C97FD |
+  JSR reset_sprite_anim                     ; $1C97FD |
   LDA $0300,x                               ; $1C9800 |
   AND #$F0                                  ; $1C9803 |
   STA $0300,x                               ; $1C9805 |
@@ -2977,7 +2977,7 @@ code_1C99B9:
   LDA #$00                                  ; $1C99B9 |
   STA $0320,x                               ; $1C99BB |
   LDA #$71                                  ; $1C99BE |
-  JMP code_1FF835                           ; $1C99C0 |
+  JMP reset_sprite_anim                     ; $1C99C0 |
 
   LDA $0300,x                               ; $1C99C3 |
   AND #$0F                                  ; $1C99C6 |
@@ -3012,7 +3012,7 @@ code_1C99FB:
   LDA #$02                                  ; $1C9A04 |
   STA $0460,x                               ; $1C9A06 |
   LDA #$1F                                  ; $1C9A09 |
-  JMP code_1FF835                           ; $1C9A0B |
+  JMP reset_sprite_anim                     ; $1C9A0B |
 
 code_1C9A0E:
   JSR code_1FF8B3                           ; $1C9A0E |
@@ -3231,7 +3231,7 @@ code_1C9BBD:
   CMP #$39                                  ; $1C9BC4 |
   BEQ code_1C9BD1                           ; $1C9BC6 |
   LDA #$39                                  ; $1C9BC8 |
-  JSR code_1FF835                           ; $1C9BCA |
+  JSR reset_sprite_anim                     ; $1C9BCA |
   INC $0540,x                               ; $1C9BCD |
   RTS                                       ; $1C9BD0 |
 
@@ -3241,7 +3241,7 @@ code_1C9BD1:
   ORA $05A0,x                               ; $1C9BD7 |
   BNE code_1C9BE1                           ; $1C9BDA |
   LDA #$38                                  ; $1C9BDC |
-  JSR code_1FF835                           ; $1C9BDE |
+  JSR reset_sprite_anim                     ; $1C9BDE |
 code_1C9BE1:
   RTS                                       ; $1C9BE1 |
 
@@ -3499,7 +3499,7 @@ code_1C9DC3:
   LDA $0540,x                               ; $1C9DD1 |
   BNE code_1C9DE7                           ; $1C9DD4 |
   LDA #$5A                                  ; $1C9DD6 |
-  JSR code_1FF835                           ; $1C9DD8 |
+  JSR reset_sprite_anim                     ; $1C9DD8 |
   JSR code_1FF869                           ; $1C9DDB |
   JSR code_1C9EA9                           ; $1C9DDE |
   LDA #$1E                                  ; $1C9DE1 |
@@ -3548,7 +3548,7 @@ code_1C9E31:
   ORA $05A0,x                               ; $1C9E3B |
   BNE code_1C9E45                           ; $1C9E3E |
   LDA #$59                                  ; $1C9E40 |
-  JSR code_1FF835                           ; $1C9E42 |
+  JSR reset_sprite_anim                     ; $1C9E42 |
 code_1C9E45:
   RTS                                       ; $1C9E45 |
 
@@ -3672,7 +3672,7 @@ code_1C9F30:
 code_1C9F44:
   LDA #$71                                  ; $1C9F44 |
 code_1C9F46:
-  JMP code_1FF835                           ; $1C9F46 |
+  JMP reset_sprite_anim                     ; $1C9F46 |
 
   LDA $04A0,x                               ; $1C9F49 |
   AND #$01                                  ; $1C9F4C |

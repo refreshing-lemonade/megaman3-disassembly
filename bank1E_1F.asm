@@ -1350,7 +1350,7 @@ code_1ECA15:
   STA $0460                                 ; $1ECA61 |
   LDX #$00                                  ; $1ECA64 |
   LDA #$13                                  ; $1ECA66 |
-  JSR code_1FF835                           ; $1ECA68 |
+  JSR reset_sprite_anim                     ; $1ECA68 |
   LDA #$04                                  ; $1ECA6B |
   STA $30                                   ; $1ECA6D |
   LDA #$80                                  ; $1ECA6F |
@@ -1770,7 +1770,7 @@ code_1ECD8B:
   LDA #$01                                  ; $1ECDD7 |
   CMP $05C0                                 ; $1ECDD9 |
   BEQ code_1ECDE5                           ; $1ECDDC |
-  JSR code_1FF835                           ; $1ECDDE |
+  JSR reset_sprite_anim                     ; $1ECDDE |
   LDA #$00                                  ; $1ECDE1 |
   STA $32                                   ; $1ECDE3 |
 code_1ECDE5:
@@ -1832,7 +1832,7 @@ code_1ECE35:
   CMP #$11                                  ; $1ECE44 |
   BNE code_1ECE4D                           ; $1ECE46 |
   LDA #$01                                  ; $1ECE48 |
-  JSR code_1FF835                           ; $1ECE4A |
+  JSR reset_sprite_anim                     ; $1ECE4A |
 code_1ECE4D:
   LDY $05C1                                 ; $1ECE4D |
   CPY #$D7                                  ; $1ECE50 |
@@ -1856,7 +1856,7 @@ code_1ECE4D:
   LDA $0581                                 ; $1ECE7A |
   AND #$FE                                  ; $1ECE7D |
   STA $0581                                 ; $1ECE7F |
-  JSR code_1EDED8                           ; $1ECE82 |
+  JSR decrease_ammo.check_frames            ; $1ECE82 |
   JMP code_1ED007                           ; $1ECE85 |
 
 code_1ECE88:
@@ -1924,7 +1924,7 @@ code_1ECEEB:
 
 code_1ECEF9:
   LDA #$0D                                  ; $1ECEF9 |
-  JSR code_1FF835                           ; $1ECEFB |
+  JSR reset_sprite_anim                     ; $1ECEFB |
   LDA $32                                   ; $1ECEFE |
   BEQ code_1ECF05                           ; $1ECF00 |
   JSR code_1ED370                           ; $1ECF02 |
@@ -1947,7 +1947,7 @@ code_1ECF0A:
   BNE code_1ECEF9                           ; $1ECF22 |
 code_1ECF24:
   LDA #$04                                  ; $1ECF24 |
-  JSR code_1FF835                           ; $1ECF26 |
+  JSR reset_sprite_anim                     ; $1ECF26 |
   LDA $31                                   ; $1ECF29 |
   LDY $32                                   ; $1ECF2B |
   BEQ code_1ECF3D                           ; $1ECF2D |
@@ -1973,7 +1973,7 @@ code_1ECF4B:
   LDA #$01                                  ; $1ECF4F |
   CMP $05C0                                 ; $1ECF51 |
   BEQ code_1ECF59                           ; $1ECF54 |
-  JSR code_1FF835                           ; $1ECF56 |
+  JSR reset_sprite_anim                     ; $1ECF56 |
 code_1ECF59:
   JSR code_1ED355                           ; $1ECF59 |
   LDA $14                                   ; $1ECF5C |
@@ -1983,7 +1983,7 @@ code_1ECF59:
 code_1ECF65:
   RTS                                       ; $1ECF65 |
 
-  JSR code_1EDED8                           ; $1ECF66 |
+  JSR decrease_ammo.check_frames            ; $1ECF66 |
   LDA #$82                                  ; $1ECF69 |
   CMP $0321                                 ; $1ECF6B |
   BEQ code_1ECF7B                           ; $1ECF6E |
@@ -2004,7 +2004,7 @@ code_1ECF84:
   STA $31                                   ; $1ECF8A |
   JSR code_1ECF3D                           ; $1ECF8C |
   LDA #$01                                  ; $1ECF8F |
-  JSR code_1FF835                           ; $1ECF91 |
+  JSR reset_sprite_anim                     ; $1ECF91 |
   LDA $32                                   ; $1ECF94 |
   BEQ code_1ECF9B                           ; $1ECF96 |
   JSR code_1ED370                           ; $1ECF98 |
@@ -2059,7 +2059,7 @@ code_1ECFDF:
   LDA #$08                                  ; $1ECFFE |
   STA $30                                   ; $1ED000 |
   LDA #$DA                                  ; $1ED002 |
-  JMP code_1FF835                           ; $1ED004 |
+  JMP reset_sprite_anim                     ; $1ED004 |
 
 code_1ED007:
   LDA $0460                                 ; $1ED007 |
@@ -2099,7 +2099,7 @@ code_1ED01D:
   STA $0584                                 ; $1ED04D |
   LDX #$04                                  ; $1ED050 |
   LDA #$68                                  ; $1ED052 |
-  JSR code_1FF835                           ; $1ED054 |
+  JSR reset_sprite_anim                     ; $1ED054 |
   LDA $0360                                 ; $1ED057 |
   STA $0364                                 ; $1ED05A |
   LDA $0380                                 ; $1ED05D |
@@ -2130,7 +2130,7 @@ code_1ED084:
   LDA #$00                                  ; $1ED093 |
   STA $30                                   ; $1ED095 |
   LDA #$0D                                  ; $1ED097 |
-  JSR code_1FF835                           ; $1ED099 |
+  JSR reset_sprite_anim                     ; $1ED099 |
   INC $05A0                                 ; $1ED09C |
   LDA $32                                   ; $1ED09F |
   BEQ code_1ED0A6                           ; $1ED0A1 |
@@ -2145,7 +2145,7 @@ code_1ED0A7:
   CMP #$01                                  ; $1ED0AD |
   BEQ code_1ED0C1                           ; $1ED0AF |
   LDA #$07                                  ; $1ED0B1 |
-  JSR code_1FF835                           ; $1ED0B3 |
+  JSR reset_sprite_anim                     ; $1ED0B3 |
   LDA #$01                                  ; $1ED0B6 |
   STA $30                                   ; $1ED0B8 |
   LDA $32                                   ; $1ED0BA |
@@ -2172,7 +2172,7 @@ code_1ED0DA:
   LDA $00A2,y                               ; $1ED0DC |
   AND #$1F                                  ; $1ED0DF |
   BEQ code_1ED134                           ; $1ED0E1 |
-  LDA $D33D,y                               ; $1ED0E3 |
+  LDA weapon_max_shots,y                    ; $1ED0E3 |
   TAY                                       ; $1ED0E6 |
 code_1ED0E7:
   LDA $0300,y                               ; $1ED0E7 |
@@ -2182,7 +2182,7 @@ code_1ED0E7:
   BEQ code_1ED134                           ; $1ED0EF |
 code_1ED0F1:
   LDY $A0                                   ; $1ED0F1 |
-  JSR code_1EDECE                           ; $1ED0F3 |
+  JSR decrease_ammo                         ; $1ED0F3 |
   LDA $D303,y                               ; $1ED0F6 |
   STA $00                                   ; $1ED0F9 |
   LDA $D30F,y                               ; $1ED0FB |
@@ -2208,7 +2208,7 @@ code_1ED121:
   LDA #$10                                  ; $1ED121 |
   STA $32                                   ; $1ED123 |
   LDY $A0                                   ; $1ED125 |
-  LDA $D33D,y                               ; $1ED127 |
+  LDA weapon_max_shots,y                    ; $1ED127 |
   TAY                                       ; $1ED12A |
 code_1ED12B:
   LDA $0300,y                               ; $1ED12B |
@@ -2356,7 +2356,7 @@ code_1ED24C:
   JSR code_1ED103                           ; $1ED25D |
   LDY $30                                   ; $1ED260 |
   LDA $D293,y                               ; $1ED262 |
-  JSR code_1FF835                           ; $1ED265 |
+  JSR reset_sprite_anim                     ; $1ED265 |
   CPY #$03                                  ; $1ED268 |
   BNE code_1ED271                           ; $1ED26A |
   LDA #$AE                                  ; $1ED26C |
@@ -2387,7 +2387,7 @@ code_1ED292:
   LDA #$A3                                  ; $1ED2A5 |
   CMP $05C0                                 ; $1ED2A7 |
   BEQ code_1ED2D2                           ; $1ED2AA |
-  JSR code_1FF835                           ; $1ED2AC |
+  JSR reset_sprite_anim                     ; $1ED2AC |
   LDA #$2C                                  ; $1ED2AF |
   JMP code_1FF89A                           ; $1ED2B1 |
 
@@ -2428,15 +2428,38 @@ code_1ED2E1:
 code_1ED302:
   RTS                                       ; $1ED302 |
 
-  db $03, $12, $FB, $4D, $03, $9F, $B4, $A6 ; $1ED303 |
-  db $03, $A6, $D3, $A6, $D1, $D2, $D1, $D2 ; $1ED30B |
-  db $D1, $D2, $D2, $D1, $D1, $D1, $D2, $D1 ; $1ED313 |
+_lo:
+  db $03, $12, $FB, $4D                     ; $1ED303 |
+  db $03, $9F, $B4, $A6                     ; $1ED307 |
+  db $03, $A6, $D3, $A6                     ; $1ED30B |
+
+_hi:
+  db $D1, $D2, $D1, $D2                     ; $1ED30F |
+  db $D1, $D2, $D2, $D1                     ; $1ED313 |
+  db $D1, $D1, $D2, $D1                     ; $1ED317 |
+
   db $0F, $00, $F0, $FF, $17, $00, $E8, $FF ; $1ED31B |
   db $18, $9F, $A2, $AC, $97, $18, $A5, $18 ; $1ED323 |
   db $9C, $18, $9E, $18, $01, $84, $01, $85 ; $1ED32B |
   db $83, $01, $86, $01, $87, $01, $88, $01 ; $1ED333 |
-  db $FE, $02, $03, $01, $03, $01, $02, $00 ; $1ED33B |
-  db $03, $03, $02, $03, $01, $03, $15, $2B ; $1ED343 |
+  db $FE, $02                               ; $1ED33B |
+
+; maximum # of shots on screen at once
+weapon_max_shots:
+  db $03                                    ; $1ED33D | Mega Buster
+  db $01                                    ; $1ED33E | Gemini Laser
+  db $03                                    ; $1ED33F | Needle Cannon
+  db $01                                    ; $1ED340 | Hard Knuckle
+  db $02                                    ; $1ED341 | Magnet Missile
+  db $00                                    ; $1ED342 | Top Spin
+  db $03                                    ; $1ED343 | Search Snake
+  db $03                                    ; $1ED344 | Rush Coil
+  db $02                                    ; $1ED345 | Spark Shock
+  db $03                                    ; $1ED346 | Rush Marine
+  db $01                                    ; $1ED347 | Shadow Blade
+  db $03                                    ; $1ED348 | Rush Jet
+
+  db $15, $2B                               ; $1ED349 |
   db $15, $15, $2A, $2C, $15, $15, $2D, $15 ; $1ED34B |
   db $2E, $15                               ; $1ED353 |
 
@@ -2501,7 +2524,7 @@ code_1ED3A9:
   LDA #$14                                  ; $1ED3AD |
   STA $33                                   ; $1ED3AF |
   LDA #$10                                  ; $1ED3B1 |
-  JSR code_1FF835                           ; $1ED3B3 |
+  JSR reset_sprite_anim                     ; $1ED3B3 |
   LDA $03C0                                 ; $1ED3B6 |
   CLC                                       ; $1ED3B9 |
   ADC #$02                                  ; $1ED3BA |
@@ -2516,7 +2539,7 @@ code_1ED3A9:
   STA $0584                                 ; $1ED3D1 |
   LDX #$04                                  ; $1ED3D4 |
   LDA #$17                                  ; $1ED3D6 |
-  JSR code_1FF835                           ; $1ED3D8 |
+  JSR reset_sprite_anim                     ; $1ED3D8 |
   LDA $0360                                 ; $1ED3DB |
   STA $0364                                 ; $1ED3DE |
   LDA $0380                                 ; $1ED3E1 |
@@ -2586,7 +2609,7 @@ code_1ED455:
 code_1ED45D:
   LDA #$04                                  ; $1ED45D |
 code_1ED45F:
-  JSR code_1FF835                           ; $1ED45F |
+  JSR reset_sprite_anim                     ; $1ED45F |
   LDA #$4C                                  ; $1ED462 |
   STA $0400                                 ; $1ED464 |
   LDA #$01                                  ; $1ED467 |
@@ -2631,7 +2654,7 @@ code_1ED4A3:
   STA $0360                                 ; $1ED4AA |
   LDA #$0A                                  ; $1ED4AD |
 code_1ED4AF:
-  JSR code_1FF835                           ; $1ED4AF |
+  JSR reset_sprite_anim                     ; $1ED4AF |
   LDA #$03                                  ; $1ED4B2 |
   STA $30                                   ; $1ED4B4 |
   LDA #$4C                                  ; $1ED4B6 |
@@ -2707,7 +2730,7 @@ code_1ED521:
   LDA #$0A                                  ; $1ED531 |
   CMP $05C0                                 ; $1ED533 |
   BEQ code_1ED53B                           ; $1ED536 |
-  JSR code_1FF835                           ; $1ED538 |
+  JSR reset_sprite_anim                     ; $1ED538 |
 code_1ED53B:
   LDY #$00                                  ; $1ED53B |
   JSR code_1FF606                           ; $1ED53D |
@@ -2761,7 +2784,7 @@ code_1ED57A:
   LDA #$14                                  ; $1ED59A |
   CMP $05C0                                 ; $1ED59C |
   BEQ code_1ED5A4                           ; $1ED59F |
-  JSR code_1FF835                           ; $1ED5A1 |
+  JSR reset_sprite_anim                     ; $1ED5A1 |
 code_1ED5A4:
   LDA $03C0                                 ; $1ED5A4 |
   AND #$0F                                  ; $1ED5A7 |
@@ -2916,7 +2939,7 @@ code_1ED69D:
 code_1ED6C3:
   LDA #$B1                                  ; $1ED6C3 |
 code_1ED6C5:
-  JSR code_1FF835                           ; $1ED6C5 |
+  JSR reset_sprite_anim                     ; $1ED6C5 |
   LDA #$00                                  ; $1ED6C8 |
   STA $32                                   ; $1ED6CA |
   JSR code_1FF81B                           ; $1ED6CC |
@@ -2926,7 +2949,7 @@ code_1ED6C5:
   STA $0584                                 ; $1ED6D7 |
   LDX #$04                                  ; $1ED6DA |
   LDA #$12                                  ; $1ED6DC |
-  JSR code_1FF835                           ; $1ED6DE |
+  JSR reset_sprite_anim                     ; $1ED6DE |
   LDA $0360                                 ; $1ED6E1 |
   STA $0364                                 ; $1ED6E4 |
   LDA $0380                                 ; $1ED6E7 |
@@ -2980,7 +3003,7 @@ code_1ED742:
   CMP #$D9                                  ; $1ED750 |
   BCC code_1ED757                           ; $1ED752 |
 code_1ED754:
-  JSR code_1FF835                           ; $1ED754 |
+  JSR reset_sprite_anim                     ; $1ED754 |
 code_1ED757:
   PLA                                       ; $1ED757 |
   CMP #$10                                  ; $1ED758 |
@@ -3089,7 +3112,7 @@ code_1ED84E:
 code_1ED857:
   RTS                                       ; $1ED857 |
 
-  JSR code_1EDED8                           ; $1ED858 |
+  JSR decrease_ammo.check_frames            ; $1ED858 |
   LDA $05C0                                 ; $1ED85B |
   CMP #$DA                                  ; $1ED85E |
   BNE code_1ED86E                           ; $1ED860 |
@@ -3097,7 +3120,7 @@ code_1ED857:
   CMP #$03                                  ; $1ED865 |
   BNE code_1ED857                           ; $1ED867 |
   LDA #$DB                                  ; $1ED869 |
-  JSR code_1FF835                           ; $1ED86B |
+  JSR reset_sprite_anim                     ; $1ED86B |
 code_1ED86E:
   LDY #$06                                  ; $1ED86E |
   JSR code_1FE8D6                           ; $1ED870 |
@@ -3107,14 +3130,14 @@ code_1ED86E:
   LDA #$DB                                  ; $1ED879 |
   CMP $05C0                                 ; $1ED87B |
   BEQ code_1ED893                           ; $1ED87E |
-  JSR code_1FF835                           ; $1ED880 |
+  JSR reset_sprite_anim                     ; $1ED880 |
   JMP code_1ED893                           ; $1ED883 |
 
 code_1ED886:
   LDA #$DC                                  ; $1ED886 |
   CMP $05C0                                 ; $1ED888 |
   BEQ code_1ED8BD                           ; $1ED88B |
-  JSR code_1FF835                           ; $1ED88D |
+  JSR reset_sprite_anim                     ; $1ED88D |
   JMP code_1ED8BD                           ; $1ED890 |
 
 code_1ED893:
@@ -3286,7 +3309,7 @@ code_1ED9BD:
   LDY $0500                                 ; $1ED9C3 |
   STY $30                                   ; $1ED9C6 |
   LDA $D297,y                               ; $1ED9C8 |
-  JSR code_1FF835                           ; $1ED9CB |
+  JSR reset_sprite_anim                     ; $1ED9CB |
   LDA #$00                                  ; $1ED9CE |
   STA $32                                   ; $1ED9D0 |
 code_1ED9D2:
@@ -3367,7 +3390,7 @@ code_1EDA55:
   LDA #$01                                  ; $1EDA61 |
   CMP $05C0                                 ; $1EDA63 |
   BEQ code_1EDA6C                           ; $1EDA66 |
-  JSR code_1FF835                           ; $1EDA68 |
+  JSR reset_sprite_anim                     ; $1EDA68 |
   SEC                                       ; $1EDA6B |
 code_1EDA6C:
   ROL $0F                                   ; $1EDA6C |
@@ -3458,7 +3481,7 @@ code_1EDB07:
   LDA $DC7F,y                               ; $1EDB07 |
   CMP $05C0                                 ; $1EDB0A |
   BEQ code_1EDB12                           ; $1EDB0D |
-  JSR code_1FF835                           ; $1EDB0F |
+  JSR reset_sprite_anim                     ; $1EDB0F |
 code_1EDB12:
   CPY #$01                                  ; $1EDB12 |
   BEQ code_1EDB88                           ; $1EDB14 |
@@ -3574,7 +3597,7 @@ code_1EDBB5:
   CMP #$04                                  ; $1EDBF2 |
   BNE code_1EDC0E                           ; $1EDBF4 |
   LDA #$07                                  ; $1EDBF6 |
-  JMP code_1FF835                           ; $1EDBF8 |
+  JMP reset_sprite_anim                     ; $1EDBF8 |
 
 code_1EDBFB:
   INC $0300                                 ; $1EDBFB |
@@ -3583,7 +3606,7 @@ code_1EDBFB:
   LDA #$3C                                  ; $1EDC04 |
   STA $0500                                 ; $1EDC06 |
   LDA #$01                                  ; $1EDC09 |
-  JSR code_1FF835                           ; $1EDC0B |
+  JSR reset_sprite_anim                     ; $1EDC0B |
 code_1EDC0E:
   RTS                                       ; $1EDC0E |
 
@@ -3597,7 +3620,7 @@ code_1EDC18:
   LDA #$13                                  ; $1EDC18 |
   CMP $05C0                                 ; $1EDC1A |
   BEQ code_1EDC2C                           ; $1EDC1D |
-  JSR code_1FF835                           ; $1EDC1F |
+  JSR reset_sprite_anim                     ; $1EDC1F |
   LDA #$34                                  ; $1EDC22 |
   JSR code_1FF89A                           ; $1EDC24 |
   LDA #$04                                  ; $1EDC27 |
@@ -3674,7 +3697,7 @@ code_1EDC74:
   LDA #$01                                  ; $1EDD1B |
   CMP $05C0                                 ; $1EDD1D |
   BEQ code_1EDD25                           ; $1EDD20 |
-  JSR code_1FF835                           ; $1EDD22 |
+  JSR reset_sprite_anim                     ; $1EDD22 |
 code_1EDD25:
   LDY #$26                                  ; $1EDD25 |
   CPY $52                                   ; $1EDD27 |
@@ -3827,7 +3850,7 @@ code_1EDE40:
   JSR code_1EC74C                           ; $1EDE43 |
   LDX #$00                                  ; $1EDE46 |
   LDA #$13                                  ; $1EDE48 |
-  JSR code_1FF835                           ; $1EDE4A |
+  JSR reset_sprite_anim                     ; $1EDE4A |
   LDA #$12                                  ; $1EDE4D |
   STA $30                                   ; $1EDE4F |
   RTS                                       ; $1EDE51 |
@@ -3855,51 +3878,80 @@ code_1EDE5D:
   db $02, $02, $02, $02, $01, $02, $04, $08 ; $1EDEBE |
   db $10, $20, $40, $80, $01, $04, $40, $80 ; $1EDEC6 |
 
-code_1EDECE:
-  LDA $A0                                   ; $1EDECE |
-  CMP #$06                                  ; $1EDED0 |
-  BCC code_1EDED8                           ; $1EDED2 |
-  AND #$01                                  ; $1EDED4 |
-  BNE code_1EDF1A                           ; $1EDED6 |
-code_1EDED8:
-  LDY $A0                                   ; $1EDED8 |
-  INC $B5                                   ; $1EDEDA |
-  LDA $B5                                   ; $1EDEDC |
-  CMP $DF27,y                               ; $1EDEDE |
-  BNE code_1EDF1A                           ; $1EDEE1 |
-  LDA #$00                                  ; $1EDEE3 |
-  STA $B5                                   ; $1EDEE5 |
-  LDA $00A2,y                               ; $1EDEE7 |
-  AND #$1F                                  ; $1EDEEA |
-  SEC                                       ; $1EDEEC |
-  SBC $DF1B,y                               ; $1EDEED |
-  BCS code_1EDEF4                           ; $1EDEF0 |
-  LDA #$00                                  ; $1EDEF2 |
-code_1EDEF4:
-  ORA #$80                                  ; $1EDEF4 |
-  STA $00A2,y                               ; $1EDEF6 |
-  CMP #$80                                  ; $1EDEF9 |
-  BNE code_1EDF1A                           ; $1EDEFB |
-  CPY #$0B                                  ; $1EDEFD |
-  BEQ code_1EDF15                           ; $1EDEFF |
-  CPY #$09                                  ; $1EDF01 |
-  BNE code_1EDF1A                           ; $1EDF03 |
+decrease_ammo:
+  LDA $A0                                   ; $1EDECE |\
+  CMP #$06                                  ; $1EDED0 | | if current weapon < 6
+  BCC .check_frames                         ; $1EDED2 | | or is even
+  AND #$01                                  ; $1EDED4 | | excludes Rush weapons
+  BNE .ret                                  ; $1EDED6 |/
+.check_frames:
+  LDY $A0                                   ; $1EDED8 |\  increment number of frames/shots
+  INC $B5                                   ; $1EDEDA | | for current weapon, if it has
+  LDA $B5                                   ; $1EDEDC | | not yet reached the ammo decrease
+  CMP weapon_framerate,y                    ; $1EDEDE | | threshold, return
+  BNE .ret                                  ; $1EDEE1 |/
+  LDA #$00                                  ; $1EDEE3 |\ upon reaching threshold, reset
+  STA $B5                                   ; $1EDEE5 |/ shot counter
+  LDA $00A2,y                               ; $1EDEE7 |\
+  AND #$1F                                  ; $1EDEEA | | fetch ammo value to decrease by
+  SEC                                       ; $1EDEEC | | and decrease ammo
+  SBC weapon_cost,y                         ; $1EDEED |/
+  BCS .store_ammo                           ; $1EDEF0 |\ clamp to minimum zero
+  LDA #$00                                  ; $1EDEF2 |/ (no negatives)
+.store_ammo:
+  ORA #$80                                  ; $1EDEF4 |\  flag "own weapon" back on
+  STA $00A2,y                               ; $1EDEF6 | | store new ammo value
+  CMP #$80                                  ; $1EDEF9 | | if not zero, return
+  BNE .ret                                  ; $1EDEFB |/
+; ammo has been depleted, clean up rush
+  CPY #$0B                                  ; $1EDEFD |\ are we rush jet? disable him
+  BEQ .disable_rush                         ; $1EDEFF |/
+  CPY #$09                                  ; $1EDF01 |\ if we're rush marine
+  BNE .ret                                  ; $1EDF03 |/ there's more to do
   LDA #$02                                  ; $1EDF05 |
   STA $EB                                   ; $1EDF07 |
   JSR code_1FFF3C                           ; $1EDF09 |
-  LDA #$01                                  ; $1EDF0C |
-  JSR code_1FF835                           ; $1EDF0E |
+  LDA #$01                                  ; $1EDF0C |\ reset mega man animation
+  JSR reset_sprite_anim                     ; $1EDF0E |/ & ID
   LDA #$00                                  ; $1EDF11 |
   STA $30                                   ; $1EDF13 |
-code_1EDF15:
-  LDA #$00                                  ; $1EDF15 |
-  STA $0301                                 ; $1EDF17 |
-code_1EDF1A:
+.disable_rush:
+  LDA #$00                                  ; $1EDF15 |\ set rush sprite to inactive
+  STA $0301                                 ; $1EDF17 |/
+.ret:
   RTS                                       ; $1EDF1A |
 
-  db $00, $02, $01, $02, $02, $00, $01, $03 ; $1EDF1B |
-  db $01, $01, $01, $01, $00, $01, $04, $01 ; $1EDF23 |
-  db $01, $00, $02, $01, $01, $1E, $02, $1E ; $1EDF2B |
+; how much ammo each weapon costs upon use
+weapon_cost:
+  db $00                                    ; $1EDF1B | Mega Buster
+  db $02                                    ; $1EDF1C | Gemini Laser
+  db $01                                    ; $1EDF1D | Needle Cannon
+  db $02                                    ; $1EDF1E | Hard Knuckle
+  db $02                                    ; $1EDF1F | Magnet Missile
+  db $00                                    ; $1EDF20 | Top Spin
+  db $01                                    ; $1EDF21 | Search Snake
+  db $03                                    ; $1EDF22 | Rush Coil
+  db $01                                    ; $1EDF23 | Spark Shock
+  db $01                                    ; $1EDF24 | Rush Marine
+  db $01                                    ; $1EDF25 | Shadow Blade
+  db $01                                    ; $1EDF26 | Rush Jet
+
+; the rate or number of frames of use before decreasing
+; most weapons are 1 shot == 1 frame
+; jet & marine count while using them
+weapon_framerate:
+  db $00                                    ; $1EDF27 | Mega Buster
+  db $01                                    ; $1EDF28 | Gemini Laser
+  db $04                                    ; $1EDF29 | Needle Cannon
+  db $01                                    ; $1EDF2A | Hard Knuckle
+  db $01                                    ; $1EDF2B | Magnet Missile
+  db $00                                    ; $1EDF2C | Top Spin
+  db $02                                    ; $1EDF2D | Search Snake
+  db $01                                    ; $1EDF2E | Rush Coil
+  db $01                                    ; $1EDF2F | Spark Shock
+  db $1E                                    ; $1EDF30 | Rush Marine
+  db $02                                    ; $1EDF31 | Shadow Blade
+  db $1E                                    ; $1EDF32 | Rush Jet
 
   LDA $05C0                                 ; $1EDF33 |
   CMP #$13                                  ; $1EDF36 |
@@ -3908,7 +3960,7 @@ code_1EDF1A:
   JSR code_1FF67C                           ; $1EDF3C |
   BCC code_1EDF89                           ; $1EDF3F |
   LDA #$13                                  ; $1EDF41 |
-  JSR code_1FF835                           ; $1EDF43 |
+  JSR reset_sprite_anim                     ; $1EDF43 |
   INC $05A0                                 ; $1EDF46 |
   LDA #$00                                  ; $1EDF49 |
   STA $0440                                 ; $1EDF4B |
@@ -3954,14 +4006,14 @@ code_1EDF89:
   LDA #$07                                  ; $1EDF95 |
   CMP $05C0                                 ; $1EDF97 |
   BEQ code_1EDFAC                           ; $1EDF9A |
-  JSR code_1FF835                           ; $1EDF9C |
+  JSR reset_sprite_anim                     ; $1EDF9C |
   JMP code_1EDFAC                           ; $1EDF9F |
 
 code_1EDFA2:
   LDA #$04                                  ; $1EDFA2 |
   CMP $05C0                                 ; $1EDFA4 |
   BEQ code_1EDFAC                           ; $1EDFA7 |
-  JSR code_1FF835                           ; $1EDFA9 |
+  JSR reset_sprite_anim                     ; $1EDFA9 |
 code_1EDFAC:
   LDA $0300                                 ; $1EDFAC |
   AND #$0F                                  ; $1EDFAF |
@@ -4018,7 +4070,7 @@ code_1FE015:
   BEQ code_1FE023                           ; $1FE018 |
   DEC $0500                                 ; $1FE01A |
   LDA #$01                                  ; $1FE01D |
-  JSR code_1FF835                           ; $1FE01F |
+  JSR reset_sprite_anim                     ; $1FE01F |
 
 code_1FE022:
   RTS                                       ; $1FE022 |
@@ -4034,7 +4086,7 @@ code_1FE023:
   LDA #$04                                  ; $1FE033 |
   CMP $05C0                                 ; $1FE035 |
   BEQ code_1FE03D                           ; $1FE038 |
-  JSR code_1FF835                           ; $1FE03A |
+  JSR reset_sprite_anim                     ; $1FE03A |
 code_1FE03D:
   INC $0360                                 ; $1FE03D |
   LDA $0360                                 ; $1FE040 |
@@ -4089,7 +4141,7 @@ code_1FE097:
 code_1FE099:
   CMP $05C0                                 ; $1FE099 |
   BEQ code_1FE0A1                           ; $1FE09C |
-  JSR code_1FF835                           ; $1FE09E |
+  JSR reset_sprite_anim                     ; $1FE09E |
 code_1FE0A1:
   LDA $0360                                 ; $1FE0A1 |
   CMP #$68                                  ; $1FE0A4 |
@@ -4106,7 +4158,7 @@ code_1FE0B2:
   LDA #$01                                  ; $1FE0B2 |
   CMP $05C0                                 ; $1FE0B4 |
   BEQ code_1FE0BC                           ; $1FE0B7 |
-  JSR code_1FF835                           ; $1FE0B9 |
+  JSR reset_sprite_anim                     ; $1FE0B9 |
 code_1FE0BC:
   INC $0500                                 ; $1FE0BC |
   BNE code_1FE119                           ; $1FE0BF |
@@ -6910,13 +6962,17 @@ code_1FF82A:
   STA $0460,x                               ; $1FF831 |
   RTS                                       ; $1FF834 |
 
-code_1FF835:
-  STA $05C0,x                               ; $1FF835 |
-  LDA #$00                                  ; $1FF838 |
-  STA $05A0,x                               ; $1FF83A |
-  LDA $05E0,x                               ; $1FF83D |
-  AND #$80                                  ; $1FF840 |
-  STA $05E0,x                               ; $1FF842 |
+; resets sprite's animation & sets ID
+; parameters:
+; A: sprite ID
+; X: sprite slot
+reset_sprite_anim:
+  STA $05C0,x                               ; $1FF835 | store parameter -> sprite ID
+  LDA #$00                                  ; $1FF838 |\ reset animation
+  STA $05A0,x                               ; $1FF83A |/
+  LDA $05E0,x                               ; $1FF83D |\
+  AND #$80                                  ; $1FF840 | | reset anim frame counter
+  STA $05E0,x                               ; $1FF842 |/
   RTS                                       ; $1FF845 |
 
 code_1FF846:

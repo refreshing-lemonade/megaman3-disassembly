@@ -1025,7 +1025,7 @@ code_1A9C83:
   LDA $A200,y                               ; $1A9CE2 |
   STA $0480,x                               ; $1A9CE5 |
   LDA $A300,y                               ; $1A9CE8 |
-  JSR code_1FF835                           ; $1A9CEB |
+  JSR reset_sprite_anim                     ; $1A9CEB |
   JSR code_1FF869                           ; $1A9CEE |
   LDA $A400,y                               ; $1A9CF1 |
   STA $04E0,x                               ; $1A9CF4 |

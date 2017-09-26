@@ -65,7 +65,7 @@ code_04A06E:
   DEC $0500,x                               ; $04A074 |
   BNE code_04A082                           ; $04A077 |
   LDA #$06                                  ; $04A079 |
-  JSR code_1FF835                           ; $04A07B |
+  JSR reset_sprite_anim                     ; $04A07B |
   INC $0300,x                               ; $04A07E |
   RTS                                       ; $04A081 |
 
@@ -74,7 +74,7 @@ code_04A082:
   AND #$10                                  ; $04A084 |
   BEQ code_04A09A                           ; $04A086 |
   LDA #$03                                  ; $04A088 |
-  JSR code_1FF835                           ; $04A08A |
+  JSR reset_sprite_anim                     ; $04A08A |
   LDA #$9E                                  ; $04A08D |
   STA $0440,x                               ; $04A08F |
   LDA #$04                                  ; $04A092 |
@@ -86,7 +86,7 @@ code_04A09A:
   CMP #$05                                  ; $04A09D |
   BEQ code_04A0A6                           ; $04A09F |
   LDA #$05                                  ; $04A0A1 |
-  JSR code_1FF835                           ; $04A0A3 |
+  JSR reset_sprite_anim                     ; $04A0A3 |
 code_04A0A6:
   RTS                                       ; $04A0A6 |
 
@@ -99,7 +99,7 @@ code_04A0A7:
   BNE code_04A0F4                           ; $04A0B4 |
   JSR code_04A1B4                           ; $04A0B6 |
   LDA #$02                                  ; $04A0B9 |
-  JSR code_1FF835                           ; $04A0BB |
+  JSR reset_sprite_anim                     ; $04A0BB |
   JSR code_1FF869                           ; $04A0BE |
   JSR code_1FF883                           ; $04A0C1 |
   RTS                                       ; $04A0C4 |
@@ -118,7 +118,7 @@ code_04A0C5:
 
 code_04A0DD:
   LDA #$05                                  ; $04A0DD |
-  JSR code_1FF835                           ; $04A0DF |
+  JSR reset_sprite_anim                     ; $04A0DF |
   LDA #$60                                  ; $04A0E2 |
   STA $0500,x                               ; $04A0E4 |
   DEC $0300,x                               ; $04A0E7 |
@@ -376,7 +376,7 @@ code_04A332:
   BNE code_04A2FC                           ; $04A33F |
   LDA #$03                                  ; $04A341 |
 code_04A343:
-  JMP code_1FF835                           ; $04A343 |
+  JMP reset_sprite_anim                     ; $04A343 |
 
   LDA $05A0,x                               ; $04A346 |
   CMP #$01                                  ; $04A349 |
@@ -545,7 +545,7 @@ code_04A49A:
   STA $0300,x                               ; $04A4A9 |
   INC $0300,x                               ; $04A4AC |
   LDA #$05                                  ; $04A4AF |
-  JSR code_1FF835                           ; $04A4B1 |
+  JSR reset_sprite_anim                     ; $04A4B1 |
   LDA #$96                                  ; $04A4B4 |
   STA $0520,x                               ; $04A4B6 |
 code_04A4B9:
@@ -629,7 +629,7 @@ code_04A53C:
   LDA #$00                                  ; $04A553 |
   STA $0540,x                               ; $04A555 |
   LDA #$05                                  ; $04A558 |
-  JMP code_1FF835                           ; $04A55A |
+  JMP reset_sprite_anim                     ; $04A55A |
 
 code_04A55D:
   LDA $05C0,x                               ; $04A55D |
@@ -640,7 +640,7 @@ code_04A55D:
   LDA $04A0,x                               ; $04A569 |
   STA $0540,x                               ; $04A56C |
   LDA #$04                                  ; $04A56F |
-  JSR code_1FF835                           ; $04A571 |
+  JSR reset_sprite_anim                     ; $04A571 |
   LDA $04A0,x                               ; $04A574 |
   PHA                                       ; $04A577 |
   JSR code_1FF869                           ; $04A578 |
@@ -658,7 +658,7 @@ code_04A589:
 
 code_04A593:
   LDA #$03                                  ; $04A593 |
-  JSR code_1FF835                           ; $04A595 |
+  JSR reset_sprite_anim                     ; $04A595 |
 code_04A598:
   RTS                                       ; $04A598 |
 
@@ -796,7 +796,7 @@ code_04A6AF:
   BCC code_04A6E2                           ; $04A6AF |
 code_04A6B1:
   LDA #$0C                                  ; $04A6B1 |
-  JSR code_1FF835                           ; $04A6B3 |
+  JSR reset_sprite_anim                     ; $04A6B3 |
   INC $0300,x                               ; $04A6B6 |
   RTS                                       ; $04A6B9 |
 
@@ -808,12 +808,12 @@ code_04A6BA:
   ORA $05A0,x                               ; $04A6C4 |
   BNE code_04A6CE                           ; $04A6C7 |
   LDA #$0D                                  ; $04A6C9 |
-  JSR code_1FF835                           ; $04A6CB |
+  JSR reset_sprite_anim                     ; $04A6CB |
 code_04A6CE:
   DEC $0500,x                               ; $04A6CE |
   BNE code_04A6E2                           ; $04A6D1 |
   LDA #$59                                  ; $04A6D3 |
-  JSR code_1FF835                           ; $04A6D5 |
+  JSR reset_sprite_anim                     ; $04A6D5 |
   LDA #$00                                  ; $04A6D8 |
   STA $0500,x                               ; $04A6DA |
   LDA #$48                                  ; $04A6DD |
@@ -880,13 +880,13 @@ code_04A748:
   BCC code_04A75B                           ; $04A74D |
   JSR code_04A81F                           ; $04A74F |
   LDA #$1D                                  ; $04A752 |
-  JSR code_1FF835                           ; $04A754 |
+  JSR reset_sprite_anim                     ; $04A754 |
   DEC $0300,x                               ; $04A757 |
   RTS                                       ; $04A75A |
 
 code_04A75B:
   LDA #$03                                  ; $04A75B |
-  JSR code_1FF835                           ; $04A75D |
+  JSR reset_sprite_anim                     ; $04A75D |
   LDA $0460,x                               ; $04A760 |
   BPL code_04A77D                           ; $04A763 |
   DEC $0520,x                               ; $04A765 |
@@ -895,7 +895,7 @@ code_04A75B:
   STA $0520,x                               ; $04A76D |
   JSR code_04A84A                           ; $04A770 |
   LDA #$04                                  ; $04A773 |
-  JSR code_1FF835                           ; $04A775 |
+  JSR reset_sprite_anim                     ; $04A775 |
   LDA #$07                                  ; $04A778 |
   STA $0560,x                               ; $04A77A |
 code_04A77D:
@@ -906,7 +906,7 @@ code_04A77E:
   ORA $05A0,x                               ; $04A781 |
   BNE code_04A78B                           ; $04A784 |
   LDA #$03                                  ; $04A786 |
-  JSR code_1FF835                           ; $04A788 |
+  JSR reset_sprite_anim                     ; $04A788 |
 code_04A78B:
   LDA $04A0,x                               ; $04A78B |
   AND #$01                                  ; $04A78E |
@@ -925,7 +925,7 @@ code_04A79B:
   LDA #$08                                  ; $04A7A7 |
   STA $0460,x                               ; $04A7A9 |
   LDA #$1D                                  ; $04A7AC |
-  JSR code_1FF835                           ; $04A7AE |
+  JSR reset_sprite_anim                     ; $04A7AE |
   LDA $04A0,x                               ; $04A7B1 |
   AND #$01                                  ; $04A7B4 |
   BEQ code_04A7C2                           ; $04A7B6 |
@@ -970,7 +970,7 @@ code_04A809:
   JSR code_1FF869                           ; $04A809 |
   JSR code_04A84A                           ; $04A80C |
   LDA #$04                                  ; $04A80F |
-  JSR code_1FF835                           ; $04A811 |
+  JSR reset_sprite_anim                     ; $04A811 |
   LDA #$00                                  ; $04A814 |
   STA $0540,x                               ; $04A816 |
   LDA $0F                                   ; $04A819 |

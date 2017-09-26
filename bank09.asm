@@ -236,7 +236,7 @@ code_0981CA:
   JSR code_1FFC43                           ; $0981F2 |
   BCS code_098270                           ; $0981F5 |
   LDA #$71                                  ; $0981F7 |
-  JSR code_1FF835                           ; $0981F9 |
+  JSR reset_sprite_anim                     ; $0981F9 |
   LDA #$19                                  ; $0981FC |
   STA $0320,x                               ; $0981FE |
   LDA #$80                                  ; $098201 |
@@ -421,7 +421,7 @@ code_098382:
 code_09838F:
   JSR code_1FFC43                           ; $09838F |
   LDA #$2C                                  ; $098392 |
-  JSR code_1FF835                           ; $098394 |
+  JSR reset_sprite_anim                     ; $098394 |
   LDA #$80                                  ; $098397 |
   STA $0300,x                               ; $098399 |
   LDA #$9A                                  ; $09839C |

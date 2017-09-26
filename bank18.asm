@@ -1128,7 +1128,7 @@ code_18947F:
   STA $03C0                                 ; $18948F |
   LDX #$00                                  ; $189492 |
   LDA #$B0                                  ; $189494 |
-  JSR code_1FF835                           ; $189496 |
+  JSR reset_sprite_anim                     ; $189496 |
   LDA $0580                                 ; $189499 |
   AND #$BF                                  ; $18949C |
   STA $0580                                 ; $18949E |
@@ -1149,7 +1149,7 @@ code_1894B9:
   BNE code_1894C7                           ; $1894BE |
   LDX #$00                                  ; $1894C0 |
   LDA #$1A                                  ; $1894C2 |
-  JSR code_1FF835                           ; $1894C4 |
+  JSR reset_sprite_anim                     ; $1894C4 |
 code_1894C7:
   JSR code_1FFD6E                           ; $1894C7 |
   LDA $05C0                                 ; $1894CA |
@@ -2007,7 +2007,7 @@ code_189B38:
   STA $043F                                 ; $189B62 |
   JSR code_1FF81B                           ; $189B65 |
   LDA #$99                                  ; $189B68 |
-  JSR code_1FF835                           ; $189B6A |
+  JSR reset_sprite_anim                     ; $189B6A |
   LDA #$18                                  ; $189B6D |
   STA $F9                                   ; $189B6F |
   STA $0380                                 ; $189B71 |

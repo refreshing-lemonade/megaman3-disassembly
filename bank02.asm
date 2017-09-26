@@ -201,7 +201,7 @@ code_02A139:
   STA $30                                   ; $02A14C |
   LDX #$00                                  ; $02A14E |
   LDA #$13                                  ; $02A150 |
-  JSR code_1FF835                           ; $02A152 |
+  JSR reset_sprite_anim                     ; $02A152 |
   INC $05A0                                 ; $02A155 |
   JMP code_1FFF3C                           ; $02A158 |
 
