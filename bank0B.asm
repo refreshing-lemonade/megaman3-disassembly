@@ -170,7 +170,7 @@ code_0B814E:
   BNE code_0B81AD                           ; $0B8165 |
   LDA #$0E                                  ; $0B8167 |
   STA $F5                                   ; $0B8169 |
-  JSR code_1FFF6B                           ; $0B816B |
+  JSR select_PRG_banks                      ; $0B816B |
   LDA $B8                                   ; $0B816E |
   BNE code_0B817B                           ; $0B8170 |
   LDX $0500                                 ; $0B8172 |
@@ -195,7 +195,7 @@ code_0B8190:
   BEQ code_0B81B0                           ; $0B819A |
   LDA #$0E                                  ; $0B819C |
   STA $F5                                   ; $0B819E |
-  JSR code_1FFF6B                           ; $0B81A0 |
+  JSR select_PRG_banks                      ; $0B81A0 |
   LDA #$00                                  ; $0B81A3 |
   STA $EE                                   ; $0B81A5 |
   JSR $A000                                 ; $0B81A7 |
@@ -217,7 +217,7 @@ code_0B81B0:
   STA $F8                                   ; $0B81C8 |
   LDA #$13                                  ; $0B81CA |
   STA $F5                                   ; $0B81CC |
-  JSR code_1FFF6B                           ; $0B81CE |
+  JSR select_PRG_banks                      ; $0B81CE |
   LDA #$08                                  ; $0B81D1 |
   JSR code_1FE8B4                           ; $0B81D3 |
 code_0B81D6:
@@ -520,7 +520,7 @@ code_0B8439:
   STA $70                                   ; $0B8458 |
   LDA #$0E                                  ; $0B845A |
   STA $F5                                   ; $0B845C |
-  JSR code_1FFF6B                           ; $0B845E |
+  JSR select_PRG_banks                      ; $0B845E |
   LDA #$00                                  ; $0B8461 |
   JSR code_1FE8B4                           ; $0B8463 |
 code_0B8466:
@@ -617,7 +617,7 @@ code_0B850F:
   ADC #$0C                                  ; $0B851C |
   STA $22                                   ; $0B851E |
   STA $F5                                   ; $0B8520 |
-  JMP code_1FFF6B                           ; $0B8522 |
+  JMP select_PRG_banks                      ; $0B8522 |
 
 code_0B8525:
   TXA                                       ; $0B8525 |

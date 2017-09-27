@@ -89,7 +89,7 @@ code_03A0B9:
   BNE code_03A0B9                           ; $03A0C4 |
   LDA #$03                                  ; $03A0C6 |
   STA $F5                                   ; $03A0C8 |
-  JSR code_1FFF6B                           ; $03A0CA |
+  JSR select_PRG_banks                      ; $03A0CA |
   JMP code_03A0D0                           ; $03A0CD |
 
 code_03A0D0:

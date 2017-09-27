@@ -1012,7 +1012,7 @@ code_1A9C83:
   STX $05                                   ; $1A9CC4 |
   LDA #$00                                  ; $1A9CC6 |
   STA $F5                                   ; $1A9CC8 |
-  JSR code_1FFF6B                           ; $1A9CCA |
+  JSR select_PRG_banks                      ; $1A9CCA |
   LDX $05                                   ; $1A9CCD |
   PLA                                       ; $1A9CCF |
   TAY                                       ; $1A9CD0 |
@@ -1046,7 +1046,7 @@ code_1A9C83:
   STA $0560,x                               ; $1A9D1E |
   LDA $22                                   ; $1A9D21 |
   STA $F5                                   ; $1A9D23 |
-  JMP code_1FFF6B                           ; $1A9D25 |
+  JMP select_PRG_banks                      ; $1A9D25 |
 
   db $00, $00, $00, $04, $00, $00, $00, $00 ; $1A9D28 |
   db $00, $01, $00, $00, $80, $00, $00, $00 ; $1A9D30 |

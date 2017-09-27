@@ -39,7 +39,7 @@ code_09802B:
 
 code_098034:
   STA $F5                                   ; $098034 |
-  JSR code_1FFF6B                           ; $098036 |
+  JSR select_PRG_banks                      ; $098036 |
   LDA $55                                   ; $098039 |
   BEQ code_098040                           ; $09803B |
   JMP code_09815D                           ; $09803D |
@@ -352,7 +352,7 @@ code_098309:
   BNE code_098331                           ; $098314 |
   LDA $22                                   ; $098316 |
   STA $F5                                   ; $098318 |
-  JSR code_1FFF6B                           ; $09831A |
+  JSR select_PRG_banks                      ; $09831A |
   LDA #$1F                                  ; $09831D |
   JSR code_1FE8B4                           ; $09831F |
   LDA #$08                                  ; $098322 |

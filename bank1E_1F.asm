@@ -2,12 +2,12 @@ bank $1E
 org $C000
 
 NMI:
-  PHP                                       ; $1EC000 |
-  PHA                                       ; $1EC001 |
-  TXA                                       ; $1EC002 |
-  PHA                                       ; $1EC003 |
-  TYA                                       ; $1EC004 |
-  PHA                                       ; $1EC005 |
+  PHP                                       ; $1EC000 |\
+  PHA                                       ; $1EC001 | |
+  TXA                                       ; $1EC002 | | preserve X, Y, and
+  PHA                                       ; $1EC003 | | processor flags
+  TYA                                       ; $1EC004 | |
+  PHA                                       ; $1EC005 |/
   LDA $2002                                 ; $1EC006 |
   LDA $FF                                   ; $1EC009 |
   AND #$7F                                  ; $1EC00B |
@@ -134,47 +134,51 @@ code_1EC0FE:
   INX                                       ; $1EC101 |
   DEY                                       ; $1EC102 |
   BNE code_1EC0F0                           ; $1EC103 |
-  TSX                                       ; $1EC105 |
-  LDA $0107,x                               ; $1EC106 |
-  STA $7D                                   ; $1EC109 |
-  LDA $0106,x                               ; $1EC10B |
-  STA $7C                                   ; $1EC10E |
-  LDA #$C1                                  ; $1EC110 |
-  STA $0107,x                               ; $1EC112 |
-  LDA #$21                                  ; $1EC115 |
-  STA $0106,x                               ; $1EC117 |
-  PLA                                       ; $1EC11A |
-  TAY                                       ; $1EC11B |
-  PLA                                       ; $1EC11C |
-  TAX                                       ; $1EC11D |
-  PLA                                       ; $1EC11E |
-  PLP                                       ; $1EC11F |
-  RTI                                       ; $1EC120 |
-
-  PHP                                       ; $1EC121 |
-  PHP                                       ; $1EC122 |
-  PHP                                       ; $1EC123 |
-  PHA                                       ; $1EC124 |
-  TXA                                       ; $1EC125 |
-  PHA                                       ; $1EC126 |
-  TYA                                       ; $1EC127 |
-  PHA                                       ; $1EC128 |
-  TSX                                       ; $1EC129 |
-  SEC                                       ; $1EC12A |
-  LDA $7C                                   ; $1EC12B |
-  SBC #$01                                  ; $1EC12D |
-  STA $0105,x                               ; $1EC12F |
-  LDA $7D                                   ; $1EC132 |
-  SBC #$00                                  ; $1EC134 |
-  STA $0106,x                               ; $1EC136 |
-  JSR code_1FFF90                           ; $1EC139 |
-  PLA                                       ; $1EC13C |
-  TAY                                       ; $1EC13D |
-  PLA                                       ; $1EC13E |
-  TAX                                       ; $1EC13F |
-  PLA                                       ; $1EC140 |
-  PLP                                       ; $1EC141 |
-  RTS                                       ; $1EC142 |
+  TSX                                       ; $1EC105 |\
+  LDA $0107,x                               ; $1EC106 | | manual stack hackery!
+  STA $7D                                   ; $1EC109 | | preserve original address
+  LDA $0106,x                               ; $1EC10B | | from interrupt push
+  STA $7C                                   ; $1EC10E | | (word address 6th & 7th down)
+  LDA #$C1                                  ; $1EC110 | | -> $7C & $7D
+  STA $0107,x                               ; $1EC112 | | then change that slot to be
+  LDA #$21                                  ; $1EC115 | | $C121, the address right after RTI
+  STA $0106,x                               ; $1EC117 |/
+  PLA                                       ; $1EC11A |\
+  TAY                                       ; $1EC11B | |
+  PLA                                       ; $1EC11C | | restore X, Y, and P flags
+  TAX                                       ; $1EC11D | | and clear interrupt flag
+  PLA                                       ; $1EC11E | |
+  PLP                                       ; $1EC11F |/
+  RTI                                       ; $1EC120 | FAKE RETURN
+; does not actually return, stack is hardcoded to go right here
+; another preserve & restore just to call NMI_cleanup
+; this is done in case NMI happened in the middle of selecting PRG banks
+; because NMI_cleanup also selects PRG banks - possible race condition
+; is handled in NMI_cleanup routine
+  PHP                                       ; $1EC121 |\ leave a stack slot for word sized
+  PHP                                       ; $1EC122 |/ return address for the RTS
+  PHP                                       ; $1EC123 |\
+  PHA                                       ; $1EC124 | |
+  TXA                                       ; $1EC125 | | once again, preserve X, Y & flags
+  PHA                                       ; $1EC126 | |
+  TYA                                       ; $1EC127 | |
+  PHA                                       ; $1EC128 |/
+  TSX                                       ; $1EC129 |\
+  SEC                                       ; $1EC12A | |
+  LDA $7C                                   ; $1EC12B | | restore original address
+  SBC #$01                                  ; $1EC12D | | from interrupt push
+  STA $0105,x                               ; $1EC12F | | onto the beginning of stack
+  LDA $7D                                   ; $1EC132 | | (for RTS)
+  SBC #$00                                  ; $1EC134 | |
+  STA $0106,x                               ; $1EC136 |/
+  JSR NMI_cleanup                           ; $1EC139 |
+  PLA                                       ; $1EC13C |\
+  TAY                                       ; $1EC13D | |
+  PLA                                       ; $1EC13E | | once again, restore X, Y & flags
+  TAX                                       ; $1EC13F | |
+  PLA                                       ; $1EC140 | |
+  PLP                                       ; $1EC141 |/
+  RTS                                       ; $1EC142 | this is the "true" RTI
 
 IRQ:
   PHP                                       ; $1EC143 |
@@ -1058,7 +1062,7 @@ code_1EC80F:
 code_1EC816:
   LDA $22                                   ; $1EC816 |
   STA $F5                                   ; $1EC818 |
-  JSR code_1FFF6B                           ; $1EC81A |
+  JSR select_PRG_banks                      ; $1EC81A |
   LDA $AA80                                 ; $1EC81D |
   STA $E8                                   ; $1EC820 |
   LDA $AA81                                 ; $1EC822 |
@@ -1118,7 +1122,7 @@ code_1EC864:
   STA $0630                                 ; $1EC887 |
   LDA #$01                                  ; $1EC88A |
   STA $F5                                   ; $1EC88C |
-  JSR code_1FFF6B                           ; $1EC88E |
+  JSR select_PRG_banks                      ; $1EC88E |
   PLA                                       ; $1EC891 |
   JSR $A000                                 ; $1EC892 |
   JMP update_CHR_banks                      ; $1EC895 |
@@ -1136,7 +1140,7 @@ code_1EC8A0:
   LDY $22                                   ; $1EC8AA |
   LDA $C8B9,y                               ; $1EC8AC |
   STA $F5                                   ; $1EC8AF |
-  JSR code_1FFF6B                           ; $1EC8B1 |
+  JSR select_PRG_banks                      ; $1EC8B1 |
 code_1EC8B4:
   PLA                                       ; $1EC8B4 |
   TAY                                       ; $1EC8B5 |
@@ -1164,7 +1168,7 @@ code_1EC8B4:
   STA $99                                   ; $1EC8EB |
   LDA #$18                                  ; $1EC8ED |
   STA $F4                                   ; $1EC8EF |
-  JSR code_1FFF6B                           ; $1EC8F1 |
+  JSR select_PRG_banks                      ; $1EC8F1 |
   JSR $9009                                 ; $1EC8F4 |
   LDA #$9C                                  ; $1EC8F7 |
   STA $A9                                   ; $1EC8F9 |
@@ -1230,7 +1234,7 @@ code_1EC969:
   BEQ code_1EC969                           ; $1EC975 |
   LDA $22                                   ; $1EC977 |
   STA $F5                                   ; $1EC979 |
-  JSR code_1FFF6B                           ; $1EC97B |
+  JSR select_PRG_banks                      ; $1EC97B |
   LDA $AA40                                 ; $1EC97E |
   PHA                                       ; $1EC981 |
   AND #$E0                                  ; $1EC982 |
@@ -1386,12 +1390,12 @@ code_1ECAA4:
   BMI code_1ECAB5                           ; $1ECAA9 |
   LDA #$02                                  ; $1ECAAB |
   STA $F5                                   ; $1ECAAD |
-  JSR code_1FFF6B                           ; $1ECAAF |
+  JSR select_PRG_banks                      ; $1ECAAF |
   JSR $A003                                 ; $1ECAB2 |
 code_1ECAB5:
   LDA $22                                   ; $1ECAB5 |
   STA $F5                                   ; $1ECAB7 |
-  JSR code_1FFF6B                           ; $1ECAB9 |
+  JSR select_PRG_banks                      ; $1ECAB9 |
   JSR code_1ECD34                           ; $1ECABC |
   LDA $3D                                   ; $1ECABF |
   BEQ code_1ECAD7                           ; $1ECAC1 |
@@ -1432,17 +1436,17 @@ code_1ECAFB:
   STX $F4                                   ; $1ECB02 |
   INX                                       ; $1ECB04 |
   STX $F5                                   ; $1ECB05 |
-  JSR code_1FFF6B                           ; $1ECB07 |
+  JSR select_PRG_banks                      ; $1ECB07 |
   JSR $8000                                 ; $1ECB0A |
   LDA #$1A                                  ; $1ECB0D |
   STA $F4                                   ; $1ECB0F |
   LDA $22                                   ; $1ECB11 |
   STA $F5                                   ; $1ECB13 |
-  JSR code_1FFF6B                           ; $1ECB15 |
+  JSR select_PRG_banks                      ; $1ECB15 |
   JSR $9C00                                 ; $1ECB18 |
   LDA #$09                                  ; $1ECB1B |
   STA $F4                                   ; $1ECB1D |
-  JSR code_1FFF6B                           ; $1ECB1F |
+  JSR select_PRG_banks                      ; $1ECB1F |
   JSR $8003                                 ; $1ECB22 |
   JSR $8006                                 ; $1ECB25 |
   JSR $800F                                 ; $1ECB28 |
@@ -1479,7 +1483,7 @@ code_1ECB5B:
   STA $F4                                   ; $1ECB69 |
   LDA #$10                                  ; $1ECB6B |
   STA $F5                                   ; $1ECB6D |
-  JSR code_1FFF6B                           ; $1ECB6F |
+  JSR select_PRG_banks                      ; $1ECB6F |
   JSR $9000                                 ; $1ECB72 |
   JMP code_1EC8FF                           ; $1ECB75 |
 
@@ -1508,12 +1512,12 @@ code_1ECB94:
   LDA $60                                   ; $1ECB9E |
   CMP #$12                                  ; $1ECBA0 |
   BEQ code_1ECBA7                           ; $1ECBA2 |
-  JMP code_1ECC18                           ; $1ECBA4 |
+  JMP handle_checkpoint                     ; $1ECBA4 |
 
 code_1ECBA7:
   LDA #$18                                  ; $1ECBA7 |
   STA $F4                                   ; $1ECBA9 |
-  JSR code_1FFF6B                           ; $1ECBAB |
+  JSR select_PRG_banks                      ; $1ECBAB |
   JMP $9006                                 ; $1ECBAE |
 
 code_1ECBB1:
@@ -1527,7 +1531,7 @@ code_1ECBB1:
   STA $F4                                   ; $1ECBBF |
   LDA #$13                                  ; $1ECBC1 |
   STA $F5                                   ; $1ECBC3 |
-  JSR code_1FFF6B                           ; $1ECBC5 |
+  JSR select_PRG_banks                      ; $1ECBC5 |
   JSR $9003                                 ; $1ECBC8 |
   JMP code_1EC8FF                           ; $1ECBCB |
 
@@ -1546,7 +1550,7 @@ code_1ECBCE:
   STA $F4                                   ; $1ECBE3 |
   LDA #$0E                                  ; $1ECBE5 |
   STA $F5                                   ; $1ECBE7 |
-  JSR code_1FFF6B                           ; $1ECBE9 |
+  JSR select_PRG_banks                      ; $1ECBE9 |
   PLA                                       ; $1ECBEC |
   AND #$7F                                  ; $1ECBED |
   BNE code_1ECBF7                           ; $1ECBEF |
@@ -1565,29 +1569,29 @@ code_1ECC03:
   STA $F4                                   ; $1ECC05 |
   LDA #$0E                                  ; $1ECC07 |
   STA $F5                                   ; $1ECC09 |
-  JSR code_1FFF6B                           ; $1ECC0B |
+  JSR select_PRG_banks                      ; $1ECC0B |
   LDA #$11                                  ; $1ECC0E |
   STA $F8                                   ; $1ECC10 |
   JSR $8000                                 ; $1ECC12 |
   JMP code_1EC8FF                           ; $1ECC15 |
 
-code_1ECC18:
-  LDA $22                                   ; $1ECC18 |
-  STA $F5                                   ; $1ECC1A |
-  JSR code_1FFF6B                           ; $1ECC1C |
-  LDY #$00                                  ; $1ECC1F |
-code_1ECC21:
-  LDA $6F                                   ; $1ECC21 |
-  CMP $AAF8,y                               ; $1ECC23 |
-  BCC code_1ECC2B                           ; $1ECC26 |
-  INY                                       ; $1ECC28 |
-  BNE code_1ECC21                           ; $1ECC29 |
-code_1ECC2B:
-  DEY                                       ; $1ECC2B |
-  BPL code_1ECC31                           ; $1ECC2C |
-  JMP code_1EC909                           ; $1ECC2E |
+handle_checkpoint:
+  LDA $22                                   ; $1ECC18 |\  store current level
+  STA $F5                                   ; $1ECC1A | | as $A000-$BFFF bank
+  JSR select_PRG_banks                      ; $1ECC1C |/  and swap banks to it
+  LDY #$00                                  ; $1ECC1F | loop through checkpoint data
+.loop:
+  LDA $6F                                   ; $1ECC21 |\  if current checkpoint >
+  CMP $AAF8,y                               ; $1ECC23 | | current screen ID
+  BCC .go_back_one                          ; $1ECC26 |/  we're done & 1 too far
+  INY                                       ; $1ECC28 |\
+  BNE .loop                                 ; $1ECC29 |/ next checkpoint
+.go_back_one:
+  DEY                                       ; $1ECC2B |\  we're one checkpoint too far so
+  BPL .take_checkpoint                      ; $1ECC2C | | go back one, if it's negative
+  JMP code_1EC909                           ; $1ECC2E |/  we're just at the beginning
 
-code_1ECC31:
+.take_checkpoint:
   TYA                                       ; $1ECC31 |
   PHA                                       ; $1ECC32 |
   JSR code_1EC752                           ; $1ECC33 |
@@ -1614,10 +1618,10 @@ code_1ECC31:
   STA $A1                                   ; $1ECC62 |
   PLA                                       ; $1ECC64 |
   TAY                                       ; $1ECC65 |
-  LDA $AAF8,y                               ; $1ECC66 |
-  STA $29                                   ; $1ECC69 |
-  STA $F9                                   ; $1ECC6B |
-  STA $0380                                 ; $1ECC6D |
+  LDA $AAF8,y                               ; $1ECC66 |\
+  STA $29                                   ; $1ECC69 | | set screen ID
+  STA $F9                                   ; $1ECC6B | | from checkpoint
+  STA $0380                                 ; $1ECC6D |/
   LDA $ABC0,y                               ; $1ECC70 |
   STA $9E                                   ; $1ECC73 |
   STA $9F                                   ; $1ECC75 |
@@ -3249,7 +3253,7 @@ code_1ED95B:
   BEQ code_1ED973                           ; $1ED95D |
 code_1ED95F:
   STA $F5                                   ; $1ED95F |
-  JSR code_1FFF6B                           ; $1ED961 |
+  JSR select_PRG_banks                      ; $1ED961 |
   LDA #$1A                                  ; $1ED964 |
   JSR code_1FE8B4                           ; $1ED966 |
   LDA #$04                                  ; $1ED969 |
@@ -3355,7 +3359,7 @@ code_1EDA03:
   STA $00A2,y                               ; $1EDA1A |
   LDA #$02                                  ; $1EDA1D |
   STA $F5                                   ; $1EDA1F |
-  JSR code_1FFF6B                           ; $1EDA21 |
+  JSR select_PRG_banks                      ; $1EDA21 |
   JSR $A000                                 ; $1EDA24 |
   LDA #$0D                                  ; $1EDA27 |
   STA $30                                   ; $1EDA29 |
@@ -3714,7 +3718,7 @@ code_1EDD38:
 code_1EDD3C:
   LDA #$11                                  ; $1EDD3C |
   STA $F5                                   ; $1EDD3E |
-  JSR code_1FFF6B                           ; $1EDD40 |
+  JSR select_PRG_banks                      ; $1EDD40 |
   LDA #$04                                  ; $1EDD43 |
   JSR code_1FE8B4                           ; $1EDD45 |
   LDA #$04                                  ; $1EDD48 |
@@ -3797,7 +3801,7 @@ code_1EDDC1:
   JSR code_1EC628                           ; $1EDDD2 |
   LDA #$01                                  ; $1EDDD5 |
   STA $F5                                   ; $1EDDD7 |
-  JSR code_1FFF6B                           ; $1EDDD9 |
+  JSR select_PRG_banks                      ; $1EDDD9 |
   LDY $6C                                   ; $1EDDDC |
   BNE code_1EDDE2                           ; $1EDDDE |
   STY $6E                                   ; $1EDDE0 |
@@ -4471,7 +4475,7 @@ code_1FE308:
   JSR code_1FE5D1                           ; $1FE30D |
   LDA $22                                   ; $1FE310 |
   STA $F5                                   ; $1FE312 |
-  JSR code_1FFF6B                           ; $1FE314 |
+  JSR select_PRG_banks                      ; $1FE314 |
   LDA $F9                                   ; $1FE317 |
   SEC                                       ; $1FE319 |
   SBC $AA30                                 ; $1FE31A |
@@ -4544,7 +4548,7 @@ code_1FE388:
   JSR code_1FE614                           ; $1FE398 |
   LDA $22                                   ; $1FE39B |
   STA $F5                                   ; $1FE39D |
-  JSR code_1FFF6B                           ; $1FE39F |
+  JSR select_PRG_banks                      ; $1FE39F |
   LDY $2B                                   ; $1FE3A2 |
   LDA $AA40,y                               ; $1FE3A4 |
   AND #$20                                  ; $1FE3A7 |
@@ -4767,7 +4771,7 @@ code_1FE50F:
 code_1FE517:
   LDA $22                                   ; $1FE517 |
   STA $F5                                   ; $1FE519 |
-  JSR code_1FFF6B                           ; $1FE51B |
+  JSR select_PRG_banks                      ; $1FE51B |
   LDA $24                                   ; $1FE51E |
   LSR                                       ; $1FE520 |
   LSR                                       ; $1FE521 |
@@ -4882,7 +4886,7 @@ code_1FE5DF:
   BNE code_1FE5D4                           ; $1FE608 |
   LDA $22                                   ; $1FE60A |
   STA $F5                                   ; $1FE60C |
-  JSR code_1FFF6B                           ; $1FE60E |
+  JSR select_PRG_banks                      ; $1FE60E |
   JMP code_1EC83D                           ; $1FE611 |
 
 code_1FE614:
@@ -4955,7 +4959,7 @@ code_1FE67A:
 code_1FE691:
   LDA $22                                   ; $1FE691 |
   STA $F5                                   ; $1FE693 |
-  JMP code_1FFF6B                           ; $1FE695 |
+  JMP select_PRG_banks                      ; $1FE695 |
 
 code_1FE698:
   LDA $FA                                   ; $1FE698 |
@@ -5012,7 +5016,7 @@ code_1FE6DA:
 code_1FE6E6:
   LDA $22                                   ; $1FE6E6 |
   STA $F5                                   ; $1FE6E8 |
-  JSR code_1FFF6B                           ; $1FE6EA |
+  JSR select_PRG_banks                      ; $1FE6EA |
   LDY $29                                   ; $1FE6ED |
   JSR code_1FE8B1                           ; $1FE6EF |
   LDA $24                                   ; $1FE6F2 |
@@ -5335,7 +5339,7 @@ code_1FE94D:
   STX $04                                   ; $1FE94D |
   LDA $22                                   ; $1FE94F |
   STA $F5                                   ; $1FE951 |
-  JSR code_1FFF6B                           ; $1FE953 |
+  JSR select_PRG_banks                      ; $1FE953 |
   LDX $04                                   ; $1FE956 |
   LDY $13                                   ; $1FE958 |
   JSR code_1FE8B1                           ; $1FE95A |
@@ -5505,7 +5509,7 @@ code_1FEA6C:
   STX $04                                   ; $1FEA7F |
   LDA $22                                   ; $1FEA81 |
   STA $F5                                   ; $1FEA83 |
-  JSR code_1FFF6B                           ; $1FEA85 |
+  JSR select_PRG_banks                      ; $1FEA85 |
   LDX $04                                   ; $1FEA88 |
   LDY $13                                   ; $1FEA8A |
   JSR code_1FE8B1                           ; $1FEA8C |
@@ -5589,7 +5593,7 @@ code_1FEB0C:
   STA $2F                                   ; $1FEB17 |
   LDA $22                                   ; $1FEB19 |
   STA $F5                                   ; $1FEB1B |
-  JSR code_1FFF6B                           ; $1FEB1D |
+  JSR select_PRG_banks                      ; $1FEB1D |
   PLA                                       ; $1FEB20 |
   TAX                                       ; $1FEB21 |
   PLA                                       ; $1FEB22 |
@@ -5600,7 +5604,7 @@ code_1FEB24:
   PHA                                       ; $1FEB25 |
   LDA $2F                                   ; $1FEB26 |
   STA $F5                                   ; $1FEB28 |
-  JSR code_1FFF6B                           ; $1FEB2A |
+  JSR select_PRG_banks                      ; $1FEB2A |
   PLA                                       ; $1FEB2D |
   TAX                                       ; $1FEB2E |
   RTS                                       ; $1FEB2F |
@@ -5829,22 +5833,22 @@ code_1FEE31:
   PHA                                       ; $1FEE33 |
   LDA #$10                                  ; $1FEE34 |
   STA $F4                                   ; $1FEE36 |
-  JSR code_1FFF6B                           ; $1FEE38 |
+  JSR select_PRG_banks                      ; $1FEE38 |
   JSR $8000                                 ; $1FEE3B |
   PLA                                       ; $1FEE3E |
   STA $F4                                   ; $1FEE3F |
-  JMP code_1FFF6B                           ; $1FEE41 |
+  JMP select_PRG_banks                      ; $1FEE41 |
 
 code_1FEE44:
   LDA $F4                                   ; $1FEE44 |
   PHA                                       ; $1FEE46 |
   LDA #$10                                  ; $1FEE47 |
   STA $F4                                   ; $1FEE49 |
-  JSR code_1FFF6B                           ; $1FEE4B |
+  JSR select_PRG_banks                      ; $1FEE4B |
   JSR $8003                                 ; $1FEE4E |
   PLA                                       ; $1FEE51 |
   STA $F4                                   ; $1FEE52 |
-  JMP code_1FFF6B                           ; $1FEE54 |
+  JMP select_PRG_banks                      ; $1FEE54 |
 
 code_1FEE57:
   SEC                                       ; $1FEE57 |
@@ -6226,7 +6230,7 @@ code_1FF12E:
 code_1FF132:
   STY $F4                                   ; $1FF132 |
   STX $00                                   ; $1FF134 |
-  JSR code_1FFF6B                           ; $1FF136 |
+  JSR select_PRG_banks                      ; $1FF136 |
   LDX $00                                   ; $1FF139 |
 code_1FF13B:
   LDA $05C0,x                               ; $1FF13B |
@@ -6334,7 +6338,7 @@ code_1FF1FD:
   BEQ code_1FF20C                           ; $1FF201 |
   STY $F5                                   ; $1FF203 |
   STX $05                                   ; $1FF205 |
-  JSR code_1FFF6B                           ; $1FF207 |
+  JSR select_PRG_banks                      ; $1FF207 |
   LDX $05                                   ; $1FF20A |
 code_1FF20C:
   LDY #$01                                  ; $1FF20C |
@@ -7674,7 +7678,7 @@ code_1FFD52:
   STA $F4                                   ; $1FFD66 |
   PLA                                       ; $1FFD68 |
   STA $F5                                   ; $1FFD69 |
-  JMP code_1FFF6B                           ; $1FFD6B |
+  JMP select_PRG_banks                      ; $1FFD6B |
 
 code_1FFD6E:
   LDA $F4                                   ; $1FFD6E |
@@ -7687,7 +7691,7 @@ code_1FFD77:
   STA $F5                                   ; $1FFD78 |
   PLA                                       ; $1FFD7A |
   STA $F4                                   ; $1FFD7B |
-  JMP code_1FFF6B                           ; $1FFD7D |
+  JMP select_PRG_banks                      ; $1FFD7D |
 
 code_1FFD80:
   LDA $F4                                   ; $1FFD80 |
@@ -7703,13 +7707,13 @@ code_1FFD8C:
   PHA                                       ; $1FFD90 |
   LDA #$0E                                  ; $1FFD91 |
   STA $F5                                   ; $1FFD93 |
-  JSR code_1FFF6B                           ; $1FFD95 |
+  JSR select_PRG_banks                      ; $1FFD95 |
   LDX $B8                                   ; $1FFD98 |
   JSR $A006                                 ; $1FFD9A |
 code_1FFD9D:
   PLA                                       ; $1FFD9D |
   STA $F5                                   ; $1FFD9E |
-  JSR code_1FFF6B                           ; $1FFDA0 |
+  JSR select_PRG_banks                      ; $1FFDA0 |
   LDX $0F                                   ; $1FFDA3 |
   RTS                                       ; $1FFDA5 |
 
@@ -7719,7 +7723,7 @@ code_1FFDA6:
   PHA                                       ; $1FFDAA |
   LDA #$0E                                  ; $1FFDAB |
   STA $F5                                   ; $1FFDAD |
-  JSR code_1FFF6B                           ; $1FFDAF |
+  JSR select_PRG_banks                      ; $1FFDAF |
   JSR $A003                                 ; $1FFDB2 |
   JMP code_1FFD9D                           ; $1FFDB5 |
 
@@ -7792,7 +7796,7 @@ code_1FFE51:
   STX $F4                                   ; $1FFE61 |
   INX                                       ; $1FFE63 |
   STX $F5                                   ; $1FFE64 |
-  JSR code_1FFF6B                           ; $1FFE66 |
+  JSR select_PRG_banks                      ; $1FFE66 |
   LDA #$40                                  ; $1FFE69 |
   STA $E8                                   ; $1FFE6B |
   LDA #$42                                  ; $1FFE6D |
@@ -7961,41 +7965,44 @@ code_1FFF5B:
   INC $EE                                   ; $1FFF68 |
   RTS                                       ; $1FFF6A |
 
-code_1FFF6B:
-  INC $F6                                   ; $1FFF6B |
-  LDA #$06                                  ; $1FFF6D |
-  STA $F0                                   ; $1FFF6F |
-  STA $8000                                 ; $1FFF71 |
-  LDA $F4                                   ; $1FFF74 |
-  STA $F2                                   ; $1FFF76 |
-  STA $8001                                 ; $1FFF78 |
-  LDA #$07                                  ; $1FFF7B |
-  STA $F0                                   ; $1FFF7D |
-  STA $8000                                 ; $1FFF7F |
-  LDA $F5                                   ; $1FFF82 |
-  STA $F3                                   ; $1FFF84 |
-  STA $8001                                 ; $1FFF86 |
-  DEC $F6                                   ; $1FFF89 |
-  LDA $F7                                   ; $1FFF8B |
-  BNE code_1FFF90                           ; $1FFF8D |
-  RTS                                       ; $1FFF8F |
+; selects both swappable PRG banks
+; based on $F4 and $F5
+select_PRG_banks:
+  INC $F6                                   ; $1FFF6B | flag on "selecting PRG bank"
+  LDA #$06                                  ; $1FFF6D |\
+  STA $F0                                   ; $1FFF6F | |
+  STA $8000                                 ; $1FFF71 | | select the bank in $F4
+  LDA $F4                                   ; $1FFF74 | | as $8000-$9FFF
+  STA $F2                                   ; $1FFF76 | | also mirror in $F2
+  STA $8001                                 ; $1FFF78 |/
+  LDA #$07                                  ; $1FFF7B |\
+  STA $F0                                   ; $1FFF7D | |
+  STA $8000                                 ; $1FFF7F | | select the bank in $F5
+  LDA $F5                                   ; $1FFF82 | | as $A000-$BFFF
+  STA $F3                                   ; $1FFF84 | | also mirror in $F3
+  STA $8001                                 ; $1FFF86 |/
+  DEC $F6                                   ; $1FFF89 | flag selecting back off (done)
+  LDA $F7                                   ; $1FFF8B |\ if NMI and non-NMI race condition
+  BNE NMI_cleanup                           ; $1FFF8D |/ we still need to perform NMI cleanup (???)
+  RTS                                       ; $1FFF8F | else just return
 
-code_1FFF90:
-  LDA $F6                                   ; $1FFF90 |
-  BNE code_1FFFCC                           ; $1FFF92 |
-  LDA #$06                                  ; $1FFF94 |
-  STA $8000                                 ; $1FFF96 |
-  LDA #$16                                  ; $1FFF99 |
-  STA $8001                                 ; $1FFF9B |
-  LDA #$07                                  ; $1FFF9E |
-  STA $8000                                 ; $1FFFA0 |
-  LDA #$17                                  ; $1FFFA3 |
-  STA $8001                                 ; $1FFFA5 |
-code_1FFFA8:
+; some kind of cleanup called by NMI ???
+NMI_cleanup:
+  LDA $F6                                   ; $1FFF90 |\ this means both NMI and non
+  BNE .flag_simultaneous                    ; $1FFF92 |/ are trying to select banks
+  LDA #$06                                  ; $1FFF94 |\
+  STA $8000                                 ; $1FFF96 | |
+  LDA #$16                                  ; $1FFF99 | | select bank 16 for $8000-$9FFF
+  STA $8001                                 ; $1FFF9B | | and 17 for $A000-$BFFF
+  LDA #$07                                  ; $1FFF9E | |
+  STA $8000                                 ; $1FFFA0 | |
+  LDA #$17                                  ; $1FFFA3 | |
+  STA $8001                                 ; $1FFFA5 |/
+.code_1FFFA8:
   LDX $DB                                   ; $1FFFA8 |
   LDA $DC,x                                 ; $1FFFAA |
   CMP #$88                                  ; $1FFFAC |
-  BEQ code_1FFFC2                           ; $1FFFAE |
+  BEQ .code_1FFFC2                          ; $1FFFAE |
   PHA                                       ; $1FFFB0 |
   LDA #$88                                  ; $1FFFB1 |
   STA $DC,x                                 ; $1FFFB3 |
@@ -8005,16 +8012,16 @@ code_1FFFA8:
   STA $DB                                   ; $1FFFB9 |
   PLA                                       ; $1FFFBB |
   JSR $8003                                 ; $1FFFBC |
-  JMP code_1FFFA8                           ; $1FFFBF |
+  JMP .code_1FFFA8                          ; $1FFFBF |
 
-code_1FFFC2:
+.code_1FFFC2:
   JSR $8000                                 ; $1FFFC2 |
-  LDA #$00                                  ; $1FFFC5 |
-  STA $F7                                   ; $1FFFC7 |
-  JMP code_1FFF6B                           ; $1FFFC9 |
+  LDA #$00                                  ; $1FFFC5 |\ clear race condition flag
+  STA $F7                                   ; $1FFFC7 |/
+  JMP select_PRG_banks                      ; $1FFFC9 |
 
-code_1FFFCC:
-  INC $F7                                   ; $1FFFCC |
+.flag_simultaneous:
+  INC $F7                                   ; $1FFFCC | flag the race condition
   RTS                                       ; $1FFFCE |
 
   db $05, $10, $11, $04, $41, $33, $5C, $D4 ; $1FFFCF |

@@ -46,7 +46,7 @@ code_1C803D:
   STY $F5                                   ; $1C8041 |
   TXA                                       ; $1C8043 |
   PHA                                       ; $1C8044 |
-  JSR code_1FFF6B                           ; $1C8045 |
+  JSR select_PRG_banks                      ; $1C8045 |
   PLA                                       ; $1C8048 |
   TAX                                       ; $1C8049 |
 code_1C804A:
@@ -100,7 +100,7 @@ code_1C8097:
   PHA                                       ; $1C80A2 |
   LDA #$0A                                  ; $1C80A3 |
   STA $F5                                   ; $1C80A5 |
-  JSR code_1FFF6B                           ; $1C80A7 |
+  JSR select_PRG_banks                      ; $1C80A7 |
   LDX $0F                                   ; $1C80AA |
   LDA $39                                   ; $1C80AC |
   BNE code_1C80F9                           ; $1C80AE |
@@ -143,7 +143,7 @@ code_1C80E7:
 code_1C80F9:
   PLA                                       ; $1C80F9 |
   STA $F5                                   ; $1C80FA |
-  JSR code_1FFF6B                           ; $1C80FC |
+  JSR select_PRG_banks                      ; $1C80FC |
   LDX $0F                                   ; $1C80FF |
   RTS                                       ; $1C8101 |
 
@@ -190,7 +190,7 @@ code_1C8144:
   STX $0F                                   ; $1C814C |
   LDA #$0A                                  ; $1C814E |
   STA $F5                                   ; $1C8150 |
-  JSR code_1FFF6B                           ; $1C8152 |
+  JSR select_PRG_banks                      ; $1C8152 |
   LDX $0F                                   ; $1C8155 |
   LDY $A0                                   ; $1C8157 |
   LDA $83AF,y                               ; $1C8159 |
@@ -314,7 +314,7 @@ code_1C822F:
 code_1C824D:
   PLA                                       ; $1C824D |
   STA $F5                                   ; $1C824E |
-  JSR code_1FFF6B                           ; $1C8250 |
+  JSR select_PRG_banks                      ; $1C8250 |
   LDX $0F                                   ; $1C8253 |
   CLC                                       ; $1C8255 |
   LDA $0300,x                               ; $1C8256 |
@@ -334,7 +334,7 @@ code_1C825E:
   PHA                                       ; $1C826E |
   LDA #$0A                                  ; $1C826F |
   STA $F5                                   ; $1C8271 |
-  JSR code_1FFF6B                           ; $1C8273 |
+  JSR select_PRG_banks                      ; $1C8273 |
   LDX $0F                                   ; $1C8276 |
   LDY $0320,x                               ; $1C8278 |
   LDA $83AF                                 ; $1C827B |

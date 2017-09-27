@@ -93,7 +93,7 @@ code_108084:
 code_1080CC:
   LDA $22                                   ; $1080CC |
   STA $F5                                   ; $1080CE |
-  JMP code_1FFF6B                           ; $1080D0 |
+  JMP select_PRG_banks                      ; $1080D0 |
 
   db $21, $5E, $6D, $6D, $6D, $6C, $22, $DE ; $1080D3 |
   db $6B, $6A, $69, $68, $21, $5E, $7A, $7A ; $1080DB |
@@ -214,7 +214,7 @@ code_108263:
 code_1082A9:
   LDA $22                                   ; $1082A9 |
   STA $F5                                   ; $1082AB |
-  JMP code_1FFF6B                           ; $1082AD |
+  JMP select_PRG_banks                      ; $1082AD |
 
   db $20, $81, $16, $16, $16, $16, $22, $01 ; $1082B0 |
   db $2F, $2F, $2F, $2F, $20, $81, $27, $27 ; $1082B8 |
