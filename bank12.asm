@@ -1471,7 +1471,7 @@ code_12ADE0:
   STA $E8                                   ; $12AE06 |
   LDA #$6E                                  ; $12AE08 |
   STA $E9                                   ; $12AE0A |
-  JSR code_1FFF3C                           ; $12AE0C |
+  JSR update_CHR_banks                      ; $12AE0C |
   LDA #$00                                  ; $12AE0F |
   STA $69                                   ; $12AE11 |
   STA $6A                                   ; $12AE13 |

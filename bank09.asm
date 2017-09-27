@@ -265,7 +265,7 @@ code_09822C:
   BNE code_098270                           ; $098236 |
   LDA #$4E                                  ; $098238 |
   STA $E9                                   ; $09823A |
-  JSR code_1FFF3C                           ; $09823C |
+  JSR update_CHR_banks                      ; $09823C |
   LDY #$0F                                  ; $09823F |
 code_098241:
   LDA $AABE,y                               ; $098241 |

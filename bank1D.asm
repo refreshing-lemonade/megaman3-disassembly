@@ -2811,7 +2811,7 @@ code_1DB6C9:
   JSR code_1FF81B                           ; $1DB726 |
   LDA $B81B,y                               ; $1DB729 |
   STA $ED                                   ; $1DB72C |
-  JSR code_1FFF3C                           ; $1DB72E |
+  JSR update_CHR_banks                      ; $1DB72E |
   LDA #$C0                                  ; $1DB731 |
   STA $0300,x                               ; $1DB733 |
   TYA                                       ; $1DB736 |
@@ -2880,7 +2880,7 @@ code_1DB752:
   STA $063F                                 ; $1DB7BF |
   LDA #$FF                                  ; $1DB7C2 |
   STA $18                                   ; $1DB7C4 |
-  JMP code_1FFF3C                           ; $1DB7C6 |
+  JMP update_CHR_banks                      ; $1DB7C6 |
 
   JSR code_1FF759                           ; $1DB7C9 |
   LDA $03C0,x                               ; $1DB7CC |

@@ -530,7 +530,7 @@ code_189014:
   STA $00E8,y                               ; $189017 |
   DEY                                       ; $18901A |
   BPL code_189014                           ; $18901B |
-  JSR code_1FFF45                           ; $18901D |
+  JSR select_CHR_banks.reset_flag           ; $18901D |
   LDA #$20                                  ; $189020 |
   LDX #$24                                  ; $189022 |
   LDY #$00                                  ; $189024 |
@@ -562,7 +562,7 @@ code_18905E:
   STA $00E8,y                               ; $189061 |
   DEY                                       ; $189064 |
   BPL code_18905E                           ; $189065 |
-  JSR code_1FFF45                           ; $189067 |
+  JSR select_CHR_banks.reset_flag           ; $189067 |
   LDA #$13                                  ; $18906A |
   STA $F5                                   ; $18906C |
   JSR code_1FFF6B                           ; $18906E |
@@ -620,7 +620,7 @@ code_1890D0:
   STA $EC                                   ; $1890D2 |
   LDA #$34                                  ; $1890D4 |
   STA $ED                                   ; $1890D6 |
-  JSR code_1FFF45                           ; $1890D8 |
+  JSR select_CHR_banks.reset_flag           ; $1890D8 |
   LDY #$0F                                  ; $1890DB |
 code_1890DD:
   LDA $9C23,y                               ; $1890DD |
@@ -736,7 +736,7 @@ code_189199:
   LDY #$00                                  ; $1891BF |
   LDA #$7E                                  ; $1891C1 |
   STA $E9                                   ; $1891C3 |
-  JSR code_1FFF3C                           ; $1891C5 |
+  JSR update_CHR_banks                      ; $1891C5 |
 code_1891C8:
   LDX #$00                                  ; $1891C8 |
 code_1891CA:
@@ -810,7 +810,7 @@ code_189236:
   STA $11                                   ; $18924C |
   LDA #$7C                                  ; $18924E |
   STA $E8                                   ; $189250 |
-  JSR code_1FFF3C                           ; $189252 |
+  JSR update_CHR_banks                      ; $189252 |
   JMP code_189155                           ; $189255 |
 
 code_189258:
@@ -946,7 +946,7 @@ code_189316:
   JSR code_1EC5E9                           ; $18933C |
   LDA #$76                                  ; $18933F |
   STA $E9                                   ; $189341 |
-  JSR code_1FFF3C                           ; $189343 |
+  JSR update_CHR_banks                      ; $189343 |
   LDA $FD                                   ; $189346 |
   PHA                                       ; $189348 |
   EOR #$01                                  ; $189349 |
@@ -1115,7 +1115,7 @@ code_189471:
   STA $00E8,y                               ; $189474 |
   DEY                                       ; $189477 |
   BPL code_189471                           ; $189478 |
-  JSR code_1FFF3C                           ; $18947A |
+  JSR update_CHR_banks                      ; $18947A |
   LDY #$1F                                  ; $18947D |
 code_18947F:
   LDA $9D16,y                               ; $18947F |
@@ -1312,7 +1312,7 @@ code_1895E1:
   STA $EC                                   ; $1895F9 |
   LDA #$34                                  ; $1895FB |
   STA $ED                                   ; $1895FD |
-  JSR code_1FFF3C                           ; $1895FF |
+  JSR update_CHR_banks                      ; $1895FF |
   LDY #$0F                                  ; $189602 |
 code_189604:
   LDA $9C33,y                               ; $189604 |
@@ -1357,7 +1357,7 @@ code_18964D:
   STA $60                                   ; $189658 |
   LDA #$74                                  ; $18965A |
   STA $E9                                   ; $18965C |
-  JSR code_1FFF3C                           ; $18965E |
+  JSR update_CHR_banks                      ; $18965E |
   LDY #$0F                                  ; $189661 |
 code_189663:
   LDA $9D36,y                               ; $189663 |
@@ -1409,7 +1409,7 @@ code_1896AC:
   STA $EC                                   ; $1896C4 |
   LDA #$34                                  ; $1896C6 |
   STA $ED                                   ; $1896C8 |
-  JSR code_1FFF3C                           ; $1896CA |
+  JSR update_CHR_banks                      ; $1896CA |
   LDY #$0F                                  ; $1896CD |
 code_1896CF:
   LDA $9C43,y                               ; $1896CF |
@@ -1634,7 +1634,7 @@ code_18987F:
   STA $EC                                   ; $189897 |
   LDA #$34                                  ; $189899 |
   STA $ED                                   ; $18989B |
-  JSR code_1FFF3C                           ; $18989D |
+  JSR update_CHR_banks                      ; $18989D |
   LDY #$0F                                  ; $1898A0 |
 code_1898A2:
   LDA $9C43,y                               ; $1898A2 |
@@ -1823,7 +1823,7 @@ code_1899FA:
   BEQ code_189A19                           ; $1899FE |
   LDA #$74                                  ; $189A00 |
   STA $E9                                   ; $189A02 |
-  JSR code_1FFF3C                           ; $189A04 |
+  JSR update_CHR_banks                      ; $189A04 |
   LDY #$0F                                  ; $189A07 |
 code_189A09:
   LDA $9D36,y                               ; $189A09 |
@@ -1983,7 +1983,7 @@ code_189B0E:
   STA $EC                                   ; $189B2D |
   LDA #$1E                                  ; $189B2F |
   STA $ED                                   ; $189B31 |
-  JSR code_1FFF3C                           ; $189B33 |
+  JSR update_CHR_banks                      ; $189B33 |
   LDY #$1F                                  ; $189B36 |
 code_189B38:
   LDA $9E2A,y                               ; $189B38 |

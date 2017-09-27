@@ -29,7 +29,7 @@ code_03A039:
   BPL code_03A039                           ; $03A043 |
   LDA $A1B7,y                               ; $03A045 |
   JSR $938B                                 ; $03A048 |
-  JSR code_1FFF3C                           ; $03A04B |
+  JSR update_CHR_banks                      ; $03A04B |
   LDA #$00                                  ; $03A04E |
   STA $05F0                                 ; $03A050 |
   STA $05B0                                 ; $03A053 |
@@ -70,7 +70,7 @@ code_03A095:
   BNE code_03A05D                           ; $03A09F |
   LDA #$7E                                  ; $03A0A1 |
   STA $E9                                   ; $03A0A3 |
-  JSR code_1FFF3C                           ; $03A0A5 |
+  JSR update_CHR_banks                      ; $03A0A5 |
   LDA #$3C                                  ; $03A0A8 |
 code_03A0AA:
   PHA                                       ; $03A0AA |

@@ -92,7 +92,7 @@ code_1EC0AA:
   AND #$03                                  ; $1EC0B1 |
   ORA $FF                                   ; $1EC0B3 |
   STA $2000                                 ; $1EC0B5 |
-  JSR code_1FFF41                           ; $1EC0B8 |
+  JSR select_CHR_banks                      ; $1EC0B8 |
   LDA $F0                                   ; $1EC0BB |
   STA $8000                                 ; $1EC0BD |
   LDA $7B                                   ; $1EC0C0 |
@@ -569,7 +569,7 @@ code_1EC447:
   STA $E8                                   ; $1EC481 |
   LDA #$72                                  ; $1EC483 |
   STA $E9                                   ; $1EC485 |
-  JSR code_1FFF45                           ; $1EC487 |
+  JSR select_CHR_banks.reset_flag           ; $1EC487 |
   LDA $F0                                   ; $1EC48A |
   STA $8000                                 ; $1EC48C |
   LDA #$78                                  ; $1EC48F |
@@ -587,7 +587,7 @@ code_1EC447:
   STA $E8                                   ; $1EC4A4 |
   LDA #$72                                  ; $1EC4A6 |
   STA $E9                                   ; $1EC4A8 |
-  JSR code_1FFF45                           ; $1EC4AA |
+  JSR select_CHR_banks.reset_flag           ; $1EC4AA |
   LDA $F0                                   ; $1EC4AD |
   STA $8000                                 ; $1EC4AF |
   PLA                                       ; $1EC4B2 |
@@ -1121,7 +1121,7 @@ code_1EC864:
   JSR code_1FFF6B                           ; $1EC88E |
   PLA                                       ; $1EC891 |
   JSR $A000                                 ; $1EC892 |
-  JMP code_1FFF3C                           ; $1EC895 |
+  JMP update_CHR_banks                      ; $1EC895 |
 
   db $0F, $0F, $2C, $11, $0F, $0F, $30, $37 ; $1EC898 |
 
@@ -1280,7 +1280,7 @@ code_1EC9D3:
   STA $EA                                   ; $1EC9D5 |
   LDA #$75                                  ; $1EC9D7 |
   STA $EB                                   ; $1EC9D9 |
-  JSR code_1FFF3C                           ; $1EC9DB |
+  JSR update_CHR_banks                      ; $1EC9DB |
   LDA #$30                                  ; $1EC9DE |
   STA $0611                                 ; $1EC9E0 |
   INC $18                                   ; $1EC9E3 |
@@ -1333,7 +1333,7 @@ code_1ECA15:
   STA $EA                                   ; $1ECA38 |
   LDA #$01                                  ; $1ECA3A |
   STA $EB                                   ; $1ECA3C |
-  JSR code_1FFF3C                           ; $1ECA3E |
+  JSR update_CHR_banks                      ; $1ECA3E |
   LDA #$80                                  ; $1ECA41 |
   STA $0300                                 ; $1ECA43 |
   LDA #$00                                  ; $1ECA46 |
@@ -2055,7 +2055,7 @@ code_1ECFDF:
   STA $0301                                 ; $1ECFF4 |
   LDA #$05                                  ; $1ECFF7 |
   STA $EB                                   ; $1ECFF9 |
-  JSR code_1FFF3C                           ; $1ECFFB |
+  JSR update_CHR_banks                      ; $1ECFFB |
   LDA #$08                                  ; $1ECFFE |
   STA $30                                   ; $1ED000 |
   LDA #$DA                                  ; $1ED002 |
@@ -3818,7 +3818,7 @@ code_1EDDE2:
   STA $9F                                   ; $1EDE03 |
   LDA $DEAE,y                               ; $1EDE05 |
   JSR $A000                                 ; $1EDE08 |
-  JSR code_1FFF3C                           ; $1EDE0B |
+  JSR update_CHR_banks                      ; $1EDE0B |
   LDA #$01                                  ; $1EDE0E |
   STA $31                                   ; $1EDE10 |
   STA $23                                   ; $1EDE12 |
@@ -3891,7 +3891,7 @@ decrease_ammo:
   CMP weapon_framerate,y                    ; $1EDEDE | | threshold, return
   BNE .ret                                  ; $1EDEE1 |/
   LDA #$00                                  ; $1EDEE3 |\ upon reaching threshold, reset
-  STA $B5                                   ; $1EDEE5 |/ shot counter
+  STA $B5                                   ; $1EDEE5 |/ frame/shot counter
   LDA $00A2,y                               ; $1EDEE7 |\
   AND #$1F                                  ; $1EDEEA | | fetch ammo value to decrease by
   SEC                                       ; $1EDEEC | | and decrease ammo
@@ -3907,14 +3907,14 @@ decrease_ammo:
   CPY #$0B                                  ; $1EDEFD |\ are we rush jet? disable him
   BEQ .disable_rush                         ; $1EDEFF |/
   CPY #$09                                  ; $1EDF01 |\ if we're rush marine
-  BNE .ret                                  ; $1EDF03 |/ there's more to do
-  LDA #$02                                  ; $1EDF05 |
-  STA $EB                                   ; $1EDF07 |
-  JSR code_1FFF3C                           ; $1EDF09 |
-  LDA #$01                                  ; $1EDF0C |\ reset mega man animation
-  JSR reset_sprite_anim                     ; $1EDF0E |/ & ID
-  LDA #$00                                  ; $1EDF11 |
-  STA $30                                   ; $1EDF13 |
+  BNE .ret                                  ; $1EDF03 |/ there's more to do:
+  LDA #$02                                  ; $1EDF05 |\
+  STA $EB                                   ; $1EDF07 | |
+  JSR update_CHR_banks                      ; $1EDF09 | | reset mega man graphics,
+  LDA #$01                                  ; $1EDF0C | | animation, ID & state
+  JSR reset_sprite_anim                     ; $1EDF0E | |
+  LDA #$00                                  ; $1EDF11 | |
+  STA $30                                   ; $1EDF13 |/
 .disable_rush:
   LDA #$00                                  ; $1EDF15 |\ set rush sprite to inactive
   STA $0301                                 ; $1EDF17 |/
@@ -4230,7 +4230,7 @@ code_1FE11A:
   STA $6E                                   ; $1FE15D |
   LDA #$0C                                  ; $1FE15F |
   STA $EC                                   ; $1FE161 |
-  JMP code_1FFF3C                           ; $1FE163 |
+  JMP update_CHR_banks                      ; $1FE163 |
 
   db $E0, $30, $B0, $68                     ; $1FE166 |
 
@@ -7805,7 +7805,7 @@ code_1FFE51:
   STA $EC                                   ; $1FFE7B |
   LDA #$0B                                  ; $1FFE7D |
   STA $ED                                   ; $1FFE7F |
-  JSR code_1FFF3C                           ; $1FFE81 |
+  JSR update_CHR_banks                      ; $1FFE81 |
   JSR code_1EC5E9                           ; $1FFE84 |
   LDA #$20                                  ; $1FFE87 |
   LDX #$00                                  ; $1FFE89 |
@@ -7926,25 +7926,27 @@ code_1FFF21:
   STX $82,y                                 ; $1FFF37 |
   JMP code_1FFEAA                           ; $1FFF39 |
 
-code_1FFF3C:
-  LDA #$FF                                  ; $1FFF3C |
-  STA $1B                                   ; $1FFF3E |
-  RTS                                       ; $1FFF40 |
+update_CHR_banks:
+  LDA #$FF                                  ; $1FFF3C |\  turns on the flag for
+  STA $1B                                   ; $1FFF3E | | refreshing CHR banks
+  RTS                                       ; $1FFF40 |/  during NMI
 
-code_1FFF41:
-  LDA $1B                                   ; $1FFF41 |
-  BEQ code_1FFF56                           ; $1FFF43 |
-code_1FFF45:
-  LDX #$00                                  ; $1FFF45 |
-  STX $1B                                   ; $1FFF47 |
-code_1FFF49:
-  STX $8000                                 ; $1FFF49 |
-  LDA $E8,x                                 ; $1FFF4C |
-  STA $8001                                 ; $1FFF4E |
-  INX                                       ; $1FFF51 |
-  CPX #$06                                  ; $1FFF52 |
-  BNE code_1FFF49                           ; $1FFF54 |
-code_1FFF56:
+; selects all 6 swappable CHR banks
+; based on what's in $E8~$ED
+select_CHR_banks:
+  LDA $1B                                   ; $1FFF41 |\ test select CHR flag
+  BEQ .ret                                  ; $1FFF43 |/ return if not on
+.reset_flag:
+  LDX #$00                                  ; $1FFF45 |\ reset select CHR flag
+  STX $1B                                   ; $1FFF47 |/ immediately, one-off usage
+.loop:
+  STX $8000                                 ; $1FFF49 |\
+  LDA $E8,x                                 ; $1FFF4C | | loop index $00 to $05
+  STA $8001                                 ; $1FFF4E | | -> bank select register
+  INX                                       ; $1FFF51 | | fetch CHR bank from RAM
+  CPX #$06                                  ; $1FFF52 | | -> bank data register
+  BNE .loop                                 ; $1FFF54 |/
+.ret:
   RTS                                       ; $1FFF56 |
 
 code_1FFF57:

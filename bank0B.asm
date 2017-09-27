@@ -46,7 +46,7 @@ code_0B8053:
   STA $00E8,y                               ; $0B8056 |
   DEY                                       ; $0B8059 |
   BPL code_0B8053                           ; $0B805A |
-  JSR code_1FFF3C                           ; $0B805C |
+  JSR update_CHR_banks                      ; $0B805C |
   LDY #$01                                  ; $0B805F |
 code_0B8061:
   LDA #$80                                  ; $0B8061 |
@@ -239,7 +239,7 @@ code_0B81F1:
   STA $00E8,y                               ; $0B81F4 |
   DEY                                       ; $0B81F7 |
   BPL code_0B81F1                           ; $0B81F8 |
-  JSR code_1FFF3C                           ; $0B81FA |
+  JSR update_CHR_banks                      ; $0B81FA |
   LDA #$80                                  ; $0B81FD |
   STA $0300                                 ; $0B81FF |
   LDA #$90                                  ; $0B8202 |
@@ -542,7 +542,7 @@ code_0B8481:
   STA $00E8,y                               ; $0B8484 |
   DEY                                       ; $0B8487 |
   BPL code_0B8481                           ; $0B8488 |
-  JSR code_1FFF3C                           ; $0B848A |
+  JSR update_CHR_banks                      ; $0B848A |
   LDY #$27                                  ; $0B848D |
 code_0B848F:
   LDA $86F1,y                               ; $0B848F |

@@ -203,7 +203,7 @@ code_02A139:
   LDA #$13                                  ; $02A150 |
   JSR reset_sprite_anim                     ; $02A152 |
   INC $05A0                                 ; $02A155 |
-  JMP code_1FFF3C                           ; $02A158 |
+  JMP update_CHR_banks                      ; $02A158 |
 
 code_02A15B:
   LDA $EA                                   ; $02A15B |
@@ -329,7 +329,7 @@ code_02A22D:
   BNE code_02A22D                           ; $02A234 |
   LDA #$FF                                  ; $02A236 |
   STA $18                                   ; $02A238 |
-  JSR code_1FFF3C                           ; $02A23A |
+  JSR update_CHR_banks                      ; $02A23A |
 code_02A23D:
   JSR code_02A2EA                           ; $02A23D |
   LDA $51                                   ; $02A240 |
