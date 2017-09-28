@@ -898,93 +898,102 @@ org $8000
   db $00, $00, $00, $00, $80, $00, $00, $00 ; $1A9BF0 |
   db $00, $00, $00, $00, $00, $00, $20, $00 ; $1A9BF8 |
 
-  CLC                                       ; $1A9C00 |
-  LDA $FC                                   ; $1A9C01 |
-  STA $00                                   ; $1A9C03 |
-  ADC #$FF                                  ; $1A9C05 |
-  STA $02                                   ; $1A9C07 |
-  LDA $F9                                   ; $1A9C09 |
-  STA $01                                   ; $1A9C0B |
-  ADC #$00                                  ; $1A9C0D |
-  STA $03                                   ; $1A9C0F |
-  LDA $2E                                   ; $1A9C11 |
-  AND #$01                                  ; $1A9C13 |
-  BNE code_1A9C4F                           ; $1A9C15 |
-code_1A9C17:
-  LDY $9F                                   ; $1A9C17 |
-  BEQ code_1A9C33                           ; $1A9C19 |
-  LDA $AAFF,y                               ; $1A9C1B |
-  CMP $01                                   ; $1A9C1E |
-  BCC code_1A9C33                           ; $1A9C20 |
-  BNE code_1A9C2B                           ; $1A9C22 |
-  LDA $ABFF,y                               ; $1A9C24 |
-  CMP $00                                   ; $1A9C27 |
-  BCC code_1A9C33                           ; $1A9C29 |
-code_1A9C2B:
-  DEY                                       ; $1A9C2B |
-  JSR code_1A9C80                           ; $1A9C2C |
-  DEC $9F                                   ; $1A9C2F |
-  BNE code_1A9C17                           ; $1A9C31 |
-code_1A9C33:
+; checks for new enemies spawning in on both
+; left and right side based on travel direction
+check_new_enemies:
+  CLC                                       ; $1A9C00 |\
+  LDA $FC                                   ; $1A9C01 | | camera X left edge
+  STA $00                                   ; $1A9C03 |/  -> $00
+  ADC #$FF                                  ; $1A9C05 |\ camera X + 255 -> $02
+  STA $02                                   ; $1A9C07 |/ (right edge)
+  LDA $F9                                   ; $1A9C09 |\ camera screen left edge
+  STA $01                                   ; $1A9C0B |/  -> $01
+  ADC #$00                                  ; $1A9C0D |\ camera screen right edge
+  STA $03                                   ; $1A9C0F |/ -> $03
+  LDA $2E                                   ; $1A9C11 |\
+  AND #$01                                  ; $1A9C13 | | if player moving right
+  BNE .right_loop                           ; $1A9C15 |/  check right side, else left
+; check new enemies on left edge
+; NOTE: everything is checked minus one
+.left_loop:
+  LDY $9F                                   ; $1A9C17 |\  fetch last left-spawned
+  BEQ .track_right                          ; $1A9C19 | | enemy screen #, if it's zero break
+  LDA $AAFF,y                               ; $1A9C1B | | if camera screen left edge >= this,
+  CMP $01                                   ; $1A9C1E | | break loop
+  BCC .track_right                          ; $1A9C20 | | if < , spawn
+  BNE .spawn_left                           ; $1A9C22 | | if == , check camera X left edge
+  LDA $ABFF,y                               ; $1A9C24 | | >= last left-spawned enemy X
+  CMP $00                                   ; $1A9C27 | | if < , spawn
+  BCC .track_right                          ; $1A9C29 |/
+.spawn_left:
+  DEY                                       ; $1A9C2B |\  spawn,
+  JSR spawn_enemy                           ; $1A9C2C | | set new last left-spawned enemy ID,
+  DEC $9F                                   ; $1A9C2F | | and continue looking for more
+  BNE .left_loop                            ; $1A9C31 |/
+; track stage enemy ID for right side but don't spawn
+; anything on right while moving left
+.track_right:
   LDY $9E                                   ; $1A9C33 |
-  BEQ code_1A9C4A                           ; $1A9C35 |
-code_1A9C37:
-  LDA $AAFF,y                               ; $1A9C37 |
-  CMP $03                                   ; $1A9C3A |
-  BCC code_1A9C4A                           ; $1A9C3C |
-  BNE code_1A9C47                           ; $1A9C3E |
-  LDA $ABFF,y                               ; $1A9C40 |
-  CMP $02                                   ; $1A9C43 |
-  BCC code_1A9C4A                           ; $1A9C45 |
-code_1A9C47:
-  DEY                                       ; $1A9C47 |
-  BNE code_1A9C37                           ; $1A9C48 |
-code_1A9C4A:
-  STY $9E                                   ; $1A9C4A |
-  JMP code_1A9C7F                           ; $1A9C4C |
-
-code_1A9C4F:
-  LDY $9E                                   ; $1A9C4F |
-  LDA $03                                   ; $1A9C51 |
-  CMP $AB00,y                               ; $1A9C53 |
-  BCC code_1A9C68                           ; $1A9C56 |
-  BNE code_1A9C61                           ; $1A9C58 |
-  LDA $02                                   ; $1A9C5A |
-  CMP $AC00,y                               ; $1A9C5C |
-  BCC code_1A9C68                           ; $1A9C5F |
-code_1A9C61:
-  JSR code_1A9C80                           ; $1A9C61 |
-  INC $9E                                   ; $1A9C64 |
-  BNE code_1A9C4F                           ; $1A9C66 |
-code_1A9C68:
-  LDY $9F                                   ; $1A9C68 |
-code_1A9C6A:
-  LDA $01                                   ; $1A9C6A |
-  CMP $AB00,y                               ; $1A9C6C |
-  BCC code_1A9C7D                           ; $1A9C6F |
-  BNE code_1A9C7A                           ; $1A9C71 |
-  LDA $00                                   ; $1A9C73 |
-  CMP $AC00,y                               ; $1A9C75 |
-  BCC code_1A9C7D                           ; $1A9C78 |
-code_1A9C7A:
-  INY                                       ; $1A9C7A |
-  BNE code_1A9C6A                           ; $1A9C7B |
-code_1A9C7D:
-  STY $9F                                   ; $1A9C7D |
-code_1A9C7F:
+  BEQ .set_last_right                       ; $1A9C35 |
+.track_right_loop:
+  LDA $AAFF,y                               ; $1A9C37 |\  if camera screen right edge
+  CMP $03                                   ; $1A9C3A | | >= last right-spawned enemy screen,
+  BCC .set_last_right                       ; $1A9C3C | | break loop
+  BNE .track_right_continue                 ; $1A9C3E | | if < , set new last right
+  LDA $ABFF,y                               ; $1A9C40 | | if == , check camera X right edge
+  CMP $02                                   ; $1A9C43 | | >= last right-spawned enemy X
+  BCC .set_last_right                       ; $1A9C45 |/  if < , set new last right
+.track_right_continue:
+  DEY                                       ; $1A9C47 |\ track new "last right enemy"
+  BNE .track_right_loop                     ; $1A9C48 |/ continue tracking more
+.set_last_right:
+  STY $9E                                   ; $1A9C4A |\ set new right enemy ID
+  JMP .ret                                  ; $1A9C4C |/ return
+; check new enemies on right edge
+.right_loop:
+  LDY $9E                                   ; $1A9C4F |\  fetch last right-spawned
+  LDA $03                                   ; $1A9C51 | | enemy screen #
+  CMP $AB00,y                               ; $1A9C53 | | if camera screen right edge < this,
+  BCC .track_left                           ; $1A9C56 | | break loop
+  BNE .spawn_right                          ; $1A9C58 | | if > , spawn
+  LDA $02                                   ; $1A9C5A | | if == , check camera X right edge
+  CMP $AC00,y                               ; $1A9C5C | | < last right-spawned enemy X
+  BCC .track_left                           ; $1A9C5F |/  if >=, spawn
+.spawn_right:
+  JSR spawn_enemy                           ; $1A9C61 |\  spawn,
+  INC $9E                                   ; $1A9C64 | | set new last right-spawned enemy ID,
+  BNE .right_loop                           ; $1A9C66 |/  and continue looking for more
+; track stage enemy ID for left side but don't spawn
+; anything on left while moving right
+.track_left:
+  LDY $9F                                   ; $1A9C68 | last left-spawned enemy stage ID
+.track_left_loop:
+  LDA $01                                   ; $1A9C6A |\  if camera screen left edge
+  CMP $AB00,y                               ; $1A9C6C | | < last left-spawned enemy screen,
+  BCC .set_last_left                        ; $1A9C6F | | break loop
+  BNE .track_left_continue                  ; $1A9C71 | | if > , set new last left
+  LDA $00                                   ; $1A9C73 | | if == , check camera X left edge
+  CMP $AC00,y                               ; $1A9C75 | | < last left-spawned enemy X
+  BCC .set_last_left                        ; $1A9C78 |/  if >=, set new last left
+.track_left_continue:
+  INY                                       ; $1A9C7A |\ track new "last left enemy"
+  BNE .track_left_loop                      ; $1A9C7B |/ continue tracking more
+.set_last_left:
+  STY $9F                                   ; $1A9C7D | set new last left enemy ID
+.ret:
   RTS                                       ; $1A9C7F |
 
-code_1A9C80:
+spawn_enemy:
   TYA                                       ; $1A9C80 |
   LDX #$1F                                  ; $1A9C81 |
 code_1A9C83:
   CMP $04C0,x                               ; $1A9C83 |
-  BEQ code_1A9C7F                           ; $1A9C86 |
+  BEQ check_new_enemies.ret                 ; $1A9C86 |
   DEX                                       ; $1A9C88 |
   CPX #$0F                                  ; $1A9C89 |
   BNE code_1A9C83                           ; $1A9C8B |
   JSR code_1FFC43                           ; $1A9C8D |
-  BCS code_1A9C7F                           ; $1A9C90 |
+  BCS check_new_enemies.ret                 ; $1A9C90 |
   TYA                                       ; $1A9C92 |
   STA $04C0,x                               ; $1A9C93 |
   PHA                                       ; $1A9C96 |
@@ -999,7 +1008,7 @@ code_1A9C83:
   TAY                                       ; $1A9CA3 |
   LDA $0150,y                               ; $1A9CA4 |
   AND $04                                   ; $1A9CA7 |
-  BNE code_1A9C7F                           ; $1A9CA9 |
+  BNE check_new_enemies.ret                 ; $1A9CA9 |
   LDY $04C0,x                               ; $1A9CAB |
   LDA $AB00,y                               ; $1A9CAE |
   STA $0380,x                               ; $1A9CB1 |

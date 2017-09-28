@@ -1443,7 +1443,7 @@ code_1ECAFB:
   LDA $22                                   ; $1ECB11 |
   STA $F5                                   ; $1ECB13 |
   JSR select_PRG_banks                      ; $1ECB15 |
-  JSR $9C00                                 ; $1ECB18 |
+  JSR check_new_enemies                     ; $1ECB18 |
   LDA #$09                                  ; $1ECB1B |
   STA $F4                                   ; $1ECB1D |
   JSR select_PRG_banks                      ; $1ECB1F |
