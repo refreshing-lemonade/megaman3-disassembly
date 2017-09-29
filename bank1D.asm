@@ -1919,78 +1919,80 @@ code_1DAFC6:
 code_1DAFD6:
   RTS                                       ; $1DAFD6 |
 
-  LDA $0300,x                               ; $1DAFD7 |
-  AND #$0F                                  ; $1DAFDA |
-  BNE code_1DB00D                           ; $1DAFDC |
-  STA $0440,x                               ; $1DAFDE |
-  LDA #$02                                  ; $1DAFE1 |
-  STA $0460,x                               ; $1DAFE3 |
-  JSR code_1FF8B3                           ; $1DAFE6 |
-  CMP #$18                                  ; $1DAFE9 |
-  BCS code_1DB00C                           ; $1DAFEB |
-  JSR code_1FF8C2                           ; $1DAFED |
-  CMP #$18                                  ; $1DAFF0 |
-  BCS code_1DB00C                           ; $1DAFF2 |
-  INC $0300,x                               ; $1DAFF4 |
-  LDA #$21                                  ; $1DAFF7 |
-  STA $0500,x                               ; $1DAFF9 |
-  LDA #$06                                  ; $1DAFFC |
-  STA $0520,x                               ; $1DAFFE |
-  LDA $03C0,x                               ; $1DB001 |
-  STA $0540,x                               ; $1DB004 |
-  LDA #$10                                  ; $1DB007 |
-  STA $0560,x                               ; $1DB009 |
-code_1DB00C:
+main_snapper:
+  LDA $0300,x                               ; $1DAFD7 |\  test state:
+  AND #$0F                                  ; $1DAFDA | | any of these bits
+  BNE .presnap                              ; $1DAFDC |/  means at least presnap
+  STA $0440,x                               ; $1DAFDE |\
+  LDA #$02                                  ; $1DAFE1 | | if not, $0200
+  STA $0460,x                               ; $1DAFE3 |/  -> Y speed
+  JSR code_1FF8B3                           ; $1DAFE6 |\
+  CMP #$18                                  ; $1DAFE9 | |
+  BCS .ret                                  ; $1DAFEB | | if player is within $18
+  JSR code_1FF8C2                           ; $1DAFED | | pixel distance both X & Y
+  CMP #$18                                  ; $1DAFF0 | | (if not return)
+  BCS .ret                                  ; $1DAFF2 |/
+  INC $0300,x                               ; $1DAFF4 | start snapping!
+  LDA #$21                                  ; $1DAFF7 |\ $21 frames of delay timer
+  STA $0500,x                               ; $1DAFF9 |/ for presnap
+  LDA #$06                                  ; $1DAFFC |\ 6 frames to snap upward
+  STA $0520,x                               ; $1DAFFE |/ snapping timer
+  LDA $03C0,x                               ; $1DB001 |\ preserve original Y position
+  STA $0540,x                               ; $1DB004 |/ pre-snap
+  LDA #$10                                  ; $1DB007 |\ 16 frames downward snap
+  STA $0560,x                               ; $1DB009 |/
+.ret:
   RTS                                       ; $1DB00C |
 
-code_1DB00D:
-  LDA $0580,x                               ; $1DB00D |
-  AND #$04                                  ; $1DB010 |
-  BEQ code_1DB026                           ; $1DB012 |
-  DEC $0500,x                               ; $1DB014 |
-  BNE code_1DB00C                           ; $1DB017 |
-  LDA $0580,x                               ; $1DB019 |
-  EOR #$04                                  ; $1DB01C |
-  STA $0580,x                               ; $1DB01E |
-  LDA #$A3                                  ; $1DB021 |
-  STA $0480,x                               ; $1DB023 |
-code_1DB026:
-  LDA $0300,x                               ; $1DB026 |
-  AND #$02                                  ; $1DB029 |
-  BNE code_1DB04C                           ; $1DB02B |
-  LDA #$00                                  ; $1DB02D |
-  STA $05E0,x                               ; $1DB02F |
-  STA $05A0,x                               ; $1DB032 |
-  DEC $03C0,x                               ; $1DB035 |
-  DEC $03C0,x                               ; $1DB038 |
-  DEC $03C0,x                               ; $1DB03B |
-  DEC $0520,x                               ; $1DB03E |
-  BNE code_1DB00C                           ; $1DB041 |
-  INC $0300,x                               ; $1DB043 |
-  LDA #$22                                  ; $1DB046 |
-  JSR code_1FF89A                           ; $1DB048 |
+.presnap:
+  LDA $0580,x                               ; $1DB00D |\  this sprite flag
+  AND #$04                                  ; $1DB010 | | indicates past presnap
+  BEQ .snapping                             ; $1DB012 |/
+  DEC $0500,x                               ; $1DB014 |\ presnap timer
+  BNE .ret                                  ; $1DB017 |/ not expired yet? return
+  LDA $0580,x                               ; $1DB019 |\  on expiration,
+  EOR #$04                                  ; $1DB01C | | turn $04 sprite flag on
+  STA $0580,x                               ; $1DB01E |/
+  LDA #$A3                                  ; $1DB021 |\ and set shape to ???
+  STA $0480,x                               ; $1DB023 |/
+
+.snapping:
+  LDA $0300,x                               ; $1DB026 |\  this bitflag on
+  AND #$02                                  ; $1DB029 | | means past snapping
+  BNE .postsnap                             ; $1DB02B |/
+  LDA #$00                                  ; $1DB02D |\
+  STA $05E0,x                               ; $1DB02F | | show open mouth frame
+  STA $05A0,x                               ; $1DB032 |/
+  DEC $03C0,x                               ; $1DB035 |\
+  DEC $03C0,x                               ; $1DB038 | | move up 3 pixels
+  DEC $03C0,x                               ; $1DB03B |/
+  DEC $0520,x                               ; $1DB03E |\ upward snap timer
+  BNE .ret                                  ; $1DB041 |/ not expired yet? return
+  INC $0300,x                               ; $1DB043 |\
+  LDA #$22                                  ; $1DB046 | | on expiration,
+  JSR code_1FF89A                           ; $1DB048 |/  $02 -> state
   RTS                                       ; $1DB04B |
 
-code_1DB04C:
-  LDA #$01                                  ; $1DB04C |
-  STA $05A0,x                               ; $1DB04E |
-  LDA #$00                                  ; $1DB051 |
-  STA $05E0,x                               ; $1DB053 |
+.postsnap:
+  LDA #$01                                  ; $1DB04C |\
+  STA $05A0,x                               ; $1DB04E | | show closed mouth frame
+  LDA #$00                                  ; $1DB051 | |
+  STA $05E0,x                               ; $1DB053 |/
   JSR code_1FF759                           ; $1DB056 |
-  DEC $0560,x                               ; $1DB059 |
-  BNE code_1DB00C                           ; $1DB05C |
-  LDA #$00                                  ; $1DB05E |
-  STA $05E0,x                               ; $1DB060 |
-  STA $05A0,x                               ; $1DB063 |
-  LDA $0540,x                               ; $1DB066 |
-  STA $03C0,x                               ; $1DB069 |
-  LDA $0580,x                               ; $1DB06C |
-  ORA #$94                                  ; $1DB06F |
-  STA $0580,x                               ; $1DB071 |
-  LDA #$80                                  ; $1DB074 |
-  STA $0300,x                               ; $1DB076 |
-  LDA #$83                                  ; $1DB079 |
-  STA $0480,x                               ; $1DB07B |
+  DEC $0560,x                               ; $1DB059 |\ downward snap timer
+  BNE .ret                                  ; $1DB05C |/ not expired yet? return
+  LDA #$00                                  ; $1DB05E |\  on expiration,
+  STA $05E0,x                               ; $1DB060 | | reset animation frame
+  STA $05A0,x                               ; $1DB063 |/
+  LDA $0540,x                               ; $1DB066 |\ restore original presnap
+  STA $03C0,x                               ; $1DB069 |/ Y position
+  LDA $0580,x                               ; $1DB06C |\
+  ORA #$94                                  ; $1DB06F | | sprite flags ???
+  STA $0580,x                               ; $1DB071 |/
+  LDA #$80                                  ; $1DB074 |\ sprite state ???
+  STA $0300,x                               ; $1DB076 |/
+  LDA #$83                                  ; $1DB079 |\ reset shape
+  STA $0480,x                               ; $1DB07B |/
   RTS                                       ; $1DB07E |
 
   LDA $0300,x                               ; $1DB07F |
