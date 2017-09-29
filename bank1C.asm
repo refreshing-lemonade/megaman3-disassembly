@@ -545,7 +545,7 @@ sprite_main_ptr_lo:
   db $3E                                    ; $1C83FF |
   db $60                                    ; $1C8400 |
   db $60                                    ; $1C8401 |
-  db $B6                                    ; $1C8402 |
+  db main_bee                               ; $1C8402 |
   db $C9                                    ; $1C8403 |
   db $14                                    ; $1C8404 |
   db $E5                                    ; $1C8405 |
@@ -804,7 +804,7 @@ sprite_main_ptr_hi:
   db $B2                                    ; $1C84FF |
   db $A9                                    ; $1C8500 |
   db $A9                                    ; $1C8501 |
-  db $92                                    ; $1C8502 |
+  db main_bee>>8                            ; $1C8502 |
   db $85                                    ; $1C8503 |
   db $8E                                    ; $1C8504 |
   db $B9                                    ; $1C8505 |
@@ -2633,6 +2633,7 @@ code_1C92AA:
   INC $00                                   ; $1C92B1 |
   JMP code_1C9295                           ; $1C92B3 |
 
+main_bee:
   LDA $0500,x                               ; $1C92B6 |
   BNE code_1C92F5                           ; $1C92B9 |
   JSR code_1FF954                           ; $1C92BB |
