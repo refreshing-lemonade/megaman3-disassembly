@@ -533,7 +533,7 @@ sprite_main_ptr_lo:
   db $C3                                    ; $1C83F3 |
   db $C9                                    ; $1C83F4 |
   db main_have_su_bee                       ; $1C83F5 |
-  db $28                                    ; $1C83F6 |
+  db main_beehive                           ; $1C83F6 |
   db $5B                                    ; $1C83F7 |
   db $82                                    ; $1C83F8 |
   db $D7                                    ; $1C83F9 |
@@ -792,7 +792,7 @@ sprite_main_ptr_hi:
   db $AE                                    ; $1C84F3 |
   db $85                                    ; $1C84F4 |
   db main_have_su_bee>>8                    ; $1C84F5 |
-  db $AE                                    ; $1C84F6 |
+  db main_beehive>>8                        ; $1C84F6 |
   db $AB                                    ; $1C84F7 |
   db $AC                                    ; $1C84F8 |
   db $AF                                    ; $1C84F9 |

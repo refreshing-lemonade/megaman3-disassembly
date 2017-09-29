@@ -1716,6 +1716,7 @@ code_1DADD9:
 code_1DAE27:
   RTS                                       ; $1DAE27 |
 
+main_beehive:
   LDY #$08                                  ; $1DAE28 |
   JSR code_1FF606                           ; $1DAE2A |
   BCC code_1DAE27                           ; $1DAE2D |
@@ -1738,10 +1739,10 @@ code_1DAE42:
   TAY                                       ; $1DAE52 |
   LDA $0360,x                               ; $1DAE53 |
   CLC                                       ; $1DAE56 |
-  ADC $AEB4,y                               ; $1DAE57 |
+  ADC bee_spawn_x_offset,y                  ; $1DAE57 |
   PHA                                       ; $1DAE5A |
   LDA $0380,x                               ; $1DAE5B |
-  ADC $AEB5,y                               ; $1DAE5E |
+  ADC bee_spawn_x_offset+1,y                ; $1DAE5E |
   LDY $00                                   ; $1DAE61 |
   STA $0380,y                               ; $1DAE63 |
   PLA                                       ; $1DAE66 |
@@ -1749,7 +1750,7 @@ code_1DAE42:
   LDY $01                                   ; $1DAE6A |
   LDA $03C0,x                               ; $1DAE6C |
   CLC                                       ; $1DAE6F |
-  ADC $AEBE,y                               ; $1DAE70 |
+  ADC bee_spawn_y_offset,y                  ; $1DAE70 |
   LDY $00                                   ; $1DAE73 |
   STA $03C0,y                               ; $1DAE75 |
   LDA #$41                                  ; $1DAE78 |
@@ -1779,8 +1780,14 @@ code_1DAE42:
 code_1DAEB3:
   RTS                                       ; $1DAEB3 |
 
-  db $E8, $FF, $E8, $FF, $01, $00, $18, $00 ; $1DAEB4 |
-  db $18, $00, $E8, $18, $01, $E8, $18      ; $1DAEBC |
+; spawn offsets indexed by bee #
+; screen and pixel (not sub)
+bee_spawn_x_offset:
+  dw $FFE8, $FFE8, $0001, $0018, $0018      ; $1DAEB4 |
+
+; pixel
+bee_spawn_y_offset:
+  db $E8, $18, $01, $E8, $18                ; $1DAEBE |
 
   LDA $0300,x                               ; $1DAEC3 |
   AND #$0F                                  ; $1DAEC6 |
