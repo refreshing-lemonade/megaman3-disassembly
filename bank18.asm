@@ -2005,7 +2005,7 @@ code_189B38:
   STA $049F                                 ; $189B5D |
   LDA #$01                                  ; $189B60 |
   STA $043F                                 ; $189B62 |
-  JSR code_1FF81B                           ; $189B65 |
+  JSR reset_gravity                         ; $189B65 |
   LDA #$99                                  ; $189B68 |
   JSR reset_sprite_anim                     ; $189B6A |
   LDA #$18                                  ; $189B6D |

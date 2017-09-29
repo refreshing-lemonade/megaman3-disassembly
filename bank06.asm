@@ -74,7 +74,7 @@ code_06A067:
   LDA #$08                                  ; $06A085 |
   STA $0540,x                               ; $06A087 |
   INC $0300,x                               ; $06A08A |
-  JSR code_1FF869                           ; $06A08D |
+  JSR face_player                           ; $06A08D |
   JMP code_06A1A2                           ; $06A090 |
 
 code_06A093:
@@ -238,7 +238,7 @@ code_06A1A2:
   db $FF, $00, $FF, $FF, $00, $FF, $00, $FF ; $06A1D8 |
 
 code_06A1E0:
-  JSR code_1FFC53                           ; $06A1E0 |
+  JSR find_enemy_freeslot_y                 ; $06A1E0 |
   BCS code_06A245                           ; $06A1E3 |
   STY $00                                   ; $06A1E5 |
   LDA $04A0,x                               ; $06A1E7 |
@@ -439,7 +439,7 @@ code_06A383:
   BCC code_06A3A4                           ; $06A388 |
   LDA #$1F                                  ; $06A38A |
   JSR reset_sprite_anim                     ; $06A38C |
-  JSR code_1FF81B                           ; $06A38F |
+  JSR reset_gravity                         ; $06A38F |
   LDA $0560,x                               ; $06A392 |
   EOR #$01                                  ; $06A395 |
   STA $0560,x                               ; $06A397 |
@@ -497,7 +497,7 @@ code_06A3F6:
   RTS                                       ; $06A3FB |
 
 code_06A3FC:
-  JSR code_1FF869                           ; $06A3FC |
+  JSR face_player                           ; $06A3FC |
   LDA $04A0,x                               ; $06A3FF |
   AND #$01                                  ; $06A402 |
   BEQ code_06A410                           ; $06A404 |
@@ -516,7 +516,7 @@ code_06A418:
   db $00, $01, $02, $02                     ; $06A421 |
 
 code_06A425:
-  JSR code_1FFC53                           ; $06A425 |
+  JSR find_enemy_freeslot_y                 ; $06A425 |
   BCS code_06A46F                           ; $06A428 |
   STY $00                                   ; $06A42A |
   LDA $04A0,x                               ; $06A42C |
@@ -711,7 +711,7 @@ code_06A5BB:
   RTS                                       ; $06A5BB |
 
 code_06A5BC:
-  JSR code_1FFC53                           ; $06A5BC |
+  JSR find_enemy_freeslot_y                 ; $06A5BC |
   BCS code_06A624                           ; $06A5BF |
   STY $00                                   ; $06A5C1 |
   LDA $04A0,x                               ; $06A5C3 |
@@ -930,7 +930,7 @@ code_06A743:
   STA $0400,x                               ; $06A788 |
   LDA #$04                                  ; $06A78B |
   STA $0420,x                               ; $06A78D |
-  JMP code_1FF869                           ; $06A790 |
+  JMP face_player                           ; $06A790 |
 
   LDA $0520,x                               ; $06A793 |
   BNE code_06A7B4                           ; $06A796 |
@@ -1021,7 +1021,7 @@ code_06A835:
 code_06A836:
   LDA $04A0,x                               ; $06A836 |
   PHA                                       ; $06A839 |
-  JSR code_1FF869                           ; $06A83A |
+  JSR face_player                           ; $06A83A |
   PLA                                       ; $06A83D |
   CMP $04A0,x                               ; $06A83E |
   BEQ code_06A84B                           ; $06A841 |
@@ -1049,7 +1049,7 @@ code_06A84C:
   db $00, $01, $00, $01                     ; $06A870 |
 
 code_06A874:
-  JSR code_1FFC53                           ; $06A874 |
+  JSR find_enemy_freeslot_y                 ; $06A874 |
   BCS code_06A8D7                           ; $06A877 |
   STY $00                                   ; $06A879 |
   LDA $04A0,x                               ; $06A87B |

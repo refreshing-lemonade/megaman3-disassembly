@@ -50,16 +50,16 @@ code_1C803D:
   PLA                                       ; $1C8048 |
   TAX                                       ; $1C8049 |
 code_1C804A:
-  LDY $0320,x                               ; $1C804A |
-  LDA $83C7,y                               ; $1C804D |
-  STA $00                                   ; $1C8050 |
-  LDA $84C7,y                               ; $1C8052 |
-  STA $01                                   ; $1C8055 |
+  LDY $0320,x                               ; $1C804A |\
+  LDA sprite_main_ptr_lo,y                  ; $1C804D | |
+  STA $00                                   ; $1C8050 | | load sprite main routine
+  LDA sprite_main_ptr_hi,y                  ; $1C8052 | | pointer (low then high)
+  STA $01                                   ; $1C8055 |/
   LDA #$80                                  ; $1C8057 |
   PHA                                       ; $1C8059 |
   LDA #$76                                  ; $1C805A |
   PHA                                       ; $1C805C |
-  JMP ($0000)                               ; $1C805D |
+  JMP ($0000)                               ; $1C805D | jump to sprite main
 
 code_1C8060:
   LDA #$00                                  ; $1C8060 |
@@ -483,71 +483,526 @@ code_1C83AD:
   db $00, $00, $00, $00, $00, $00, $00, $00 ; $1C83AF |
   db $00, $00, $00, $00, $A1, $A4, $A2, $A5 ; $1C83B7 |
   db $A3, $A6, $A7, $A1, $A8, $A1, $A9, $A1 ; $1C83BF |
-  db $C7, $C9, $FB, $58, $DE, $B4, $FD, $7C ; $1C83C7 |
-  db $D3, $C8, $14, $49, $12, $C5, $83, $85 ; $1C83CF |
-  db $0E, $09, $B3, $9B, $8A, $CB, $CB, $E2 ; $1C83D7 |
-  db $E2, $60, $BB, $C9, $C8, $E0, $6B, $44 ; $1C83DF |
-  db $56, $31, $96, $84, $19, $98, $FE, $3A ; $1C83E7 |
-  db $6B, $35, $EC, $CB, $C3, $C9, $09, $28 ; $1C83EF |
-  db $5B, $82, $D7, $FE, $C4, $52, $85, $BD ; $1C83F7 |
-  db $3E, $60, $60, $B6, $C9, $14, $E5, $C8 ; $1C83FF |
-  db $C9, $C9, $56, $85, $F7, $35, $3F, $7F ; $1C8407 |
-  db $60, $CC, $40, $40, $0A, $C3, $E4, $55 ; $1C840F |
-  db $34, $C9, $F7, $F7, $C8, $C8, $60, $C8 ; $1C8417 |
-  db $53, $53, $53, $53, $53, $53, $53, $53 ; $1C841F |
-  db $C8, $C9, $93, $3F, $FD, $F9, $FD, $F9 ; $1C8427 |
-  db $FD, $FD, $D2, $C8, $2F, $65, $F8, $C8 ; $1C842F |
-  db $31, $E2, $C8, $94, $AC, $B6, $C8, $C8 ; $1C8437 |
-  db $5F, $5F, $51, $C8, $C8, $C8, $C8, $C8 ; $1C843F |
-  db $A4, $1E, $96, $DD, $88, $47, $C2, $79 ; $1C8447 |
-  db $98, $6C, $BE, $A7, $A8, $65, $95, $34 ; $1C844F |
-  db $E8, $E8, $E8, $E8, $E8, $E8, $E8, $E8 ; $1C8457 |
-  db $C8, $C8, $C8, $C8, $C8, $C8, $C8, $C8 ; $1C845F |
-  db $00, $03, $06, $09, $0C, $0F, $12, $15 ; $1C8467 |
-  db $18, $1B, $1E, $21, $24, $27, $2A, $2D ; $1C846F |
-  db $00, $03, $06, $09, $0C, $0F, $12, $15 ; $1C8477 |
-  db $18, $1B, $1E, $21, $24, $27, $2A, $2D ; $1C847F |
-  db $00, $03, $06, $09, $0C, $0F, $12, $15 ; $1C8487 |
-  db $18, $1B, $1E, $21, $24, $27, $2A, $2D ; $1C848F |
-  db $00, $03, $06, $09, $0C, $0F, $12, $15 ; $1C8497 |
-  db $18, $1B, $1E, $21, $24, $27, $2A, $2D ; $1C849F |
-  db $00, $03, $06, $09, $0C, $0F, $12, $15 ; $1C84A7 |
-  db $18, $1B, $1E, $21, $24, $27, $2A, $2D ; $1C84AF |
-  db $30, $33, $36, $39, $3C, $3F, $42, $45 ; $1C84B7 |
-  db $48, $4B, $4E, $51, $54, $57, $5A, $5D ; $1C84BF |
-  db $85, $85, $8A, $8B, $8B, $9D, $8B, $B4 ; $1C84C7 |
-  db $8C, $8D, $8E, $9F, $9F, $96, $97, $98 ; $1C84CF |
-  db $94, $94, $98, $99, $8F, $8D, $8D, $90 ; $1C84D7 |
-  db $90, $A9, $9A, $85, $85, $AA, $A6, $9B ; $1C84DF |
-  db $9C, $9D, $90, $9D, $9C, $A4, $A5, $A6 ; $1C84E7 |
-  db $A6, $A7, $A2, $A7, $AE, $85, $AD, $AE ; $1C84EF |
-  db $AB, $AC, $AF, $B2, $B4, $B3, $98, $B1 ; $1C84F7 |
-  db $B2, $A9, $A9, $92, $85, $8E, $B9, $85 ; $1C84FF |
-  db $85, $85, $B1, $98, $B8, $A7, $A9, $B0 ; $1C8507 |
-  db $A9, $B5, $B5, $B5, $AA, $99, $95, $BB ; $1C850F |
-  db $BB, $85, $9F, $9F, $85, $85, $A9, $85 ; $1C8517 |
-  db $B8, $B8, $B8, $B8, $B8, $B8, $B8, $B8 ; $1C851F |
-  db $85, $B7, $95, $A8, $BD, $BD, $BD, $BD ; $1C8527 |
-  db $BD, $BD, $BE, $85, $95, $91, $B8, $85 ; $1C852F |
-  db $B9, $A1, $85, $91, $B9, $92, $85, $85 ; $1C8537 |
-  db $94, $94, $BF, $85, $85, $85, $85, $85 ; $1C853F |
-  db $86, $87, $87, $87, $88, $89, $89, $8A ; $1C8547 |
-  db $8A, $BA, $BB, $BC, $BC, $BD, $BD, $BB ; $1C854F |
-  db $B6, $B6, $B6, $B6, $B6, $B6, $B6, $B6 ; $1C8557 |
-  db $85, $85, $85, $85, $85, $85, $85, $85 ; $1C855F |
-  db $A0, $A0, $A0, $A0, $A0, $A0, $A0, $A0 ; $1C8567 |
-  db $A0, $A0, $A0, $A0, $A0, $A0, $A0, $A0 ; $1C856F |
-  db $A0, $A0, $A0, $A0, $A0, $A0, $A0, $A0 ; $1C8577 |
-  db $A0, $A0, $A0, $A0, $A0, $A0, $A0, $A0 ; $1C857F |
-  db $A0, $A0, $A0, $A0, $A0, $A0, $A0, $A0 ; $1C8587 |
-  db $A0, $A0, $A0, $A0, $A0, $A0, $A0, $A0 ; $1C858F |
-  db $A0, $A0, $A0, $A0, $A0, $A0, $A0, $A0 ; $1C8597 |
-  db $A0, $A0, $A0, $A0, $A0, $A0, $A0, $A0 ; $1C859F |
-  db $A0, $A0, $A0, $A0, $A0, $A0, $A0, $A0 ; $1C85A7 |
-  db $A0, $A0, $A0, $A0, $A0, $A0, $A0, $A0 ; $1C85AF |
-  db $A0, $A0, $A0, $A0, $A0, $A0, $A0, $A0 ; $1C85B7 |
-  db $A0, $A0, $A0, $A0, $A0, $A0, $A0, $A0 ; $1C85BF |
 
+; low bytes of sprite main routine pointers
+sprite_main_ptr_lo:
+  db main_00                                ; $1C83C7 |
+  db $C9                                    ; $1C83C8 |
+  db $FB                                    ; $1C83C9 |
+  db $58                                    ; $1C83CA |
+  db $DE                                    ; $1C83CB |
+  db $B4                                    ; $1C83CC |
+  db $FD                                    ; $1C83CD |
+  db $7C                                    ; $1C83CE |
+  db $D3                                    ; $1C83CF |
+  db $C8                                    ; $1C83D0 |
+  db $14                                    ; $1C83D1 |
+  db $49                                    ; $1C83D2 |
+  db $12                                    ; $1C83D3 |
+  db $C5                                    ; $1C83D4 |
+  db $83                                    ; $1C83D5 |
+  db $85                                    ; $1C83D6 |
+  db $0E                                    ; $1C83D7 |
+  db $09                                    ; $1C83D8 |
+  db $B3                                    ; $1C83D9 |
+  db $9B                                    ; $1C83DA |
+  db $8A                                    ; $1C83DB |
+  db $CB                                    ; $1C83DC |
+  db $CB                                    ; $1C83DD |
+  db $E2                                    ; $1C83DE |
+  db $E2                                    ; $1C83DF |
+  db $60                                    ; $1C83E0 |
+  db $BB                                    ; $1C83E1 |
+  db $C9                                    ; $1C83E2 |
+  db $C8                                    ; $1C83E3 |
+  db $E0                                    ; $1C83E4 |
+  db $6B                                    ; $1C83E5 |
+  db $44                                    ; $1C83E6 |
+  db $56                                    ; $1C83E7 |
+  db $31                                    ; $1C83E8 |
+  db $96                                    ; $1C83E9 |
+  db $84                                    ; $1C83EA |
+  db $19                                    ; $1C83EB |
+  db $98                                    ; $1C83EC |
+  db $FE                                    ; $1C83ED |
+  db $3A                                    ; $1C83EE |
+  db $6B                                    ; $1C83EF |
+  db $35                                    ; $1C83F0 |
+  db $EC                                    ; $1C83F1 |
+  db $CB                                    ; $1C83F2 |
+  db $C3                                    ; $1C83F3 |
+  db $C9                                    ; $1C83F4 |
+  db main_have_su_bee                       ; $1C83F5 |
+  db $28                                    ; $1C83F6 |
+  db $5B                                    ; $1C83F7 |
+  db $82                                    ; $1C83F8 |
+  db $D7                                    ; $1C83F9 |
+  db $FE                                    ; $1C83FA |
+  db $C4                                    ; $1C83FB |
+  db $52                                    ; $1C83FC |
+  db $85                                    ; $1C83FD |
+  db $BD                                    ; $1C83FE |
+  db $3E                                    ; $1C83FF |
+  db $60                                    ; $1C8400 |
+  db $60                                    ; $1C8401 |
+  db $B6                                    ; $1C8402 |
+  db $C9                                    ; $1C8403 |
+  db $14                                    ; $1C8404 |
+  db $E5                                    ; $1C8405 |
+  db $C8                                    ; $1C8406 |
+  db $C9                                    ; $1C8407 |
+  db $C9                                    ; $1C8408 |
+  db $56                                    ; $1C8409 |
+  db $85                                    ; $1C840A |
+  db $F7                                    ; $1C840B |
+  db $35                                    ; $1C840C |
+  db $3F                                    ; $1C840D |
+  db $7F                                    ; $1C840E |
+  db $60                                    ; $1C840F |
+  db $CC                                    ; $1C8410 |
+  db $40                                    ; $1C8411 |
+  db $40                                    ; $1C8412 |
+  db $0A                                    ; $1C8413 |
+  db $C3                                    ; $1C8414 |
+  db $E4                                    ; $1C8415 |
+  db $55                                    ; $1C8416 |
+  db $34                                    ; $1C8417 |
+  db $C9                                    ; $1C8418 |
+  db $F7                                    ; $1C8419 |
+  db $F7                                    ; $1C841A |
+  db $C8                                    ; $1C841B |
+  db $C8                                    ; $1C841C |
+  db $60                                    ; $1C841D |
+  db $C8                                    ; $1C841E |
+  db $53                                    ; $1C841F |
+  db $53                                    ; $1C8420 |
+  db $53                                    ; $1C8421 |
+  db $53                                    ; $1C8422 |
+  db $53                                    ; $1C8423 |
+  db $53                                    ; $1C8424 |
+  db $53                                    ; $1C8425 |
+  db $53                                    ; $1C8426 |
+  db $C8                                    ; $1C8427 |
+  db $C9                                    ; $1C8428 |
+  db $93                                    ; $1C8429 |
+  db $3F                                    ; $1C842A |
+  db $FD                                    ; $1C842B |
+  db $F9                                    ; $1C842C |
+  db $FD                                    ; $1C842D |
+  db $F9                                    ; $1C842E |
+  db $FD                                    ; $1C842F |
+  db $FD                                    ; $1C8430 |
+  db $D2                                    ; $1C8431 |
+  db $C8                                    ; $1C8432 |
+  db $2F                                    ; $1C8433 |
+  db $65                                    ; $1C8434 |
+  db $F8                                    ; $1C8435 |
+  db $C8                                    ; $1C8436 |
+  db $31                                    ; $1C8437 |
+  db $E2                                    ; $1C8438 |
+  db $C8                                    ; $1C8439 |
+  db $94                                    ; $1C843A |
+  db $AC                                    ; $1C843B |
+  db $B6                                    ; $1C843C |
+  db $C8                                    ; $1C843D |
+  db $C8                                    ; $1C843E |
+  db $5F                                    ; $1C843F |
+  db $5F                                    ; $1C8440 |
+  db $51                                    ; $1C8441 |
+  db $C8                                    ; $1C8442 |
+  db $C8                                    ; $1C8443 |
+  db $C8                                    ; $1C8444 |
+  db $C8                                    ; $1C8445 |
+  db $C8                                    ; $1C8446 |
+  db $A4                                    ; $1C8447 |
+  db $1E                                    ; $1C8448 |
+  db $96                                    ; $1C8449 |
+  db $DD                                    ; $1C844A |
+  db $88                                    ; $1C844B |
+  db $47                                    ; $1C844C |
+  db $C2                                    ; $1C844D |
+  db $79                                    ; $1C844E |
+  db $98                                    ; $1C844F |
+  db $6C                                    ; $1C8450 |
+  db $BE                                    ; $1C8451 |
+  db $A7                                    ; $1C8452 |
+  db $A8                                    ; $1C8453 |
+  db $65                                    ; $1C8454 |
+  db $95                                    ; $1C8455 |
+  db $34                                    ; $1C8456 |
+  db $E8                                    ; $1C8457 |
+  db $E8                                    ; $1C8458 |
+  db $E8                                    ; $1C8459 |
+  db $E8                                    ; $1C845A |
+  db $E8                                    ; $1C845B |
+  db $E8                                    ; $1C845C |
+  db $E8                                    ; $1C845D |
+  db $E8                                    ; $1C845E |
+  db $C8                                    ; $1C845F |
+  db $C8                                    ; $1C8460 |
+  db $C8                                    ; $1C8461 |
+  db $C8                                    ; $1C8462 |
+  db $C8                                    ; $1C8463 |
+  db $C8                                    ; $1C8464 |
+  db $C8                                    ; $1C8465 |
+  db $C8                                    ; $1C8466 |
+  db $00                                    ; $1C8467 |
+  db $03                                    ; $1C8468 |
+  db $06                                    ; $1C8469 |
+  db $09                                    ; $1C846A |
+  db $0C                                    ; $1C846B |
+  db $0F                                    ; $1C846C |
+  db $12                                    ; $1C846D |
+  db $15                                    ; $1C846E |
+  db $18                                    ; $1C846F |
+  db $1B                                    ; $1C8470 |
+  db $1E                                    ; $1C8471 |
+  db $21                                    ; $1C8472 |
+  db $24                                    ; $1C8473 |
+  db $27                                    ; $1C8474 |
+  db $2A                                    ; $1C8475 |
+  db $2D                                    ; $1C8476 |
+  db $00                                    ; $1C8477 |
+  db $03                                    ; $1C8478 |
+  db $06                                    ; $1C8479 |
+  db $09                                    ; $1C847A |
+  db $0C                                    ; $1C847B |
+  db $0F                                    ; $1C847C |
+  db $12                                    ; $1C847D |
+  db $15                                    ; $1C847E |
+  db $18                                    ; $1C847F |
+  db $1B                                    ; $1C8480 |
+  db $1E                                    ; $1C8481 |
+  db $21                                    ; $1C8482 |
+  db $24                                    ; $1C8483 |
+  db $27                                    ; $1C8484 |
+  db $2A                                    ; $1C8485 |
+  db $2D                                    ; $1C8486 |
+  db $00                                    ; $1C8487 |
+  db $03                                    ; $1C8488 |
+  db $06                                    ; $1C8489 |
+  db $09                                    ; $1C848A |
+  db $0C                                    ; $1C848B |
+  db $0F                                    ; $1C848C |
+  db $12                                    ; $1C848D |
+  db $15                                    ; $1C848E |
+  db $18                                    ; $1C848F |
+  db $1B                                    ; $1C8490 |
+  db $1E                                    ; $1C8491 |
+  db $21                                    ; $1C8492 |
+  db $24                                    ; $1C8493 |
+  db $27                                    ; $1C8494 |
+  db $2A                                    ; $1C8495 |
+  db $2D                                    ; $1C8496 |
+  db $00                                    ; $1C8497 |
+  db $03                                    ; $1C8498 |
+  db $06                                    ; $1C8499 |
+  db $09                                    ; $1C849A |
+  db $0C                                    ; $1C849B |
+  db $0F                                    ; $1C849C |
+  db $12                                    ; $1C849D |
+  db $15                                    ; $1C849E |
+  db $18                                    ; $1C849F |
+  db $1B                                    ; $1C84A0 |
+  db $1E                                    ; $1C84A1 |
+  db $21                                    ; $1C84A2 |
+  db $24                                    ; $1C84A3 |
+  db $27                                    ; $1C84A4 |
+  db $2A                                    ; $1C84A5 |
+  db $2D                                    ; $1C84A6 |
+  db $00                                    ; $1C84A7 |
+  db $03                                    ; $1C84A8 |
+  db $06                                    ; $1C84A9 |
+  db $09                                    ; $1C84AA |
+  db $0C                                    ; $1C84AB |
+  db $0F                                    ; $1C84AC |
+  db $12                                    ; $1C84AD |
+  db $15                                    ; $1C84AE |
+  db $18                                    ; $1C84AF |
+  db $1B                                    ; $1C84B0 |
+  db $1E                                    ; $1C84B1 |
+  db $21                                    ; $1C84B2 |
+  db $24                                    ; $1C84B3 |
+  db $27                                    ; $1C84B4 |
+  db $2A                                    ; $1C84B5 |
+  db $2D                                    ; $1C84B6 |
+  db $30                                    ; $1C84B7 |
+  db $33                                    ; $1C84B8 |
+  db $36                                    ; $1C84B9 |
+  db $39                                    ; $1C84BA |
+  db $3C                                    ; $1C84BB |
+  db $3F                                    ; $1C84BC |
+  db $42                                    ; $1C84BD |
+  db $45                                    ; $1C84BE |
+  db $48                                    ; $1C84BF |
+  db $4B                                    ; $1C84C0 |
+  db $4E                                    ; $1C84C1 |
+  db $51                                    ; $1C84C2 |
+  db $54                                    ; $1C84C3 |
+  db $57                                    ; $1C84C4 |
+  db $5A                                    ; $1C84C5 |
+  db $5D                                    ; $1C84C6 |
+
+; high bytes of sprite main routine pointers
+sprite_main_ptr_hi:
+  db main_00>>8                             ; $1C84C7 |
+  db $85                                    ; $1C84C8 |
+  db $8A                                    ; $1C84C9 |
+  db $8B                                    ; $1C84CA |
+  db $8B                                    ; $1C84CB |
+  db $9D                                    ; $1C84CC |
+  db $8B                                    ; $1C84CD |
+  db $B4                                    ; $1C84CE |
+  db $8C                                    ; $1C84CF |
+  db $8D                                    ; $1C84D0 |
+  db $8E                                    ; $1C84D1 |
+  db $9F                                    ; $1C84D2 |
+  db $9F                                    ; $1C84D3 |
+  db $96                                    ; $1C84D4 |
+  db $97                                    ; $1C84D5 |
+  db $98                                    ; $1C84D6 |
+  db $94                                    ; $1C84D7 |
+  db $94                                    ; $1C84D8 |
+  db $98                                    ; $1C84D9 |
+  db $99                                    ; $1C84DA |
+  db $8F                                    ; $1C84DB |
+  db $8D                                    ; $1C84DC |
+  db $8D                                    ; $1C84DD |
+  db $90                                    ; $1C84DE |
+  db $90                                    ; $1C84DF |
+  db $A9                                    ; $1C84E0 |
+  db $9A                                    ; $1C84E1 |
+  db $85                                    ; $1C84E2 |
+  db $85                                    ; $1C84E3 |
+  db $AA                                    ; $1C84E4 |
+  db $A6                                    ; $1C84E5 |
+  db $9B                                    ; $1C84E6 |
+  db $9C                                    ; $1C84E7 |
+  db $9D                                    ; $1C84E8 |
+  db $90                                    ; $1C84E9 |
+  db $9D                                    ; $1C84EA |
+  db $9C                                    ; $1C84EB |
+  db $A4                                    ; $1C84EC |
+  db $A5                                    ; $1C84ED |
+  db $A6                                    ; $1C84EE |
+  db $A6                                    ; $1C84EF |
+  db $A7                                    ; $1C84F0 |
+  db $A2                                    ; $1C84F1 |
+  db $A7                                    ; $1C84F2 |
+  db $AE                                    ; $1C84F3 |
+  db $85                                    ; $1C84F4 |
+  db main_have_su_bee>>8                    ; $1C84F5 |
+  db $AE                                    ; $1C84F6 |
+  db $AB                                    ; $1C84F7 |
+  db $AC                                    ; $1C84F8 |
+  db $AF                                    ; $1C84F9 |
+  db $B2                                    ; $1C84FA |
+  db $B4                                    ; $1C84FB |
+  db $B3                                    ; $1C84FC |
+  db $98                                    ; $1C84FD |
+  db $B1                                    ; $1C84FE |
+  db $B2                                    ; $1C84FF |
+  db $A9                                    ; $1C8500 |
+  db $A9                                    ; $1C8501 |
+  db $92                                    ; $1C8502 |
+  db $85                                    ; $1C8503 |
+  db $8E                                    ; $1C8504 |
+  db $B9                                    ; $1C8505 |
+  db $85                                    ; $1C8506 |
+  db $85                                    ; $1C8507 |
+  db $85                                    ; $1C8508 |
+  db $B1                                    ; $1C8509 |
+  db $98                                    ; $1C850A |
+  db $B8                                    ; $1C850B |
+  db $A7                                    ; $1C850C |
+  db $A9                                    ; $1C850D |
+  db $B0                                    ; $1C850E |
+  db $A9                                    ; $1C850F |
+  db $B5                                    ; $1C8510 |
+  db $B5                                    ; $1C8511 |
+  db $B5                                    ; $1C8512 |
+  db $AA                                    ; $1C8513 |
+  db $99                                    ; $1C8514 |
+  db $95                                    ; $1C8515 |
+  db $BB                                    ; $1C8516 |
+  db $BB                                    ; $1C8517 |
+  db $85                                    ; $1C8518 |
+  db $9F                                    ; $1C8519 |
+  db $9F                                    ; $1C851A |
+  db $85                                    ; $1C851B |
+  db $85                                    ; $1C851C |
+  db $A9                                    ; $1C851D |
+  db $85                                    ; $1C851E |
+  db $B8                                    ; $1C851F |
+  db $B8                                    ; $1C8520 |
+  db $B8                                    ; $1C8521 |
+  db $B8                                    ; $1C8522 |
+  db $B8                                    ; $1C8523 |
+  db $B8                                    ; $1C8524 |
+  db $B8                                    ; $1C8525 |
+  db $B8                                    ; $1C8526 |
+  db $85                                    ; $1C8527 |
+  db $B7                                    ; $1C8528 |
+  db $95                                    ; $1C8529 |
+  db $A8                                    ; $1C852A |
+  db $BD                                    ; $1C852B |
+  db $BD                                    ; $1C852C |
+  db $BD                                    ; $1C852D |
+  db $BD                                    ; $1C852E |
+  db $BD                                    ; $1C852F |
+  db $BD                                    ; $1C8530 |
+  db $BE                                    ; $1C8531 |
+  db $85                                    ; $1C8532 |
+  db $95                                    ; $1C8533 |
+  db $91                                    ; $1C8534 |
+  db $B8                                    ; $1C8535 |
+  db $85                                    ; $1C8536 |
+  db $B9                                    ; $1C8537 |
+  db $A1                                    ; $1C8538 |
+  db $85                                    ; $1C8539 |
+  db $91                                    ; $1C853A |
+  db $B9                                    ; $1C853B |
+  db $92                                    ; $1C853C |
+  db $85                                    ; $1C853D |
+  db $85                                    ; $1C853E |
+  db $94                                    ; $1C853F |
+  db $94                                    ; $1C8540 |
+  db $BF                                    ; $1C8541 |
+  db $85                                    ; $1C8542 |
+  db $85                                    ; $1C8543 |
+  db $85                                    ; $1C8544 |
+  db $85                                    ; $1C8545 |
+  db $85                                    ; $1C8546 |
+  db $86                                    ; $1C8547 |
+  db $87                                    ; $1C8548 |
+  db $87                                    ; $1C8549 |
+  db $87                                    ; $1C854A |
+  db $88                                    ; $1C854B |
+  db $89                                    ; $1C854C |
+  db $89                                    ; $1C854D |
+  db $8A                                    ; $1C854E |
+  db $8A                                    ; $1C854F |
+  db $BA                                    ; $1C8550 |
+  db $BB                                    ; $1C8551 |
+  db $BC                                    ; $1C8552 |
+  db $BC                                    ; $1C8553 |
+  db $BD                                    ; $1C8554 |
+  db $BD                                    ; $1C8555 |
+  db $BB                                    ; $1C8556 |
+  db $B6                                    ; $1C8557 |
+  db $B6                                    ; $1C8558 |
+  db $B6                                    ; $1C8559 |
+  db $B6                                    ; $1C855A |
+  db $B6                                    ; $1C855B |
+  db $B6                                    ; $1C855C |
+  db $B6                                    ; $1C855D |
+  db $B6                                    ; $1C855E |
+  db $85                                    ; $1C855F |
+  db $85                                    ; $1C8560 |
+  db $85                                    ; $1C8561 |
+  db $85                                    ; $1C8562 |
+  db $85                                    ; $1C8563 |
+  db $85                                    ; $1C8564 |
+  db $85                                    ; $1C8565 |
+  db $85                                    ; $1C8566 |
+  db $A0                                    ; $1C8567 |
+  db $A0                                    ; $1C8568 |
+  db $A0                                    ; $1C8569 |
+  db $A0                                    ; $1C856A |
+  db $A0                                    ; $1C856B |
+  db $A0                                    ; $1C856C |
+  db $A0                                    ; $1C856D |
+  db $A0                                    ; $1C856E |
+  db $A0                                    ; $1C856F |
+  db $A0                                    ; $1C8570 |
+  db $A0                                    ; $1C8571 |
+  db $A0                                    ; $1C8572 |
+  db $A0                                    ; $1C8573 |
+  db $A0                                    ; $1C8574 |
+  db $A0                                    ; $1C8575 |
+  db $A0                                    ; $1C8576 |
+  db $A0                                    ; $1C8577 |
+  db $A0                                    ; $1C8578 |
+  db $A0                                    ; $1C8579 |
+  db $A0                                    ; $1C857A |
+  db $A0                                    ; $1C857B |
+  db $A0                                    ; $1C857C |
+  db $A0                                    ; $1C857D |
+  db $A0                                    ; $1C857E |
+  db $A0                                    ; $1C857F |
+  db $A0                                    ; $1C8580 |
+  db $A0                                    ; $1C8581 |
+  db $A0                                    ; $1C8582 |
+  db $A0                                    ; $1C8583 |
+  db $A0                                    ; $1C8584 |
+  db $A0                                    ; $1C8585 |
+  db $A0                                    ; $1C8586 |
+  db $A0                                    ; $1C8587 |
+  db $A0                                    ; $1C8588 |
+  db $A0                                    ; $1C8589 |
+  db $A0                                    ; $1C858A |
+  db $A0                                    ; $1C858B |
+  db $A0                                    ; $1C858C |
+  db $A0                                    ; $1C858D |
+  db $A0                                    ; $1C858E |
+  db $A0                                    ; $1C858F |
+  db $A0                                    ; $1C8590 |
+  db $A0                                    ; $1C8591 |
+  db $A0                                    ; $1C8592 |
+  db $A0                                    ; $1C8593 |
+  db $A0                                    ; $1C8594 |
+  db $A0                                    ; $1C8595 |
+  db $A0                                    ; $1C8596 |
+  db $A0                                    ; $1C8597 |
+  db $A0                                    ; $1C8598 |
+  db $A0                                    ; $1C8599 |
+  db $A0                                    ; $1C859A |
+  db $A0                                    ; $1C859B |
+  db $A0                                    ; $1C859C |
+  db $A0                                    ; $1C859D |
+  db $A0                                    ; $1C859E |
+  db $A0                                    ; $1C859F |
+  db $A0                                    ; $1C85A0 |
+  db $A0                                    ; $1C85A1 |
+  db $A0                                    ; $1C85A2 |
+  db $A0                                    ; $1C85A3 |
+  db $A0                                    ; $1C85A4 |
+  db $A0                                    ; $1C85A5 |
+  db $A0                                    ; $1C85A6 |
+  db $A0                                    ; $1C85A7 |
+  db $A0                                    ; $1C85A8 |
+  db $A0                                    ; $1C85A9 |
+  db $A0                                    ; $1C85AA |
+  db $A0                                    ; $1C85AB |
+  db $A0                                    ; $1C85AC |
+  db $A0                                    ; $1C85AD |
+  db $A0                                    ; $1C85AE |
+  db $A0                                    ; $1C85AF |
+  db $A0                                    ; $1C85B0 |
+  db $A0                                    ; $1C85B1 |
+  db $A0                                    ; $1C85B2 |
+  db $A0                                    ; $1C85B3 |
+  db $A0                                    ; $1C85B4 |
+  db $A0                                    ; $1C85B5 |
+  db $A0                                    ; $1C85B6 |
+  db $A0                                    ; $1C85B7 |
+  db $A0                                    ; $1C85B8 |
+  db $A0                                    ; $1C85B9 |
+  db $A0                                    ; $1C85BA |
+  db $A0                                    ; $1C85BB |
+  db $A0                                    ; $1C85BC |
+  db $A0                                    ; $1C85BD |
+  db $A0                                    ; $1C85BE |
+  db $A0                                    ; $1C85BF |
+  db $A0                                    ; $1C85C0 |
+  db $A0                                    ; $1C85C1 |
+  db $A0                                    ; $1C85C2 |
+  db $A0                                    ; $1C85C3 |
+  db $A0                                    ; $1C85C4 |
+  db $A0                                    ; $1C85C5 |
+  db $A0                                    ; $1C85C6 |
+
+main_00:
   RTS                                       ; $1C85C7 |
 
   RTS                                       ; $1C85C8 |
@@ -577,7 +1032,7 @@ code_1C85D9:
   BCS code_1C8627                           ; $1C85F4 |
   JSR code_1FEE57                           ; $1C85F6 |
   BCS code_1C8627                           ; $1C85F9 |
-  JSR code_1FFC53                           ; $1C85FB |
+  JSR find_enemy_freeslot_y                 ; $1C85FB |
   BCC code_1C8628                           ; $1C85FE |
 code_1C8600:
   LDA #$71                                  ; $1C8600 |
@@ -1275,7 +1730,7 @@ code_1C8B1E:
   STA $0460,x                               ; $1C8B32 |
   DEC $0520,x                               ; $1C8B35 |
   BNE code_1C8B42                           ; $1C8B38 |
-  JSR code_1FF869                           ; $1C8B3A |
+  JSR face_player                           ; $1C8B3A |
   LDA #$03                                  ; $1C8B3D |
   STA $0520,x                               ; $1C8B3F |
 code_1C8B42:
@@ -1333,7 +1788,7 @@ code_1C8BA8:
   RTS                                       ; $1C8BA8 |
 
 code_1C8BA9:
-  JSR code_1FFC53                           ; $1C8BA9 |
+  JSR find_enemy_freeslot_y                 ; $1C8BA9 |
   BCS code_1C8BDD                           ; $1C8BAC |
   LDA $04A0,x                               ; $1C8BAE |
   STA $04A0,y                               ; $1C8BB1 |
@@ -1359,7 +1814,7 @@ code_1C8BDD:
   LDA $0300,x                               ; $1C8BDE |
   AND #$0F                                  ; $1C8BE1 |
   BNE code_1C8BEB                           ; $1C8BE3 |
-  JSR code_1FF81B                           ; $1C8BE5 |
+  JSR reset_gravity                         ; $1C8BE5 |
   INC $0300,x                               ; $1C8BE8 |
 code_1C8BEB:
   LDY #$08                                  ; $1C8BEB |
@@ -1397,7 +1852,7 @@ code_1C8C2A:
 code_1C8C2D:
   LDA $04A0,x                               ; $1C8C2D |
   PHA                                       ; $1C8C30 |
-  JSR code_1FF869                           ; $1C8C31 |
+  JSR face_player                           ; $1C8C31 |
   PLA                                       ; $1C8C34 |
   CMP $04A0,x                               ; $1C8C35 |
   BEQ code_1C8C42                           ; $1C8C38 |
@@ -1436,7 +1891,7 @@ code_1C8C7F:
   RTS                                       ; $1C8C7F |
 
 code_1C8C80:
-  JSR code_1FFC53                           ; $1C8C80 |
+  JSR find_enemy_freeslot_y                 ; $1C8C80 |
   BCS code_1C8CCE                           ; $1C8C83 |
   STY $00                                   ; $1C8C85 |
   LDA $04A0,x                               ; $1C8C87 |
@@ -1533,7 +1988,7 @@ code_1C8D23:
   STA $0440,x                               ; $1C8D49 |
   LDA #$07                                  ; $1C8D4C |
   STA $0460,x                               ; $1C8D4E |
-  JSR code_1FFC53                           ; $1C8D51 |
+  JSR find_enemy_freeslot_y                 ; $1C8D51 |
   BCS code_1C8D9C                           ; $1C8D54 |
   STY $00                                   ; $1C8D56 |
   LDA $04A0,x                               ; $1C8D58 |
@@ -1574,7 +2029,7 @@ code_1C8D9C:
   BEQ code_1C8DC3                           ; $1C8DA7 |
   LDA #$6D                                  ; $1C8DA9 |
   JSR reset_sprite_anim                     ; $1C8DAB |
-  JSR code_1FF869                           ; $1C8DAE |
+  JSR face_player                           ; $1C8DAE |
   LDA #$00                                  ; $1C8DB1 |
   STA $0400,x                               ; $1C8DB3 |
   LDA #$02                                  ; $1C8DB6 |
@@ -1865,7 +2320,7 @@ code_1C902F:
   db $02, $01, $01, $02                     ; $1C9030 |
 
 code_1C9034:
-  JSR code_1FFC53                           ; $1C9034 |
+  JSR find_enemy_freeslot_y                 ; $1C9034 |
   BCS code_1C9095                           ; $1C9037 |
   LDA #$70                                  ; $1C9039 |
   JSR code_1FF846                           ; $1C903B |
@@ -1907,7 +2362,7 @@ code_1C9095:
 
   LDA $0500,x                               ; $1C9096 |
   BNE code_1C90DE                           ; $1C9099 |
-  JSR code_1FFC53                           ; $1C909B |
+  JSR find_enemy_freeslot_y                 ; $1C909B |
   BCS code_1C90D6                           ; $1C909E |
   LDA $04A0,x                               ; $1C90A0 |
   STA $04A0,y                               ; $1C90A3 |
@@ -1932,7 +2387,7 @@ code_1C9095:
 code_1C90D6:
   LDA #$F0                                  ; $1C90D6 |
   STA $0500,x                               ; $1C90D8 |
-  JMP code_1FF869                           ; $1C90DB |
+  JMP face_player                           ; $1C90DB |
 
 code_1C90DE:
   DEC $0500,x                               ; $1C90DE |
@@ -1941,7 +2396,7 @@ code_1C90DE:
   LDA $0300,x                               ; $1C90E2 |
   AND #$0F                                  ; $1C90E5 |
   BNE code_1C90EF                           ; $1C90E7 |
-  JSR code_1FF81B                           ; $1C90E9 |
+  JSR reset_gravity                         ; $1C90E9 |
   INC $0300,x                               ; $1C90EC |
 code_1C90EF:
   LDA $05C0,x                               ; $1C90EF |
@@ -1981,8 +2436,8 @@ code_1C912C:
   JSR code_1FF606                           ; $1C912E |
   BCC code_1C9141                           ; $1C9131 |
   DEC $0300,x                               ; $1C9133 |
-  JSR code_1FF869                           ; $1C9136 |
-  JSR code_1FF81B                           ; $1C9139 |
+  JSR face_player                           ; $1C9136 |
+  JSR reset_gravity                         ; $1C9139 |
   LDA #$4E                                  ; $1C913C |
   JSR reset_sprite_anim                     ; $1C913E |
 code_1C9141:
@@ -2020,7 +2475,7 @@ code_1C9164:
   STA $0440,x                               ; $1C9178 |
   LDA #$03                                  ; $1C917B |
   STA $0460,x                               ; $1C917D |
-  JSR code_1FF869                           ; $1C9180 |
+  JSR face_player                           ; $1C9180 |
   JSR code_1FF883                           ; $1C9183 |
 code_1C9186:
   RTS                                       ; $1C9186 |
@@ -2046,7 +2501,7 @@ code_1C9191:
   LDA $0540,x                               ; $1C91AB |
   BNE code_1C9209                           ; $1C91AE |
   DEC $05C0,x                               ; $1C91B0 |
-  JSR code_1FFC53                           ; $1C91B3 |
+  JSR find_enemy_freeslot_y                 ; $1C91B3 |
   BCS code_1C9203                           ; $1C91B6 |
   LDA $0360,x                               ; $1C91B8 |
   STA $0360,y                               ; $1C91BB |
@@ -2141,7 +2596,7 @@ code_1C926E:
   DEC $0300,x                               ; $1C9275 |
   LDA #$BB                                  ; $1C9278 |
   JSR reset_sprite_anim                     ; $1C927A |
-  JSR code_1FF869                           ; $1C927D |
+  JSR face_player                           ; $1C927D |
   LDA #$00                                  ; $1C9280 |
   STA $0500,x                               ; $1C9282 |
 code_1C9285:
@@ -2412,7 +2867,7 @@ code_1C9540:
   STA $0500,x                               ; $1C9547 |
   JSR code_1C95B9                           ; $1C954A |
   BCS code_1C9592                           ; $1C954D |
-  JSR code_1FFC53                           ; $1C954F |
+  JSR find_enemy_freeslot_y                 ; $1C954F |
   BCS code_1C9592                           ; $1C9552 |
   LDA #$94                                  ; $1C9554 |
   JSR code_1FF846                           ; $1C9556 |
@@ -2488,7 +2943,7 @@ code_1C95E3:
   AND #$0F                                  ; $1C95E7 |
   BNE code_1C95F9                           ; $1C95E9 |
   JSR code_1FF883                           ; $1C95EB |
-  JSR code_1FF869                           ; $1C95EE |
+  JSR face_player                           ; $1C95EE |
   INC $0300,x                               ; $1C95F1 |
   LDA #$24                                  ; $1C95F4 |
   STA $0500,x                               ; $1C95F6 |
@@ -2551,7 +3006,7 @@ code_1C9658:
   RTS                                       ; $1C9658 |
 
 code_1C9659:
-  JSR code_1FFC53                           ; $1C9659 |
+  JSR find_enemy_freeslot_y                 ; $1C9659 |
   BCS code_1C96C0                           ; $1C965C |
   STY $00                                   ; $1C965E |
   LDA $04A0,x                               ; $1C9660 |
@@ -2605,7 +3060,7 @@ code_1C96C0:
   JSR code_1FF8C2                           ; $1C96CC |
   CMP #$51                                  ; $1C96CF |
   BCS code_1C9716                           ; $1C96D1 |
-  JSR code_1FF869                           ; $1C96D3 |
+  JSR face_player                           ; $1C96D3 |
   JSR code_1FF883                           ; $1C96D6 |
   LDA $0580,x                               ; $1C96D9 |
   AND #$FB                                  ; $1C96DC |
@@ -2660,8 +3115,8 @@ code_1C9734:
   LDA #$14                                  ; $1C9734 |
   STA $0500,x                               ; $1C9736 |
   INC $0300,x                               ; $1C9739 |
-  JSR code_1FF81B                           ; $1C973C |
-  JSR code_1FF869                           ; $1C973F |
+  JSR reset_gravity                         ; $1C973C |
+  JSR face_player                           ; $1C973F |
   JMP code_1FF883                           ; $1C9742 |
 
 code_1C9745:
@@ -2713,7 +3168,7 @@ code_1C978D:
   LDA $0300,x                               ; $1C978D |
   AND #$0F                                  ; $1C9790 |
   BNE code_1C97D1                           ; $1C9792 |
-  JSR code_1FF869                           ; $1C9794 |
+  JSR face_player                           ; $1C9794 |
   JSR code_1FF883                           ; $1C9797 |
   LDA $05A0,x                               ; $1C979A |
   BNE code_1C97B9                           ; $1C979D |
@@ -2789,7 +3244,7 @@ code_1C981D:
   LDA #$02                                  ; $1C981F |
   STA $01                                   ; $1C9821 |
 code_1C9823:
-  JSR code_1FFC53                           ; $1C9823 |
+  JSR find_enemy_freeslot_y                 ; $1C9823 |
   BCS code_1C9872                           ; $1C9826 |
   LDX $01                                   ; $1C9828 |
   LDA $9875,x                               ; $1C982A |
@@ -2871,7 +3326,7 @@ code_1C98D6:
   LDA #$C9                                  ; $1C98D6 |
   STA $0480,x                               ; $1C98D8 |
 code_1C98DB:
-  JSR code_1FF869                           ; $1C98DB |
+  JSR face_player                           ; $1C98DB |
   JSR code_1FF883                           ; $1C98DE |
   LDA $05A0,x                               ; $1C98E1 |
   ORA $05E0,x                               ; $1C98E4 |
@@ -2899,7 +3354,7 @@ code_1C98FE:
   RTS                                       ; $1C990E |
 
 code_1C990F:
-  JSR code_1FFC53                           ; $1C990F |
+  JSR find_enemy_freeslot_y                 ; $1C990F |
   BCS code_1C98FD                           ; $1C9912 |
   LDA #$00                                  ; $1C9914 |
   STA $0440,y                               ; $1C9916 |
@@ -2990,7 +3445,7 @@ code_1C99B9:
   JMP code_1C9776                           ; $1C99D4 |
 
 code_1C99D7:
-  JSR code_1FF869                           ; $1C99D7 |
+  JSR face_player                           ; $1C99D7 |
   JSR code_1FF883                           ; $1C99DA |
   LDA $05C0,x                               ; $1C99DD |
   CMP #$1F                                  ; $1C99E0 |
@@ -3039,7 +3494,7 @@ code_1C9A2D:
   JMP code_1C9776                           ; $1C9A2F |
 
 code_1C9A32:
-  JSR code_1FF869                           ; $1C9A32 |
+  JSR face_player                           ; $1C9A32 |
   JSR code_1FF883                           ; $1C9A35 |
   LDA $0500,x                               ; $1C9A38 |
   BEQ code_1C9A41                           ; $1C9A3B |
@@ -3061,7 +3516,7 @@ code_1C9A4F:
   LDA #$02                                  ; $1C9A51 |
   STA $01                                   ; $1C9A53 |
 code_1C9A55:
-  JSR code_1FFC53                           ; $1C9A55 |
+  JSR find_enemy_freeslot_y                 ; $1C9A55 |
   BCS code_1C9AA1                           ; $1C9A58 |
   LDX $01                                   ; $1C9A5A |
   LDA $9AAC,x                               ; $1C9A5C |
@@ -3194,7 +3649,7 @@ code_1C9B67:
 code_1C9B78:
   LDA $04A0,x                               ; $1C9B78 |
   PHA                                       ; $1C9B7B |
-  JSR code_1FF869                           ; $1C9B7C |
+  JSR face_player                           ; $1C9B7C |
   PLA                                       ; $1C9B7F |
   CMP $04A0,x                               ; $1C9B80 |
   BEQ code_1C9B8D                           ; $1C9B83 |
@@ -3246,7 +3701,7 @@ code_1C9BE1:
   RTS                                       ; $1C9BE1 |
 
 code_1C9BE2:
-  JSR code_1FFC53                           ; $1C9BE2 |
+  JSR find_enemy_freeslot_y                 ; $1C9BE2 |
   BCS code_1C9C18                           ; $1C9BE5 |
   LDA $04A0,x                               ; $1C9BE7 |
   STA $04A0,y                               ; $1C9BEA |
@@ -3446,7 +3901,7 @@ code_1C9D6B:
   STA $0440,x                               ; $1C9D6D |
   LDA #$05                                  ; $1C9D70 |
   STA $0460,x                               ; $1C9D72 |
-  JSR code_1FF869                           ; $1C9D75 |
+  JSR face_player                           ; $1C9D75 |
   LDA #$C5                                  ; $1C9D78 |
   STA $0480,x                               ; $1C9D7A |
   RTS                                       ; $1C9D7D |
@@ -3500,7 +3955,7 @@ code_1C9DC3:
   BNE code_1C9DE7                           ; $1C9DD4 |
   LDA #$5A                                  ; $1C9DD6 |
   JSR reset_sprite_anim                     ; $1C9DD8 |
-  JSR code_1FF869                           ; $1C9DDB |
+  JSR face_player                           ; $1C9DDB |
   JSR code_1C9EA9                           ; $1C9DDE |
   LDA #$1E                                  ; $1C9DE1 |
   STA $0540,x                               ; $1C9DE3 |
@@ -3553,7 +4008,7 @@ code_1C9E45:
   RTS                                       ; $1C9E45 |
 
 code_1C9E46:
-  JSR code_1FFC53                           ; $1C9E46 |
+  JSR find_enemy_freeslot_y                 ; $1C9E46 |
   BCS code_1C9EA4                           ; $1C9E49 |
   STY $00                                   ; $1C9E4B |
   LDA $04A0,x                               ; $1C9E4D |
@@ -3599,7 +4054,7 @@ code_1C9EA4:
   db $0F, $00, $F1, $FF                     ; $1C9EA5 |
 
 code_1C9EA9:
-  JSR code_1FFC53                           ; $1C9EA9 |
+  JSR find_enemy_freeslot_y                 ; $1C9EA9 |
   BCS code_1C9EA4                           ; $1C9EAC |
   LDA #$00                                  ; $1C9EAE |
   STA $0440,y                               ; $1C9EB0 |
@@ -3701,7 +4156,7 @@ code_1C9F6C:
   LDA #$FF                                  ; $1C9F73 |
   STA $04C0,x                               ; $1C9F75 |
 code_1C9F78:
-  JSR code_1FFC53                           ; $1C9F78 |
+  JSR find_enemy_freeslot_y                 ; $1C9F78 |
   BCS code_1C9FE2                           ; $1C9F7B |
   STY $00                                   ; $1C9F7D |
   LDA $04A0,x                               ; $1C9F7F |

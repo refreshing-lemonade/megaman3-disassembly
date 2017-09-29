@@ -179,7 +179,7 @@ code_09815D:
   LDY #$1E                                  ; $09816F |
   JSR code_1FEEAB                           ; $098171 |
   LDX #$00                                  ; $098174 |
-  JSR code_1FFC53                           ; $098176 |
+  JSR find_enemy_freeslot_y                 ; $098176 |
   BCS code_0981AF                           ; $098179 |
   LDA #$71                                  ; $09817B |
   JSR code_1FF846                           ; $09817D |
@@ -233,7 +233,7 @@ code_0981CA:
   INC $68                                   ; $0981EE |
   PLA                                       ; $0981F0 |
   TAY                                       ; $0981F1 |
-  JSR code_1FFC43                           ; $0981F2 |
+  JSR find_enemy_freeslot_x                 ; $0981F2 |
   BCS code_098270                           ; $0981F5 |
   LDA #$71                                  ; $0981F7 |
   JSR reset_sprite_anim                     ; $0981F9 |
@@ -419,7 +419,7 @@ code_098382:
   STA $00                                   ; $09838B |
   INC $66                                   ; $09838D |
 code_09838F:
-  JSR code_1FFC43                           ; $09838F |
+  JSR find_enemy_freeslot_x                 ; $09838F |
   LDA #$2C                                  ; $098392 |
   JSR reset_sprite_anim                     ; $098394 |
   LDA #$80                                  ; $098397 |

@@ -37,7 +37,7 @@ code_05A022:
 
   db $39, $AF, $A0, $A0                     ; $05A035 |
 
-  JSR code_1FF869                           ; $05A039 |
+  JSR face_player                           ; $05A039 |
   JSR code_1FF883                           ; $05A03C |
   JSR $8003                                 ; $05A03F |
   BCS code_05A06E                           ; $05A042 |
@@ -132,7 +132,7 @@ code_05A0C8:
 code_05A0F6:
   LDA $0360                                 ; $05A0F6 |
   STA $0520,x                               ; $05A0F9 |
-  JSR code_1FF869                           ; $05A0FC |
+  JSR face_player                           ; $05A0FC |
 code_05A0FF:
   LDA $04A0,x                               ; $05A0FF |
   AND #$02                                  ; $05A102 |
@@ -165,7 +165,7 @@ code_05A12C:
   LDA #$02                                  ; $05A136 |
   STA $0F                                   ; $05A138 |
 code_05A13A:
-  JSR code_1FFC53                           ; $05A13A |
+  JSR find_enemy_freeslot_y                 ; $05A13A |
   BCS code_05A1A3                           ; $05A13D |
   LDX $0F                                   ; $05A13F |
   LDA $A1AB,x                               ; $05A141 |
@@ -300,7 +300,7 @@ code_05A24D:
   JMP code_1FF588                           ; $05A24F |
 
 code_05A252:
-  JSR code_1FF869                           ; $05A252 |
+  JSR face_player                           ; $05A252 |
   JSR code_1FF883                           ; $05A255 |
   LDA $05A0,x                               ; $05A258 |
   BNE code_05A262                           ; $05A25B |
@@ -372,7 +372,7 @@ code_05A2DC:
   RTS                                       ; $05A2DC |
 
 code_05A2DD:
-  JSR code_1FFC53                           ; $05A2DD |
+  JSR find_enemy_freeslot_y                 ; $05A2DD |
   BCS code_05A2DC                           ; $05A2E0 |
   STX $00                                   ; $05A2E2 |
   LDA $0300,x                               ; $05A2E4 |
@@ -475,7 +475,7 @@ code_05A393:
   LDY #$1E                                  ; $05A3C3 |
   JSR code_1FF67C                           ; $05A3C5 |
   BCC code_05A43D                           ; $05A3C8 |
-  JSR code_1FF869                           ; $05A3CA |
+  JSR face_player                           ; $05A3CA |
   JSR code_1FF883                           ; $05A3CD |
   DEC $0500,x                               ; $05A3D0 |
   BPL code_05A3D8                           ; $05A3D3 |
@@ -568,7 +568,7 @@ code_05A45D:
   JMP code_05A451                           ; $05A482 |
 
 code_05A485:
-  JSR code_1FF869                           ; $05A485 |
+  JSR face_player                           ; $05A485 |
   JSR code_1FF883                           ; $05A488 |
   LDA $0300,x                               ; $05A48B |
   AND #$F0                                  ; $05A48E |
@@ -581,7 +581,7 @@ code_05A498:
   LDA #$02                                  ; $05A49A |
   STA $0F                                   ; $05A49C |
 code_05A49E:
-  JSR code_1FFC53                           ; $05A49E |
+  JSR find_enemy_freeslot_y                 ; $05A49E |
   BCS code_05A4EA                           ; $05A4A1 |
   LDX $0E                                   ; $05A4A3 |
   LDA $0360,x                               ; $05A4A5 |
@@ -734,7 +734,7 @@ code_05A5AB:
   STA $01                                   ; $05A5CF |
   STX $02                                   ; $05A5D1 |
 code_05A5D3:
-  JSR code_1FFC53                           ; $05A5D3 |
+  JSR find_enemy_freeslot_y                 ; $05A5D3 |
   BCS code_05A62F                           ; $05A5D6 |
   LDX $03                                   ; $05A5D8 |
   LDA $A6FB,x                               ; $05A5DA |
@@ -1024,7 +1024,7 @@ code_05A87D:
   LDA #$02                                  ; $05A893 |
   STA $0420,x                               ; $05A895 |
   STA $0460,x                               ; $05A898 |
-  JSR code_1FF869                           ; $05A89B |
+  JSR face_player                           ; $05A89B |
   LDA $04A0,x                               ; $05A89E |
   ORA #$04                                  ; $05A8A1 |
   STA $04A0,x                               ; $05A8A3 |

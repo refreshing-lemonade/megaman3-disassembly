@@ -79,7 +79,7 @@ code_04A082:
   STA $0440,x                               ; $04A08F |
   LDA #$04                                  ; $04A092 |
   STA $0460,x                               ; $04A094 |
-  JMP code_1FF869                           ; $04A097 |
+  JMP face_player                           ; $04A097 |
 
 code_04A09A:
   LDA $05C0,x                               ; $04A09A |
@@ -100,7 +100,7 @@ code_04A0A7:
   JSR code_04A1B4                           ; $04A0B6 |
   LDA #$02                                  ; $04A0B9 |
   JSR reset_sprite_anim                     ; $04A0BB |
-  JSR code_1FF869                           ; $04A0BE |
+  JSR face_player                           ; $04A0BE |
   JSR code_1FF883                           ; $04A0C1 |
   RTS                                       ; $04A0C4 |
 
@@ -131,7 +131,7 @@ code_04A0F4:
   RTS                                       ; $04A0F4 |
 
 code_04A0F5:
-  JSR code_1FFC53                           ; $04A0F5 |
+  JSR find_enemy_freeslot_y                 ; $04A0F5 |
   BCS code_04A139                           ; $04A0F8 |
   STY $00                                   ; $04A0FA |
   LDA $04A0,x                               ; $04A0FC |
@@ -394,7 +394,7 @@ code_04A357:
   DEC $0300,x                               ; $04A365 |
   LDA #$60                                  ; $04A368 |
   STA $0560,x                               ; $04A36A |
-  JSR code_1FF869                           ; $04A36D |
+  JSR face_player                           ; $04A36D |
   JSR code_1FF883                           ; $04A370 |
   JSR code_04A382                           ; $04A373 |
 code_04A376:
@@ -408,7 +408,7 @@ code_04A377:
   RTS                                       ; $04A381 |
 
 code_04A382:
-  JSR code_1FFC53                           ; $04A382 |
+  JSR find_enemy_freeslot_y                 ; $04A382 |
   BCS code_04A3FA                           ; $04A385 |
   LDA $04A0,x                               ; $04A387 |
   STA $04A0,y                               ; $04A38A |
@@ -434,7 +434,7 @@ code_04A382:
   RTS                                       ; $04A3C0 |
 
 code_04A3C1:
-  JSR code_1FFC53                           ; $04A3C1 |
+  JSR find_enemy_freeslot_y                 ; $04A3C1 |
   BCS code_04A3FA                           ; $04A3C4 |
   LDA $04A0,x                               ; $04A3C6 |
   STA $04A0,y                               ; $04A3C9 |
@@ -459,7 +459,7 @@ code_04A3FA:
   RTS                                       ; $04A3FA |
 
 code_04A3FB:
-  JSR code_1FFC53                           ; $04A3FB |
+  JSR find_enemy_freeslot_y                 ; $04A3FB |
   BCS code_04A3FA                           ; $04A3FE |
   LDA #$02                                  ; $04A400 |
   STA $04A0,y                               ; $04A402 |
@@ -539,7 +539,7 @@ code_04A49A:
   LDA $0300,x                               ; $04A49A |
   AND #$0F                                  ; $04A49D |
   BNE code_04A4B9                           ; $04A49F |
-  JSR code_1FF81B                           ; $04A4A1 |
+  JSR reset_gravity                         ; $04A4A1 |
   LDA $0300,x                               ; $04A4A4 |
   ORA #$40                                  ; $04A4A7 |
   STA $0300,x                               ; $04A4A9 |
@@ -621,7 +621,7 @@ code_04A53C:
   JSR code_1FF67C                           ; $04A53E |
   BCC code_04A55D                           ; $04A541 |
   DEC $0300,x                               ; $04A543 |
-  JSR code_1FF81B                           ; $04A546 |
+  JSR reset_gravity                         ; $04A546 |
   LDA #$4C                                  ; $04A549 |
   STA $0400,x                               ; $04A54B |
   LDA #$01                                  ; $04A54E |
@@ -643,7 +643,7 @@ code_04A55D:
   JSR reset_sprite_anim                     ; $04A571 |
   LDA $04A0,x                               ; $04A574 |
   PHA                                       ; $04A577 |
-  JSR code_1FF869                           ; $04A578 |
+  JSR face_player                           ; $04A578 |
   PLA                                       ; $04A57B |
   CMP $04A0,x                               ; $04A57C |
   BEQ code_04A589                           ; $04A57F |
@@ -685,7 +685,7 @@ code_04A5C1:
   STA $0540,x                               ; $04A5C4 |
   LDA $04A0,x                               ; $04A5C7 |
   PHA                                       ; $04A5CA |
-  JSR code_1FF869                           ; $04A5CB |
+  JSR face_player                           ; $04A5CB |
   PLA                                       ; $04A5CE |
   CMP $04A0,x                               ; $04A5CF |
   BEQ code_04A5DC                           ; $04A5D2 |
@@ -706,7 +706,7 @@ code_04A5E7:
   DEY                                       ; $04A5EC |
   CPY #$0F                                  ; $04A5ED |
   BNE code_04A5E7                           ; $04A5EF |
-  JSR code_1FFC53                           ; $04A5F1 |
+  JSR find_enemy_freeslot_y                 ; $04A5F1 |
   BCS code_04A632                           ; $04A5F4 |
   STY $00                                   ; $04A5F6 |
   LDA $04A0,x                               ; $04A5F8 |
@@ -967,7 +967,7 @@ code_04A801:
   ORA #$40                                  ; $04A804 |
   STA $0580,x                               ; $04A806 |
 code_04A809:
-  JSR code_1FF869                           ; $04A809 |
+  JSR face_player                           ; $04A809 |
   JSR code_04A84A                           ; $04A80C |
   LDA #$04                                  ; $04A80F |
   JSR reset_sprite_anim                     ; $04A811 |
@@ -997,7 +997,7 @@ code_04A81F:
   db $0A, $08, $0D, $0A                     ; $04A846 |
 
 code_04A84A:
-  JSR code_1FFC53                           ; $04A84A |
+  JSR find_enemy_freeslot_y                 ; $04A84A |
   BCS code_04A886                           ; $04A84D |
   STY $00                                   ; $04A84F |
   LDA $04A0,x                               ; $04A851 |

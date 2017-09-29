@@ -2039,7 +2039,7 @@ code_1ECFC7:
   CLC                                       ; $1ECFCA |
   ADC #$0E                                  ; $1ECFCB |
   STA $03C1                                 ; $1ECFCD |
-  JSR code_1FF81B                           ; $1ECFD0 |
+  JSR reset_gravity                         ; $1ECFD0 |
 code_1ECFD3:
   JSR code_1ED355                           ; $1ECFD3 |
   LDA $14                                   ; $1ECFD6 |
@@ -2073,7 +2073,7 @@ code_1ED007:
   LDA $16                                   ; $1ED010 |
   AND #$80                                  ; $1ED012 |
   BNE code_1ED019                           ; $1ED014 |
-  JSR code_1FF81B                           ; $1ED016 |
+  JSR reset_gravity                         ; $1ED016 |
 code_1ED019:
   LDA #$00                                  ; $1ED019 |
   STA $3A                                   ; $1ED01B |
@@ -2797,7 +2797,7 @@ code_1ED5A4:
 code_1ED5AD:
   LDA #$00                                  ; $1ED5AD |
   STA $30                                   ; $1ED5AF |
-  JMP code_1FF81B                           ; $1ED5B1 |
+  JMP reset_gravity                         ; $1ED5B1 |
 
 code_1ED5B4:
   LDA #$00                                  ; $1ED5B4 |
@@ -2852,7 +2852,7 @@ code_1ED60B:
 code_1ED60C:
   LDA #$00                                  ; $1ED60C |
   STA $30                                   ; $1ED60E |
-  JMP code_1FF81B                           ; $1ED610 |
+  JMP reset_gravity                         ; $1ED610 |
 
   LDY $34                                   ; $1ED613 |
   LDA $0300,y                               ; $1ED615 |
@@ -2946,7 +2946,7 @@ code_1ED6C5:
   JSR reset_sprite_anim                     ; $1ED6C5 |
   LDA #$00                                  ; $1ED6C8 |
   STA $32                                   ; $1ED6CA |
-  JSR code_1FF81B                           ; $1ED6CC |
+  JSR reset_gravity                         ; $1ED6CC |
   LDA #$80                                  ; $1ED6CF |
   STA $0304                                 ; $1ED6D1 |
   LDA $0580                                 ; $1ED6D4 |
@@ -3879,8 +3879,11 @@ code_1EDE5D:
   db $11, $11, $11, $11, $11, $11, $11, $11 ; $1EDEA6 |
   db $02, $02, $00, $25, $23, $27, $24, $2A ; $1EDEAE |
   db $26, $28, $29, $00, $02, $02, $02, $02 ; $1EDEB6 |
-  db $02, $02, $02, $02, $01, $02, $04, $08 ; $1EDEBE |
-  db $10, $20, $40, $80, $01, $04, $40, $80 ; $1EDEC6 |
+  db $02, $02, $02, $02                     ; $1EDEBE |
+
+  db $01, $02, $04, $08, $10, $20, $40, $80 ; $1EDEC2 |
+
+  db $01, $04, $40, $80                     ; $1EDECA |
 
 decrease_ammo:
   LDA $A0                                   ; $1EDECE |\
@@ -4171,7 +4174,7 @@ code_1FE0BC:
   LDA $0520                                 ; $1FE0C6 |
   CMP #$04                                  ; $1FE0C9 |
   BEQ code_1FE119                           ; $1FE0CB |
-  JSR code_1FFC53                           ; $1FE0CD |
+  JSR find_enemy_freeslot_y                 ; $1FE0CD |
   BCS code_1FE119                           ; $1FE0D0 |
   LDA #$80                                  ; $1FE0D2 |
   STA $0300,y                               ; $1FE0D4 |
@@ -6770,7 +6773,7 @@ code_1FF6BF:
 code_1FF6C5:
   JSR code_1FEE13                           ; $1FF6C5 |
 code_1FF6C8:
-  JSR code_1FF81B                           ; $1FF6C8 |
+  JSR reset_gravity                         ; $1FF6C8 |
   SEC                                       ; $1FF6CB |
   RTS                                       ; $1FF6CC |
 
@@ -6799,7 +6802,7 @@ code_1FF6E9:
   BEQ code_1FF6FE                           ; $1FF6F6 |
   JSR code_1FEDF9                           ; $1FF6F8 |
 code_1FF6FB:
-  JSR code_1FF81B                           ; $1FF6FB |
+  JSR reset_gravity                         ; $1FF6FB |
 code_1FF6FE:
   CLC                                       ; $1FF6FE |
   RTS                                       ; $1FF6FF |
@@ -6950,20 +6953,23 @@ code_1FF7F2:
 code_1FF81A:
   RTS                                       ; $1FF81A |
 
-code_1FF81B:
-  CPX #$00                                  ; $1FF81B |
-  BEQ code_1FF82A                           ; $1FF81D |
-  LDA #$AB                                  ; $1FF81F |
-  STA $0440,x                               ; $1FF821 |
-  LDA #$FF                                  ; $1FF824 |
-  STA $0460,x                               ; $1FF826 |
+; resets a sprite's gravity/downward Y velocity
+; parameters:
+; X: sprite slot
+reset_gravity:
+  CPX #$00                                  ; $1FF81B |\ $00 means player
+  BEQ .player                               ; $1FF81D |/
+  LDA #$AB                                  ; $1FF81F |\
+  STA $0440,x                               ; $1FF821 | | Y velocity
+  LDA #$FF                                  ; $1FF824 | | = $FFAB, or -0.332
+  STA $0460,x                               ; $1FF826 |/
   RTS                                       ; $1FF829 |
 
-code_1FF82A:
-  LDA #$C0                                  ; $1FF82A |
-  STA $0440,x                               ; $1FF82C |
-  LDA #$FF                                  ; $1FF82F |
-  STA $0460,x                               ; $1FF831 |
+.player:
+  LDA #$C0                                  ; $1FF82A |\
+  STA $0440,x                               ; $1FF82C | | player Y velocity
+  LDA #$FF                                  ; $1FF82F | | = $FFC0, or -0.25
+  STA $0460,x                               ; $1FF831 |/
   RTS                                       ; $1FF834 |
 
 ; resets sprite's animation & sets ID
@@ -6995,18 +7001,21 @@ code_1FF846:
   STA $05E0,y                               ; $1FF865 |
   RTS                                       ; $1FF868 |
 
-code_1FF869:
-  LDA #$01                                  ; $1FF869 |
-  STA $04A0,x                               ; $1FF86B |
-  LDA $0360,x                               ; $1FF86E |
-  SEC                                       ; $1FF871 |
-  SBC $0360                                 ; $1FF872 |
-  LDA $0380,x                               ; $1FF875 |
-  SBC $0380                                 ; $1FF878 |
-  BCC code_1FF882                           ; $1FF87B |
-  LDA #$02                                  ; $1FF87D |
+; faces a sprite toward the player
+; parameters:
+; X: sprite slot
+face_player:
+  LDA #$01                                  ; $1FF869 |\ start facing right
+  STA $04A0,x                               ; $1FF86B |/
+  LDA $0360,x                               ; $1FF86E |\
+  SEC                                       ; $1FF871 | | if sprite is to the left
+  SBC $0360                                 ; $1FF872 | | of player
+  LDA $0380,x                               ; $1FF875 | | (X screen priority, then
+  SBC $0380                                 ; $1FF878 | | X pixel), return
+  BCC .ret                                  ; $1FF87B |/
+  LDA #$02                                  ; $1FF87D | else set facing to left
   STA $04A0,x                               ; $1FF87F |
-code_1FF882:
+.ret:
   RTS                                       ; $1FF882 |
 
 code_1FF883:
@@ -7498,35 +7507,47 @@ code_1FFC02:
   db $17, $0F, $13, $07, $07, $0A, $07, $0B ; $1FFC33 |
   db $23, $0F, $03, $27, $03, $03, $03, $03 ; $1FFC3B |
 
-code_1FFC43:
-  LDX #$1F                                  ; $1FFC43 |
-code_1FFC45:
-  LDA $0300,x                               ; $1FFC45 |
-  BPL code_1FFC51                           ; $1FFC48 |
-  DEX                                       ; $1FFC4A |
-  CPX #$0F                                  ; $1FFC4B |
-  BNE code_1FFC45                           ; $1FFC4D |
-  SEC                                       ; $1FFC4F |
-  RTS                                       ; $1FFC50 |
+; find free sprite slot routine, return in X register
+; searches sprite state table $0300 (enemy slots)
+; for free slots (inactive)
+; returns:
+; Carry flag off = slot found, on = not found
+; X: next free slot # (if carry off)
+find_enemy_freeslot_x:
+  LDX #$1F                                  ; $1FFC43 | start looping from slot $1F
+.loop:
+  LDA $0300,x                               ; $1FFC45 |\ check sprite state sign bit
+  BPL .ret_found                            ; $1FFC48 |/ off means inactive, return
+  DEX                                       ; $1FFC4A |\  next slot (down)
+  CPX #$0F                                  ; $1FFC4B | | $00-$0F slots not for enemies
+  BNE .loop                                 ; $1FFC4D |/  so stop there
+  SEC                                       ; $1FFC4F |\ return C=1
+  RTS                                       ; $1FFC50 |/ for no slots found
 
-code_1FFC51:
-  CLC                                       ; $1FFC51 |
-  RTS                                       ; $1FFC52 |
+.ret_found:
+  CLC                                       ; $1FFC51 |\ return C=0 slot found
+  RTS                                       ; $1FFC52 |/
 
-code_1FFC53:
-  LDY #$1F                                  ; $1FFC53 |
-code_1FFC55:
-  LDA $0300,y                               ; $1FFC55 |
-  BPL code_1FFC61                           ; $1FFC58 |
-  DEY                                       ; $1FFC5A |
-  CPY #$0F                                  ; $1FFC5B |
-  BNE code_1FFC55                           ; $1FFC5D |
-  SEC                                       ; $1FFC5F |
-  RTS                                       ; $1FFC60 |
+; find free sprite slot routine, return in Y register
+; searches sprite state table $0300 (enemy slots)
+; for free slots (inactive)
+; returns:
+; Carry flag off = slot found, on = not found
+; Y: next free slot # (if carry off)
+find_enemy_freeslot_y:
+  LDY #$1F                                  ; $1FFC53 | start looping from slot $1F
+.loop:
+  LDA $0300,y                               ; $1FFC55 |\ check sprite state sign bit
+  BPL .ret_found                            ; $1FFC58 |/ off means inactive, return
+  DEY                                       ; $1FFC5A |\  next slot (down)
+  CPY #$0F                                  ; $1FFC5B | | $00-$0F slots not for enemies
+  BNE .loop                                 ; $1FFC5D |/  so stop there
+  SEC                                       ; $1FFC5F |\ return C=1
+  RTS                                       ; $1FFC60 |/ for no slots found
 
-code_1FFC61:
-  CLC                                       ; $1FFC61 |
-  RTS                                       ; $1FFC62 |
+.ret_found:
+  CLC                                       ; $1FFC61 |\ return C=0 slot found
+  RTS                                       ; $1FFC62 |/
 
 code_1FFC63:
   JSR code_1FF8C2                           ; $1FFC63 |

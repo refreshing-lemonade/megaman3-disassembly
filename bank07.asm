@@ -48,7 +48,7 @@ code_07A019:
 
   LDA $04A0,x                               ; $07A052 |
   PHA                                       ; $07A055 |
-  JSR code_1FF869                           ; $07A056 |
+  JSR face_player                           ; $07A056 |
   PLA                                       ; $07A059 |
   CMP $04A0,x                               ; $07A05A |
   BEQ code_07A067                           ; $07A05D |
@@ -279,7 +279,7 @@ code_07A20C:
   db $02, $02, $01, $01, $00                ; $07A229 |
 
 code_07A22E:
-  JSR code_1FFC53                           ; $07A22E |
+  JSR find_enemy_freeslot_y                 ; $07A22E |
   BCS code_07A272                           ; $07A231 |
   STY $00                                   ; $07A233 |
   LDA $04A0,x                               ; $07A235 |
@@ -439,7 +439,7 @@ code_07A355:
 code_07A35D:
   LDA $04A0,x                               ; $07A35D |
   PHA                                       ; $07A360 |
-  JSR code_1FF869                           ; $07A361 |
+  JSR face_player                           ; $07A361 |
   JSR code_1FF883                           ; $07A364 |
   PLA                                       ; $07A367 |
   STA $04A0,x                               ; $07A368 |
@@ -545,7 +545,7 @@ code_07A42D:
   LDA #$07                                  ; $07A42F |
   STA $01                                   ; $07A431 |
 code_07A433:
-  JSR code_1FFC53                           ; $07A433 |
+  JSR find_enemy_freeslot_y                 ; $07A433 |
   BCS code_07A482                           ; $07A436 |
   LDX $01                                   ; $07A438 |
   LDA $A4F3,x                               ; $07A43A |
@@ -581,7 +581,7 @@ code_07A482:
 
 code_07A485:
   STX $0E                                   ; $07A485 |
-  JSR code_1FFC53                           ; $07A487 |
+  JSR find_enemy_freeslot_y                 ; $07A487 |
   BCS code_07A4DC                           ; $07A48A |
   LDA $03C0,x                               ; $07A48C |
   CLC                                       ; $07A48F |
@@ -788,7 +788,7 @@ code_07A633:
   LDA #$14                                  ; $07A63E |
   STA $0520,x                               ; $07A640 |
   STX $00                                   ; $07A643 |
-  JSR code_1FFC53                           ; $07A645 |
+  JSR find_enemy_freeslot_y                 ; $07A645 |
   BCS code_07A6A1                           ; $07A648 |
   LDA #$52                                  ; $07A64A |
   JSR code_1FF846                           ; $07A64C |
@@ -810,7 +810,7 @@ code_07A633:
   STA $0360,y                               ; $07A675 |
   LDA $04A0,x                               ; $07A678 |
   PHA                                       ; $07A67B |
-  JSR code_1FF869                           ; $07A67C |
+  JSR face_player                           ; $07A67C |
   LDA $04A0,x                               ; $07A67F |
   STA $04A0,y                               ; $07A682 |
   AND #$02                                  ; $07A685 |
@@ -934,7 +934,7 @@ code_07A774:
   LDA #$01                                  ; $07A779 |
   STA $0420,x                               ; $07A77B |
   INC $0300,x                               ; $07A77E |
-  JSR code_1FF869                           ; $07A781 |
+  JSR face_player                           ; $07A781 |
   JSR code_1FF883                           ; $07A784 |
 code_07A787:
   LDA $E6                                   ; $07A787 |
@@ -949,7 +949,7 @@ code_07A795:
   LDA $14                                   ; $07A795 |
   AND #$40                                  ; $07A797 |
   BEQ code_07A7A6                           ; $07A799 |
-  JSR code_1FF869                           ; $07A79B |
+  JSR face_player                           ; $07A79B |
   JSR code_1FF883                           ; $07A79E |
   LDA #$34                                  ; $07A7A1 |
   JMP reset_sprite_anim                     ; $07A7A3 |
@@ -1010,7 +1010,7 @@ code_07A800:
   BNE code_07A81C                           ; $07A80A |
   LDA $0310                                 ; $07A80C |
   BMI code_07A81F                           ; $07A80F |
-  JSR code_1FF869                           ; $07A811 |
+  JSR face_player                           ; $07A811 |
   JSR code_1FF883                           ; $07A814 |
   LDA #$34                                  ; $07A817 |
   JMP reset_sprite_anim                     ; $07A819 |
@@ -1058,7 +1058,7 @@ code_07A863:
   LDA $05A0,x                               ; $07A86A |
   CMP #$02                                  ; $07A86D |
   BNE code_07A87F                           ; $07A86F |
-  JSR code_1FF869                           ; $07A871 |
+  JSR face_player                           ; $07A871 |
   JSR code_1FF883                           ; $07A874 |
   JSR code_07A787                           ; $07A877 |
   LDA #$35                                  ; $07A87A |
@@ -1069,7 +1069,7 @@ code_07A87F:
 
 code_07A880:
   STX $00                                   ; $07A880 |
-  JSR code_1FFC53                           ; $07A882 |
+  JSR find_enemy_freeslot_y                 ; $07A882 |
   BCS code_07A8D0                           ; $07A885 |
   TYA                                       ; $07A887 |
   STA $0520,x                               ; $07A888 |
@@ -1105,7 +1105,7 @@ code_07A8D0:
 
 code_07A8D3:
   STX $00                                   ; $07A8D3 |
-  JSR code_1FFC53                           ; $07A8D5 |
+  JSR find_enemy_freeslot_y                 ; $07A8D5 |
   BCS code_07A927                           ; $07A8D8 |
   LDA #$40                                  ; $07A8DA |
   STA $0320,y                               ; $07A8DC |

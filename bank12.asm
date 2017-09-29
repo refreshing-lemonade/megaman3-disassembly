@@ -104,7 +104,7 @@ code_12A0A1:
   RTS                                       ; $12A0A1 |
 
 code_12A0A2:
-  JSR code_1FFC53                           ; $12A0A2 |
+  JSR find_enemy_freeslot_y                 ; $12A0A2 |
   STX $00                                   ; $12A0A5 |
   LDA $0520,x                               ; $12A0A7 |
   STA $0500,y                               ; $12A0AA |
@@ -202,7 +202,7 @@ code_12A13D:
   LDA $05A0,x                               ; $12A176 |
   CMP #$02                                  ; $12A179 |
   BNE code_12A1F5                           ; $12A17B |
-  JSR code_1FFC53                           ; $12A17D |
+  JSR find_enemy_freeslot_y                 ; $12A17D |
   BCS code_12A1F5                           ; $12A180 |
   LDA #$58                                  ; $12A182 |
   JSR code_1FF846                           ; $12A184 |
@@ -348,7 +348,7 @@ code_12A2A7:
   STA $03                                   ; $12A2C0 |
   STY $04                                   ; $12A2C2 |
 code_12A2C4:
-  JSR code_1FFC53                           ; $12A2C4 |
+  JSR find_enemy_freeslot_y                 ; $12A2C4 |
   BCS code_12A324                           ; $12A2C7 |
   LDA #$71                                  ; $12A2C9 |
   STA $05C0,y                               ; $12A2CB |
@@ -657,7 +657,7 @@ code_12A551:
   AND #$0F                                  ; $12A554 |
   CMP #$08                                  ; $12A556 |
   BNE code_12A598                           ; $12A558 |
-  JSR code_1FFC53                           ; $12A55A |
+  JSR find_enemy_freeslot_y                 ; $12A55A |
   BCS code_12A597                           ; $12A55D |
   LDA $0560,x                               ; $12A55F |
   STA $0500,y                               ; $12A562 |
@@ -1050,7 +1050,7 @@ code_12AA0A:
   JSR code_1FF8C2                           ; $12AA1B |
   CMP #$48                                  ; $12AA1E |
   BCC code_12AA7E                           ; $12AA20 |
-  JSR code_1FFC53                           ; $12AA22 |
+  JSR find_enemy_freeslot_y                 ; $12AA22 |
   BCS code_12AA7E                           ; $12AA25 |
   LDA #$B4                                  ; $12AA27 |
   STA $0540,x                               ; $12AA29 |
@@ -1130,7 +1130,7 @@ code_12AA91:
   LDY $0F                                   ; $12AACA |
   STA $0360,y                               ; $12AACC |
   LDX $0F                                   ; $12AACF |
-  JSR code_1FF869                           ; $12AAD1 |
+  JSR face_player                           ; $12AAD1 |
   JSR code_1FF8C2                           ; $12AAD4 |
   STA $01                                   ; $12AAD7 |
   LDA #$00                                  ; $12AAD9 |
@@ -1320,7 +1320,7 @@ code_12AC4F:
   LDA $03C0,x                               ; $12AC58 |
   STA $03                                   ; $12AC5B |
 code_12AC5D:
-  JSR code_1FFC53                           ; $12AC5D |
+  JSR find_enemy_freeslot_y                 ; $12AC5D |
   BCS code_12AC96                           ; $12AC60 |
   LDA #$59                                  ; $12AC62 |
   JSR code_1FF846                           ; $12AC64 |
@@ -1543,7 +1543,7 @@ code_12AE95:
   JSR code_1FF8C2                           ; $12AE9A |
   CMP #$50                                  ; $12AE9D |
   BCS code_12AEAF                           ; $12AE9F |
-  JSR code_1FF869                           ; $12AEA1 |
+  JSR face_player                           ; $12AEA1 |
   JSR code_12AFD2                           ; $12AEA4 |
   LDA #$1F                                  ; $12AEA7 |
   STA $0500,x                               ; $12AEA9 |
@@ -1640,7 +1640,7 @@ code_12AEF7:
   JMP reset_sprite_anim                     ; $12AF73 |
 
 code_12AF76:
-  JSR code_1FFC53                           ; $12AF76 |
+  JSR find_enemy_freeslot_y                 ; $12AF76 |
   BCS code_12AFCD                           ; $12AF79 |
   STY $00                                   ; $12AF7B |
   LDA $04A0,x                               ; $12AF7D |
@@ -1682,7 +1682,7 @@ code_12AFCD:
   db $0F, $00, $F1, $FF                     ; $12AFCE |
 
 code_12AFD2:
-  JSR code_1FFC53                           ; $12AFD2 |
+  JSR find_enemy_freeslot_y                 ; $12AFD2 |
   BCS code_12B02E                           ; $12AFD5 |
   LDA #$00                                  ; $12AFD7 |
   STA $0440,y                               ; $12AFD9 |
@@ -1729,7 +1729,7 @@ code_12B02E:
 code_12B03B:
   LDA $0500,x                               ; $12B03B |
   BNE code_12B08E                           ; $12B03E |
-  JSR code_1FFC53                           ; $12B040 |
+  JSR find_enemy_freeslot_y                 ; $12B040 |
   BCS code_12B091                           ; $12B043 |
   LDA #$77                                  ; $12B045 |
   JSR code_1FF846                           ; $12B047 |
@@ -2030,7 +2030,7 @@ code_12B2AB:
   LDA #$03                                  ; $12B2AB |
   STA $00                                   ; $12B2AD |
 code_12B2AF:
-  JSR code_1FFC53                           ; $12B2AF |
+  JSR find_enemy_freeslot_y                 ; $12B2AF |
   BCS code_12B28F                           ; $12B2B2 |
   LDA #$78                                  ; $12B2B4 |
   JSR code_1FF846                           ; $12B2B6 |
@@ -2088,7 +2088,7 @@ code_12B307:
 code_12B32B:
   INC $0520,x                               ; $12B32B |
   BNE code_12B379                           ; $12B32E |
-  JSR code_1FFC53                           ; $12B330 |
+  JSR find_enemy_freeslot_y                 ; $12B330 |
   BCS code_12B379                           ; $12B333 |
   LDA #$7D                                  ; $12B335 |
   JSR code_1FF846                           ; $12B337 |
@@ -2262,7 +2262,7 @@ code_12B474:
   LDA $03C0,x                               ; $12B499 |
   STA $03                                   ; $12B49C |
 code_12B49E:
-  JSR code_1FFC53                           ; $12B49E |
+  JSR find_enemy_freeslot_y                 ; $12B49E |
   BCS code_12B4E4                           ; $12B4A1 |
   LDA #$71                                  ; $12B4A3 |
   JSR code_1FF846                           ; $12B4A5 |
@@ -2393,7 +2393,7 @@ code_12B5A1:
   LDA #$02                                  ; $12B5A1 |
   STA $01                                   ; $12B5A3 |
 code_12B5A5:
-  JSR code_1FFC53                           ; $12B5A5 |
+  JSR find_enemy_freeslot_y                 ; $12B5A5 |
   BCS code_12B5FA                           ; $12B5A8 |
   LDA #$6F                                  ; $12B5AA |
   JSR code_1FF846                           ; $12B5AC |
@@ -2430,7 +2430,7 @@ code_12B5FA:
   RTS                                       ; $12B5FA |
 
 code_12B5FB:
-  JSR code_1FFC53                           ; $12B5FB |
+  JSR find_enemy_freeslot_y                 ; $12B5FB |
   BCS code_12B5FA                           ; $12B5FE |
   LDA #$1D                                  ; $12B600 |
   JSR code_1FF846                           ; $12B602 |
@@ -2591,7 +2591,7 @@ code_12B732:
   db $01, $02, $03, $05, $08, $0A           ; $12B750 |
 
 code_12B756:
-  JSR code_1FFC53                           ; $12B756 |
+  JSR find_enemy_freeslot_y                 ; $12B756 |
   BCS code_12B7C5                           ; $12B759 |
   STY $00                                   ; $12B75B |
   LDA $0360,x                               ; $12B75D |
@@ -2878,7 +2878,7 @@ code_12B9AF:
   RTS                                       ; $12B9B4 |
 
 code_12B9B5:
-  JSR code_1FFC53                           ; $12B9B5 |
+  JSR find_enemy_freeslot_y                 ; $12B9B5 |
   BCS code_12B9E7                           ; $12B9B8 |
   STY $00                                   ; $12B9BA |
   LDA $0360,x                               ; $12B9BC |
@@ -2903,7 +2903,7 @@ code_12B9E7:
   db $00, $00, $00, $00                     ; $12B9E8 |
 
 code_12B9EC:
-  JSR code_1FFC53                           ; $12B9EC |
+  JSR find_enemy_freeslot_y                 ; $12B9EC |
   BCS code_12BA2E                           ; $12B9EF |
   STY $00                                   ; $12B9F1 |
   LDA $04A0,x                               ; $12B9F3 |
@@ -3100,7 +3100,7 @@ code_12BB53:
   db $B8, $A8, $98, $88                     ; $12BB8D |
 
 code_12BB91:
-  JSR code_1FFC53                           ; $12BB91 |
+  JSR find_enemy_freeslot_y                 ; $12BB91 |
   BCS code_12BC07                           ; $12BB94 |
   STY $00                                   ; $12BB96 |
   LDA $0380,x                               ; $12BB98 |
@@ -3396,7 +3396,7 @@ code_12BDB2:
   db $1E, $3C, $1E, $3C                     ; $12BDDE |
 
 code_12BDE2:
-  JSR code_1FFC53                           ; $12BDE2 |
+  JSR find_enemy_freeslot_y                 ; $12BDE2 |
   BCS code_12BE4B                           ; $12BDE5 |
   STY $00                                   ; $12BDE7 |
   LDA $0380,x                               ; $12BDE9 |
@@ -3478,7 +3478,7 @@ code_12BE9A:
   db $00, $02, $04, $06, $08, $0A, $0C, $0E ; $12BEB0 |
 
 code_12BEB8:
-  JSR code_1FFC53                           ; $12BEB8 |
+  JSR find_enemy_freeslot_y                 ; $12BEB8 |
   BCS code_12BF14                           ; $12BEBB |
   STY $00                                   ; $12BEBD |
   LDA $04A0,x                               ; $12BEBF |

@@ -983,79 +983,84 @@ check_new_enemies:
 .ret:
   RTS                                       ; $1A9C7F |
 
+; spawn enemy routine
+; parameters:
+; Y: stage wide enemy ID
 spawn_enemy:
-  TYA                                       ; $1A9C80 |
-  LDX #$1F                                  ; $1A9C81 |
-code_1A9C83:
-  CMP $04C0,x                               ; $1A9C83 |
-  BEQ check_new_enemies.ret                 ; $1A9C86 |
-  DEX                                       ; $1A9C88 |
-  CPX #$0F                                  ; $1A9C89 |
-  BNE code_1A9C83                           ; $1A9C8B |
-  JSR code_1FFC43                           ; $1A9C8D |
-  BCS check_new_enemies.ret                 ; $1A9C90 |
-  TYA                                       ; $1A9C92 |
-  STA $04C0,x                               ; $1A9C93 |
-  PHA                                       ; $1A9C96 |
-  AND #$07                                  ; $1A9C97 |
-  TAY                                       ; $1A9C99 |
-  LDA $DEC2,y                               ; $1A9C9A |
-  STA $04                                   ; $1A9C9D |
-  PLA                                       ; $1A9C9F |
-  LSR                                       ; $1A9CA0 |
-  LSR                                       ; $1A9CA1 |
-  LSR                                       ; $1A9CA2 |
-  TAY                                       ; $1A9CA3 |
-  LDA $0150,y                               ; $1A9CA4 |
-  AND $04                                   ; $1A9CA7 |
-  BNE check_new_enemies.ret                 ; $1A9CA9 |
-  LDY $04C0,x                               ; $1A9CAB |
-  LDA $AB00,y                               ; $1A9CAE |
-  STA $0380,x                               ; $1A9CB1 |
-  LDA $AC00,y                               ; $1A9CB4 |
-  STA $0360,x                               ; $1A9CB7 |
-  LDA $AD00,y                               ; $1A9CBA |
-  STA $03C0,x                               ; $1A9CBD |
-  LDA $AE00,y                               ; $1A9CC0 |
-  PHA                                       ; $1A9CC3 |
-  STX $05                                   ; $1A9CC4 |
-  LDA #$00                                  ; $1A9CC6 |
-  STA $F5                                   ; $1A9CC8 |
-  JSR select_PRG_banks                      ; $1A9CCA |
-  LDX $05                                   ; $1A9CCD |
-  PLA                                       ; $1A9CCF |
-  TAY                                       ; $1A9CD0 |
-  LDA #$80                                  ; $1A9CD1 |
-  STA $0300,x                               ; $1A9CD3 |
-  LDA $A000,y                               ; $1A9CD6 |
-  STA $0580,x                               ; $1A9CD9 |
-  LDA $A100,y                               ; $1A9CDC |
-  STA $0320,x                               ; $1A9CDF |
-  LDA $A200,y                               ; $1A9CE2 |
-  STA $0480,x                               ; $1A9CE5 |
-  LDA $A300,y                               ; $1A9CE8 |
-  JSR reset_sprite_anim                     ; $1A9CEB |
-  JSR code_1FF869                           ; $1A9CEE |
-  LDA $A400,y                               ; $1A9CF1 |
-  STA $04E0,x                               ; $1A9CF4 |
-  LDA $A500,y                               ; $1A9CF7 |
-  TAY                                       ; $1A9CFA |
-  LDA $A600,y                               ; $1A9CFB |
-  STA $0400,x                               ; $1A9CFE |
-  LDA $A700,y                               ; $1A9D01 |
-  STA $0420,x                               ; $1A9D04 |
-  JSR code_1FF81B                           ; $1A9D07 |
-  LDA #$00                                  ; $1A9D0A |
-  STA $03E0,x                               ; $1A9D0C |
-  STA $0340,x                               ; $1A9D0F |
-  STA $03A0,x                               ; $1A9D12 |
-  STA $0500,x                               ; $1A9D15 |
-  STA $0520,x                               ; $1A9D18 |
-  STA $0540,x                               ; $1A9D1B |
-  STA $0560,x                               ; $1A9D1E |
-  LDA $22                                   ; $1A9D21 |
-  STA $F5                                   ; $1A9D23 |
-  JMP select_PRG_banks                      ; $1A9D25 |
+  TYA                                       ; $1A9C80 |\ first, loop through all sprites
+  LDX #$1F                                  ; $1A9C81 |/ besides reserved 00-0F
+.sprite_loop:
+  CMP $04C0,x                               ; $1A9C83 |\ if this ID is already here
+  BEQ check_new_enemies.ret                 ; $1A9C86 |/ don't spawn
+  DEX                                       ; $1A9C88 |\
+  CPX #$0F                                  ; $1A9C89 | | stop at $0F
+  BNE .sprite_loop                          ; $1A9C8B |/  indicating $00-$0F are "reserved"
+; ID not found, find a free slot
+  JSR find_enemy_freeslot_x                 ; $1A9C8D |\ find a slot, if none found
+  BCS check_new_enemies.ret                 ; $1A9C90 |/ don't spawn
+  TYA                                       ; $1A9C92 |\ store new stage ID
+  STA $04C0,x                               ; $1A9C93 |/
+  PHA                                       ; $1A9C96 |\
+  AND #$07                                  ; $1A9C97 | | stage ID & #$07
+  TAY                                       ; $1A9C99 | | index into ??? bitmask
+  LDA $DEC2,y                               ; $1A9C9A | | -> $04
+  STA $04                                   ; $1A9C9D |/
+  PLA                                       ; $1A9C9F |\
+  LSR                                       ; $1A9CA0 | | stage ID >> 3
+  LSR                                       ; $1A9CA1 | | index into ???
+  LSR                                       ; $1A9CA2 | | & $04 (bitmask)
+  TAY                                       ; $1A9CA3 | |
+  LDA $0150,y                               ; $1A9CA4 | | if this bit is on, don't spawn
+  AND $04                                   ; $1A9CA7 | |
+  BNE check_new_enemies.ret                 ; $1A9CA9 |/
+; finally, actually spawn
+  LDY $04C0,x                               ; $1A9CAB | load stage ID for data
+  LDA $AB00,y                               ; $1A9CAE |\ screen #
+  STA $0380,x                               ; $1A9CB1 |/
+  LDA $AC00,y                               ; $1A9CB4 |\ X position
+  STA $0360,x                               ; $1A9CB7 |/
+  LDA $AD00,y                               ; $1A9CBA |\ Y position
+  STA $03C0,x                               ; $1A9CBD |/
+  LDA $AE00,y                               ; $1A9CC0 |\ global enemy ID
+  PHA                                       ; $1A9CC3 |/
+  STX $05                                   ; $1A9CC4 | preserve X
+  LDA #$00                                  ; $1A9CC6 |\  switch to bank $00
+  STA $F5                                   ; $1A9CC8 | | for $A000-$BFFF
+  JSR select_PRG_banks                      ; $1A9CCA |/  global enemy data
+  LDX $05                                   ; $1A9CCD | restore X
+  PLA                                       ; $1A9CCF |\ Y = global enemy ID
+  TAY                                       ; $1A9CD0 |/ for initial data
+  LDA #$80                                  ; $1A9CD1 |\ active state
+  STA $0300,x                               ; $1A9CD3 |/
+  LDA enemy_flags_g,y                       ; $1A9CD6 |\ sprite flags
+  STA $0580,x                               ; $1A9CD9 |/
+  LDA enemy_main_index_g,y                  ; $1A9CDC |\ main routine pointer
+  STA $0320,x                               ; $1A9CDF |/
+  LDA enemy_shape_g,y                       ; $1A9CE2 |\ shape properties
+  STA $0480,x                               ; $1A9CE5 |/
+  LDA enemy_sprite_ID_g,y                   ; $1A9CE8 |\ sprite ID & init anim
+  JSR reset_sprite_anim                     ; $1A9CEB |/
+  JSR face_player                           ; $1A9CEE | facing
+  LDA enemy_health_g,y                      ; $1A9CF1 |\ health
+  STA $04E0,x                               ; $1A9CF4 |/
+  LDA enemy_speed_ID_g,y                    ; $1A9CF7 |\ Y = speed ID
+  TAY                                       ; $1A9CFA |/
+  LDA enemy_x_velocity_sub_g,y              ; $1A9CFB |\ X velocity subpixel
+  STA $0400,x                               ; $1A9CFE |/
+  LDA enemy_x_velocity_g,y                  ; $1A9D01 |\ X velocity pixel
+  STA $0420,x                               ; $1A9D04 |/
+  JSR reset_gravity                         ; $1A9D07 | Y velocity
+  LDA #$00                                  ; $1A9D0A |\
+  STA $03E0,x                               ; $1A9D0C | | clear Y screen,
+  STA $0340,x                               ; $1A9D0F | | X subpixel,
+  STA $03A0,x                               ; $1A9D12 | | Y subpixel,
+  STA $0500,x                               ; $1A9D15 | |
+  STA $0520,x                               ; $1A9D18 | | and all 4 wildcards
+  STA $0540,x                               ; $1A9D1B | |
+  STA $0560,x                               ; $1A9D1E |/
+  LDA $22                                   ; $1A9D21 |\
+  STA $F5                                   ; $1A9D23 | | switch $A000-$BFFF bank
+  JMP select_PRG_banks                      ; $1A9D25 |/  back to stage's bank, return
 
   db $00, $00, $00, $04, $00, $00, $00, $00 ; $1A9D28 |
   db $00, $01, $00, $00, $80, $00, $00, $00 ; $1A9D30 |
