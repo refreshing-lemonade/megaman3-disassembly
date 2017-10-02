@@ -1,32 +1,39 @@
 bank $12
 org $A000
 
+main_yellow_devil:
   JMP code_12A058                           ; $12A000 |
 
   JMP code_12A364                           ; $12A003 |
 
   JMP code_12A424                           ; $12A006 |
 
+main_wily_machine_A:
   JMP code_12A7BA                           ; $12A009 |
 
   JMP code_12AC97                           ; $12A00C |
 
+main_wily_machine_B:
   JMP code_12ABD6                           ; $12A00F |
 
   JMP code_12AD25                           ; $12A012 |
 
+main_gamma_B:
   JMP code_12ADE0                           ; $12A015 |
 
   JMP code_12AE95                           ; $12A018 |
 
   JMP code_12B03B                           ; $12A01B |
 
+main_gamma_F:
   JMP code_12B17B                           ; $12A01E |
 
+main_teleporter:
   JMP code_12B1DE                           ; $12A021 |
 
   JMP code_12B210                           ; $12A024 |
 
+main_wily_machine_C:
   NOP                                       ; $12A027 |
   NOP                                       ; $12A028 |
   RTS                                       ; $12A029 |
@@ -35,16 +42,19 @@ org $A000
 
   JMP code_12B27A                           ; $12A02D |
 
+main_kamegoro_maker:
   JMP code_12B664                           ; $12A030 |
 
   JMP code_12B7D8                           ; $12A033 |
 
   JMP code_12BA2F                           ; $12A036 |
 
+main_kamegoro_current:
   JMP code_12BADB                           ; $12A039 |
 
   JMP code_12BC0A                           ; $12A03C |
 
+main_holograph:
   JMP code_12BC7D                           ; $12A03F |
 
   JMP code_12A057                           ; $12A042 |
@@ -59,6 +69,7 @@ org $A000
 
   JMP code_12B3A7                           ; $12A051 |
 
+main_giant_met:
   JMP code_12B474                           ; $12A054 |
 
 code_12A057:

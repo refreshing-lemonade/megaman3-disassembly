@@ -1432,11 +1432,11 @@ code_1ECAF2:
 code_1ECAFB:
   LDA $0360                                 ; $1ECAFB |
   STA $27                                   ; $1ECAFE |
-  LDX #$1C                                  ; $1ECB00 |
-  STX $F4                                   ; $1ECB02 |
-  INX                                       ; $1ECB04 |
-  STX $F5                                   ; $1ECB05 |
-  JSR select_PRG_banks                      ; $1ECB07 |
+  LDX #$1C                                  ; $1ECB00 |\
+  STX $F4                                   ; $1ECB02 | | select banks 1C & 1D
+  INX                                       ; $1ECB04 | | for $8000~$BFFF
+  STX $F5                                   ; $1ECB05 | | (sprite code banks)
+  JSR select_PRG_banks                      ; $1ECB07 |/
   JSR $8000                                 ; $1ECB0A |
   LDA #$1A                                  ; $1ECB0D |
   STA $F4                                   ; $1ECB0F |
