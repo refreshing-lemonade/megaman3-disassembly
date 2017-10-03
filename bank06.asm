@@ -1,12 +1,16 @@
 bank $06
 org $A000
 
+main_needle_man:
   JMP code_06A01C                           ; $06A000 |
 
+main_magnet_man:
   JMP code_06A24E                           ; $06A003 |
 
+main_top_man:
   JMP code_06A4B3                           ; $06A006 |
 
+main_shadow_man:
   JMP code_06A698                           ; $06A009 |
 
   JMP code_06A472                           ; $06A00C |

@@ -578,14 +578,14 @@ sprite_main_ptr_lo:
   db $C8                                    ; $1C841C |
   db $60                                    ; $1C841D |
   db $C8                                    ; $1C841E |
-  db main_robot_master                      ; $1C841F |
-  db main_robot_master                      ; $1C8420 |
-  db main_robot_master                      ; $1C8421 |
-  db main_robot_master                      ; $1C8422 |
-  db main_robot_master                      ; $1C8423 |
-  db main_robot_master                      ; $1C8424 |
-  db main_robot_master                      ; $1C8425 |
-  db main_robot_master                      ; $1C8426 |
+  db init_robot_master                      ; $1C841F |
+  db init_robot_master                      ; $1C8420 |
+  db init_robot_master                      ; $1C8421 |
+  db init_robot_master                      ; $1C8422 |
+  db init_robot_master                      ; $1C8423 |
+  db init_robot_master                      ; $1C8424 |
+  db init_robot_master                      ; $1C8425 |
+  db init_robot_master                      ; $1C8426 |
   db $C8                                    ; $1C8427 |
   db $C9                                    ; $1C8428 |
   db $93                                    ; $1C8429 |
@@ -682,10 +682,10 @@ sprite_main_ptr_lo:
   db $27                                    ; $1C8484 |
   db $2A                                    ; $1C8485 |
   db $2D                                    ; $1C8486 |
-  db $00                                    ; $1C8487 |
-  db $03                                    ; $1C8488 |
-  db $06                                    ; $1C8489 |
-  db $09                                    ; $1C848A |
+  db main_needle_man                        ; $1C8487 |
+  db main_magnet_man                        ; $1C8488 |
+  db main_top_man                           ; $1C8489 |
+  db main_shadow_man                        ; $1C848A |
   db $0C                                    ; $1C848B |
   db $0F                                    ; $1C848C |
   db $12                                    ; $1C848D |
@@ -698,13 +698,13 @@ sprite_main_ptr_lo:
   db $27                                    ; $1C8494 |
   db $2A                                    ; $1C8495 |
   db $2D                                    ; $1C8496 |
-  db $00                                    ; $1C8497 |
+  db main_hard_man                          ; $1C8497 |
   db $03                                    ; $1C8498 |
-  db $06                                    ; $1C8499 |
+  db main_spark_man                         ; $1C8499 |
   db $09                                    ; $1C849A |
-  db $0C                                    ; $1C849B |
+  db main_snake_man                         ; $1C849B |
   db $0F                                    ; $1C849C |
-  db $12                                    ; $1C849D |
+  db main_gemini_man                        ; $1C849D |
   db $15                                    ; $1C849E |
   db $18                                    ; $1C849F |
   db $1B                                    ; $1C84A0 |
@@ -837,14 +837,14 @@ sprite_main_ptr_hi:
   db $85                                    ; $1C851C |
   db $A9                                    ; $1C851D |
   db $85                                    ; $1C851E |
-  db main_robot_master>>8                   ; $1C851F |
-  db main_robot_master>>8                   ; $1C8520 |
-  db main_robot_master>>8                   ; $1C8521 |
-  db main_robot_master>>8                   ; $1C8522 |
-  db main_robot_master>>8                   ; $1C8523 |
-  db main_robot_master>>8                   ; $1C8524 |
-  db main_robot_master>>8                   ; $1C8525 |
-  db main_robot_master>>8                   ; $1C8526 |
+  db init_robot_master>>8                   ; $1C851F |
+  db init_robot_master>>8                   ; $1C8520 |
+  db init_robot_master>>8                   ; $1C8521 |
+  db init_robot_master>>8                   ; $1C8522 |
+  db init_robot_master>>8                   ; $1C8523 |
+  db init_robot_master>>8                   ; $1C8524 |
+  db init_robot_master>>8                   ; $1C8525 |
+  db init_robot_master>>8                   ; $1C8526 |
   db $85                                    ; $1C8527 |
   db $B7                                    ; $1C8528 |
   db $95                                    ; $1C8529 |
@@ -941,10 +941,10 @@ sprite_main_ptr_hi:
   db $A0                                    ; $1C8584 |
   db $A0                                    ; $1C8585 |
   db $A0                                    ; $1C8586 |
-  db $A0                                    ; $1C8587 |
-  db $A0                                    ; $1C8588 |
-  db $A0                                    ; $1C8589 |
-  db $A0                                    ; $1C858A |
+  db main_needle_man>>8                     ; $1C8587 |
+  db main_magnet_man>>8                     ; $1C8588 |
+  db main_top_man>>8                        ; $1C8589 |
+  db main_shadow_man>>8                     ; $1C858A |
   db $A0                                    ; $1C858B |
   db $A0                                    ; $1C858C |
   db $A0                                    ; $1C858D |
@@ -957,13 +957,13 @@ sprite_main_ptr_hi:
   db $A0                                    ; $1C8594 |
   db $A0                                    ; $1C8595 |
   db $A0                                    ; $1C8596 |
-  db $A0                                    ; $1C8597 |
+  db main_hard_man>>8                       ; $1C8597 |
   db $A0                                    ; $1C8598 |
-  db $A0                                    ; $1C8599 |
+  db main_spark_man>>8                      ; $1C8599 |
   db $A0                                    ; $1C859A |
-  db $A0                                    ; $1C859B |
+  db main_snake_man>>8                      ; $1C859B |
   db $A0                                    ; $1C859C |
-  db $A0                                    ; $1C859D |
+  db main_gemini_man>>8                     ; $1C859D |
   db $A0                                    ; $1C859E |
   db $A0                                    ; $1C859F |
   db $A0                                    ; $1C85A0 |
@@ -7198,8 +7198,8 @@ code_1DB7DF:
   db $00, $00, $00, $B3, $4C, $00, $80, $00 ; $1DB843 |
   db $01, $00, $00, $01, $01, $00, $02, $04 ; $1DB84B |
 
-; entry point for all 8
-main_robot_master:
+; same intro for all 8
+init_robot_master:
   LDA $0300,x                               ; $1DB853 |
   AND #$0F                                  ; $1DB856 |
   BNE code_1DB860                           ; $1DB858 |
@@ -7235,11 +7235,11 @@ code_1DB86D:
   STA $0300,x                               ; $1DB897 |
   LDA #$1C                                  ; $1DB89A |
   STA $04E0,x                               ; $1DB89C |
-  LDA $0320,x                               ; $1DB89F |
-  AND #$07                                  ; $1DB8A2 |
-  TAY                                       ; $1DB8A4 |
-  LDA $B8C7,y                               ; $1DB8A5 |
-  STA $0320,x                               ; $1DB8A8 |
+  LDA $0320,x                               ; $1DB89F |\
+  AND #$07                                  ; $1DB8A2 | | fetch robot master's
+  TAY                                       ; $1DB8A4 | | main routine index
+  LDA robot_master_main_indices,y           ; $1DB8A5 | | morph this sprite into it
+  STA $0320,x                               ; $1DB8A8 |/
   LDA $B8CF,y                               ; $1DB8AB |
   STA $0400,x                               ; $1DB8AE |
   LDA $B8D7,y                               ; $1DB8B1 |
@@ -7256,7 +7256,9 @@ code_1DB8C2:
 code_1DB8C6:
   RTS                                       ; $1DB8C6 |
 
+robot_master_main_indices:
   db $C0, $C1, $D6, $D0, $C2, $D4, $D2, $C3 ; $1DB8C7 |
+
   db $B3, $00, $2D, $00, $00, $4C, $6D, $00 ; $1DB8CF |
   db $01, $00, $03, $01, $04, $01, $01, $04 ; $1DB8D7 |
   db $29, $1F, $33, $2C, $49, $22, $36, $3F ; $1DB8DF |

@@ -1,20 +1,26 @@
 bank $07
 org $A000
 
+main_hard_man:
   JMP code_07A019                           ; $07A000 |
 
   JMP code_07A277                           ; $07A003 |
 
+main_spark_man:
   JMP code_07A319                           ; $07A006 |
 
   NOP                                       ; $07A009 |
   NOP                                       ; $07A00A |
   NOP                                       ; $07A00B |
+
+main_snake_man:
   JMP code_07A51B                           ; $07A00C |
 
   NOP                                       ; $07A00F |
   NOP                                       ; $07A010 |
   NOP                                       ; $07A011 |
+
+main_gemini_man:
   JMP code_07A6B2                           ; $07A012 |
 
   JMP code_07A972                           ; $07A015 |
