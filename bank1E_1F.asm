@@ -1437,7 +1437,7 @@ code_1ECAFB:
   INX                                       ; $1ECB04 | | for $8000~$BFFF
   STX $F5                                   ; $1ECB05 | | (sprite code banks)
   JSR select_PRG_banks                      ; $1ECB07 |/
-  JSR $8000                                 ; $1ECB0A |
+  JSR process_sprites_j                     ; $1ECB0A | process all sprites
   LDA #$1A                                  ; $1ECB0D |
   STA $F4                                   ; $1ECB0F |
   LDA $22                                   ; $1ECB11 |
@@ -7422,86 +7422,107 @@ code_1FFB3A:
   db $1C, $14, $40, $0C, $0C, $0F, $0C, $10 ; $1FFB6B |
   db $28, $18, $28, $2C, $08, $08, $08, $08 ; $1FFB73 |
 
-code_1FFB7B:
-  LDA $30                                   ; $1FFB7B |
-  CMP #$0E                                  ; $1FFB7D |
-  BEQ code_1FFBD0                           ; $1FFB7F |
-  CMP #$04                                  ; $1FFB81 |
-  BEQ code_1FFBD0                           ; $1FFB83 |
-  LDA #$03                                  ; $1FFB85 |
-  STA $10                                   ; $1FFB87 |
-code_1FFB89:
+; loops through all 3 weapon slots
+; to check collision against each one
+; for a passed in sprite slot
+; parameters:
+; X: sprite slot to check weapon collision for
+; returns:
+; Carry flag off = sprite is colliding with player's weapons, on = not
+check_sprite_weapon_collision:
+  LDA $30                                   ; $1FFB7B |\
+  CMP #$0E                                  ; $1FFB7D | | is player dead
+  BEQ .ret_carry_on                         ; $1FFB7F | | or teleporting in?
+  CMP #$04                                  ; $1FFB81 | | return carry on
+  BEQ .ret_carry_on                         ; $1FFB83 |/
+  LDA #$03                                  ; $1FFB85 |\ start loop through
+  STA $10                                   ; $1FFB87 |/ all 3 weapon slots
+.loop_weapon:
   LDY $10                                   ; $1FFB89 |
-  LDA $0300,y                               ; $1FFB8B |
-  BPL code_1FFBCC                           ; $1FFB8E |
-  LDA $0580,y                               ; $1FFB90 |
-  BPL code_1FFBCC                           ; $1FFB93 |
-  LDA $0320,y                               ; $1FFB95 |
-  CMP #$0F                                  ; $1FFB98 |
-  BEQ code_1FFBCC                           ; $1FFB9A |
-  LDA $05C0,y                               ; $1FFB9C |
-  CMP #$13                                  ; $1FFB9F |
-  BEQ code_1FFBCC                           ; $1FFBA1 |
-  CMP #$D7                                  ; $1FFBA3 |
-  BEQ code_1FFBCC                           ; $1FFBA5 |
-  CMP #$D8                                  ; $1FFBA7 |
-  BEQ code_1FFBCC                           ; $1FFBA9 |
-  CMP #$D9                                  ; $1FFBAB |
-  BEQ code_1FFBCC                           ; $1FFBAD |
-  LDA $0580,x                               ; $1FFBAF |
-  BPL code_1FFBCC                           ; $1FFBB2 |
-  AND #$04                                  ; $1FFBB4 |
-  BNE code_1FFBCC                           ; $1FFBB6 |
-  LDA $0360,y                               ; $1FFBB8 |
-  STA $00                                   ; $1FFBBB |
-  LDA $0380,y                               ; $1FFBBD |
-  STA $01                                   ; $1FFBC0 |
-  LDA $03C0,y                               ; $1FFBC2 |
-  STA $02                                   ; $1FFBC5 |
-  JSR code_1FFBD2                           ; $1FFBC7 |
-  BCC code_1FFBD1                           ; $1FFBCA |
-code_1FFBCC:
-  DEC $10                                   ; $1FFBCC |
-  BNE code_1FFB89                           ; $1FFBCE |
-code_1FFBD0:
+  LDA $0300,y                               ; $1FFB8B |\
+  BPL .next_weapon                          ; $1FFB8E | | if weapon
+  LDA $0580,y                               ; $1FFB90 | | is inactive
+  BPL .next_weapon                          ; $1FFB93 | | or flag ???
+  LDA $0320,y                               ; $1FFB95 | |
+  CMP #$0F                                  ; $1FFB98 | | or main routine index ???
+  BEQ .next_weapon                          ; $1FFB9A | |
+  LDA $05C0,y                               ; $1FFB9C | |
+  CMP #$13                                  ; $1FFB9F | | or sprite ID $13
+  BEQ .next_weapon                          ; $1FFBA1 | |
+  CMP #$D7                                  ; $1FFBA3 | | or $D7
+  BEQ .next_weapon                          ; $1FFBA5 | |
+  CMP #$D8                                  ; $1FFBA7 | | or $D8
+  BEQ .next_weapon                          ; $1FFBA9 | |
+  CMP #$D9                                  ; $1FFBAB | | or $D9
+  BEQ .next_weapon                          ; $1FFBAD | | or if current sprite (passed in)
+  LDA $0580,x                               ; $1FFBAF | | flags ???
+  BPL .next_weapon                          ; $1FFBB2 | | or flags ???
+  AND #$04                                  ; $1FFBB4 | | then don't check collision
+  BNE .next_weapon                          ; $1FFBB6 |/
+  LDA $0360,y                               ; $1FFBB8 |\
+  STA $00                                   ; $1FFBBB | | store X, screen, and Y
+  LDA $0380,y                               ; $1FFBBD | | information as parameters
+  STA $01                                   ; $1FFBC0 | | for collision routine
+  LDA $03C0,y                               ; $1FFBC2 | |
+  STA $02                                   ; $1FFBC5 |/
+  JSR check_sprite_collision                ; $1FFBC7 |\ carry cleared == collision
+  BCC .ret                                  ; $1FFBCA |/ return carry off
+.next_weapon:
+  DEC $10                                   ; $1FFBCC |\ continue loop,
+  BNE .loop_weapon                          ; $1FFBCE |/ stop at $00 (Mega Man)
+.ret_carry_on:
   SEC                                       ; $1FFBD0 |
-code_1FFBD1:
+.ret:
   RTS                                       ; $1FFBD1 |
 
-code_1FFBD2:
-  SEC                                       ; $1FFBD2 |
-  LDA $0480,x                               ; $1FFBD3 |
-  AND #$1F                                  ; $1FFBD6 |
-  TAY                                       ; $1FFBD8 |
-  LDA $00                                   ; $1FFBD9 |
-  SEC                                       ; $1FFBDB |
-  SBC $0360,x                               ; $1FFBDC |
-  PHA                                       ; $1FFBDF |
-  LDA $01                                   ; $1FFBE0 |
-  SBC $0380,x                               ; $1FFBE2 |
-  PLA                                       ; $1FFBE5 |
-  BCS code_1FFBEC                           ; $1FFBE6 |
-  EOR #$FF                                  ; $1FFBE8 |
-  ADC #$01                                  ; $1FFBEA |
-code_1FFBEC:
-  CMP $FC23,y                               ; $1FFBEC |
-  BCS code_1FFC02                           ; $1FFBEF |
-  LDA $02                                   ; $1FFBF1 |
-  SEC                                       ; $1FFBF3 |
-  SBC $03C0,x                               ; $1FFBF4 |
-  BCS code_1FFBFD                           ; $1FFBF7 |
-  EOR #$FF                                  ; $1FFBF9 |
-  ADC #$01                                  ; $1FFBFB |
-code_1FFBFD:
-  CMP $FC03,y                               ; $1FFBFD |
-  BCC code_1FFC02                           ; $1FFC00 |
-code_1FFC02:
-  RTS                                       ; $1FFC02 |
+; parameters:
+; X: sprite slot to check collision for
+; $00: comparison sprite's X position
+; $01: comparison sprite's X screen
+; $02: comparison sprite's Y position
+; returns:
+; Carry flag off = collision, on = no collision
+check_sprite_collision:
+  SEC                                       ; $1FFBD2 |\
+  LDA $0480,x                               ; $1FFBD3 | | Y = shape index
+  AND #$1F                                  ; $1FFBD6 | | (mod $1F)
+  TAY                                       ; $1FFBD8 |/
+  LDA $00                                   ; $1FFBD9 |\
+  SEC                                       ; $1FFBDB | | get an X delta between
+  SBC $0360,x                               ; $1FFBDC | | the two sprites
+  PHA                                       ; $1FFBDF | | A = comparison sprite X
+  LDA $01                                   ; $1FFBE0 | | - current sprite X
+  SBC $0380,x                               ; $1FFBE2 | | take screen into account
+  PLA                                       ; $1FFBE5 | | as well via carry
+  BCS .test_x_collision                     ; $1FFBE6 | | take absolute value
+  EOR #$FF                                  ; $1FFBE8 | | so it's always positive
+  ADC #$01                                  ; $1FFBEA |/  whichever side it's on
+.test_x_collision:
+  CMP hitbox_weapon_widths,y                ; $1FFBEC |\ if abs(X delta) > hitbox X delta
+  BCS .ret                                  ; $1FFBEF |/ return
+  LDA $02                                   ; $1FFBF1 |\
+  SEC                                       ; $1FFBF3 | | get Y delta between
+  SBC $03C0,x                               ; $1FFBF4 | | the two sprites
+  BCS .test_y_collision                     ; $1FFBF7 | | A = comparison sprite Y
+  EOR #$FF                                  ; $1FFBF9 | | - current sprite Y
+  ADC #$01                                  ; $1FFBFB |/  take absolute value
+.test_y_collision:
+  CMP hitbox_weapon_heights,y               ; $1FFBFD |\ return
+  BCC .ret                                  ; $1FFC00 |/ abs(Y delta) < hitbox delta
+.ret:
+  RTS                                       ; $1FFC02 | carry off means collision
 
+; sprite hitbox heights for weapon collision
+; the actual height is double this, cause it compares delta
+hitbox_weapon_heights:
   db $0A, $12, $0E, $0A, $12, $1E, $0C, $16 ; $1FFC03 |
   db $0E, $0E, $12, $04, $1A, $1A, $2A, $0A ; $1FFC0B |
   db $16, $04, $12, $2E, $32, $12, $22, $0A ; $1FFC13 |
   db $22, $06, $02, $2A, $02, $02, $02, $02 ; $1FFC1B |
+
+; sprite hitbox widths for weapon collision
+; the actual width is double this, cause it compares delta
+hitbox_weapon_widths:
   db $0B, $0F, $0D, $0F, $0B, $13, $13, $13 ; $1FFC23 |
   db $0B, $13, $13, $05, $0F, $1B, $0B, $13 ; $1FFC2B |
   db $17, $0F, $13, $07, $07, $0A, $07, $0B ; $1FFC33 |

@@ -1,27 +1,27 @@
 bank $07
 org $A000
 
-main_hard_man:
+main_hard_man_j:
   JMP code_07A019                           ; $07A000 |
 
   JMP code_07A277                           ; $07A003 |
 
-main_spark_man:
+main_spark_man_j:
   JMP code_07A319                           ; $07A006 |
 
   NOP                                       ; $07A009 |
   NOP                                       ; $07A00A |
   NOP                                       ; $07A00B |
 
-main_snake_man:
+main_snake_man_j:
   JMP code_07A51B                           ; $07A00C |
 
   NOP                                       ; $07A00F |
   NOP                                       ; $07A010 |
   NOP                                       ; $07A011 |
 
-main_gemini_man:
-  JMP code_07A6B2                           ; $07A012 |
+main_gemini_man_j:
+  JMP main_gemini_man                       ; $07A012 |
 
   JMP code_07A972                           ; $07A015 |
 
@@ -838,16 +838,15 @@ code_07A6A1:
   db $80, $28, $80, $D8, $23, $24, $A8, $00 ; $07A6A4 |
   db $05, $08, $1E, $00, $E2, $FF           ; $07A6AC |
 
-code_07A6B2:
-  LDA $0300,x                               ; $07A6B2 |
-  AND #$0F                                  ; $07A6B5 |
-  CMP #$02                                  ; $07A6B7 |
-  BNE code_07A6BE                           ; $07A6B9 |
-  JMP code_07A7F1                           ; $07A6BB |
-
+main_gemini_man:
+  LDA $0300,x                               ; $07A6B2 |\
+  AND #$0F                                  ; $07A6B5 | | if state == $02
+  CMP #$02                                  ; $07A6B7 | | goto ???
+  BNE code_07A6BE                           ; $07A6B9 | |
+  JMP code_07A7F1                           ; $07A6BB |/
 code_07A6BE:
-  CMP #$01                                  ; $07A6BE |
-  BEQ code_07A6E1                           ; $07A6C0 |
+  CMP #$01                                  ; $07A6BE |\ if state == $01
+  BEQ code_07A6E1                           ; $07A6C0 |/ skip a little bit
   LDA #$3D                                  ; $07A6C2 |
   STA $0440,x                               ; $07A6C4 |
   LDA #$09                                  ; $07A6C7 |
@@ -1203,7 +1202,7 @@ code_07A98F:
   STA $0420,x                               ; $07A996 |
   STA $0500,x                               ; $07A999 |
 code_07A99C:
-  JMP code_07A6B2                           ; $07A99C |
+  JMP main_gemini_man                       ; $07A99C |
 
   db $2E, $2A, $AA, $EA, $5F, $A0, $11, $2A ; $07A99F |
   db $88, $A0, $1F, $AA, $F7, $A2, $57, $A6 ; $07A9A7 |

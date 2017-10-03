@@ -5,7 +5,8 @@
 bank $1C
 org $8000
 
-  JMP code_1C800C                           ; $1C8000 |
+process_sprites_j:
+  JMP process_sprites                       ; $1C8000 |
 
 code_1C8003:
   JMP code_1C8109                           ; $1C8003 |
@@ -14,91 +15,91 @@ code_1C8003:
 
   JMP code_1C8097                           ; $1C8009 |
 
-code_1C800C:
+process_sprites:
   LDA #$55                                  ; $1C800C |
   STA $99                                   ; $1C800E |
   LDX #$01                                  ; $1C8010 |
   STX $EF                                   ; $1C8012 |
-code_1C8014:
+.loop_sprite:
   LDY #$01                                  ; $1C8014 |
   CPX $5B                                   ; $1C8016 |
-  BEQ code_1C8060                           ; $1C8018 |
+  BEQ .code_1C8060                          ; $1C8018 |
   INY                                       ; $1C801A |
   CPX $5C                                   ; $1C801B |
-  BEQ code_1C8060                           ; $1C801D |
+  BEQ .code_1C8060                          ; $1C801D |
   LDA $0300,x                               ; $1C801F |\ if sprite inactive,
-  BPL code_1C808B                           ; $1C8022 |/ skip & continue loop
+  BPL .next_sprite                          ; $1C8022 |/ skip & continue loop
   LDY #$1D                                  ; $1C8024 |\  select $A000~$BFFF bank
   LDA $0320,x                               ; $1C8026 | | bank $1D for main routine
   CMP #$E0                                  ; $1C8029 | | indices $00~$9F
-  BCC code_1C8031                           ; $1C802B | |
+  BCC .check_main_index                     ; $1C802B | |
   LDY #$12                                  ; $1C802D | | bank $12 for $E0~$FF
-  BNE code_1C803D                           ; $1C802F |/
-code_1C8031:
+  BNE .select_bank                          ; $1C802F |/
+.check_main_index:
   LSR                                       ; $1C8031 |\
   LSR                                       ; $1C8032 | | in between $9F and $E0,
   LSR                                       ; $1C8033 | | index >> 4 - $06
   LSR                                       ; $1C8034 | | meaning bank $04 for $A0~$AF,
   CMP #$0A                                  ; $1C8035 | | $05 for $B0~$BF,
-  BCC code_1C803D                           ; $1C8037 | | $06 for $C0~$CF,
+  BCC .select_bank                          ; $1C8037 | | $06 for $C0~$CF,
   SEC                                       ; $1C8039 | | $07 for $D0~$DF
   SBC #$06                                  ; $1C803A | |
   TAY                                       ; $1C803C |/
-code_1C803D:
+.select_bank:
   CPY $F5                                   ; $1C803D |\
-  BEQ code_1C804A                           ; $1C803F | | if not already selected,
+  BEQ .main_sprite                          ; $1C803F | | if not already selected,
   STY $F5                                   ; $1C8041 | |
   TXA                                       ; $1C8043 | | preserve X
   PHA                                       ; $1C8044 | | select new $A000~$BFFF bank
   JSR select_PRG_banks                      ; $1C8045 | | restore X
   PLA                                       ; $1C8048 | |
   TAX                                       ; $1C8049 |/
-code_1C804A:
+.main_sprite:
   LDY $0320,x                               ; $1C804A |\
   LDA sprite_main_ptr_lo,y                  ; $1C804D | |
   STA $00                                   ; $1C8050 | | load sprite main routine
   LDA sprite_main_ptr_hi,y                  ; $1C8052 | | pointer (low then high)
   STA $01                                   ; $1C8055 |/
-  LDA #$80                                  ; $1C8057 |
-  PHA                                       ; $1C8059 |
-  LDA #$76                                  ; $1C805A |
-  PHA                                       ; $1C805C |
+  LDA #.sprite_return>>8                    ; $1C8057 |\
+  PHA                                       ; $1C8059 | | return address
+  LDA #.sprite_return-1                     ; $1C805A | | (skips some code below)
+  PHA                                       ; $1C805C |/
   JMP ($0000)                               ; $1C805D | jump to sprite main
-
-code_1C8060:
+.code_1C8060:
   LDA #$00                                  ; $1C8060 |
   STA $005A,y                               ; $1C8062 |
-  JSR code_1FFB7B                           ; $1C8065 |
-  BCS code_1C8083                           ; $1C8068 |
+  JSR check_sprite_weapon_collision         ; $1C8065 |
+  BCS .code_1C8083                          ; $1C8068 |
   TXA                                       ; $1C806A |
   LDY $10                                   ; $1C806B |
   STA $005A,y                               ; $1C806D |
   LDA #$00                                  ; $1C8070 |
   STA $05E0,x                               ; $1C8072 |
-  BEQ code_1C8083                           ; $1C8075 |
+  BEQ .code_1C8083                          ; $1C8075 |
+.sprite_return:
   CPX #$10                                  ; $1C8077 |
-  BCC code_1C808B                           ; $1C8079 |
+  BCC .next_sprite                          ; $1C8079 |
   LDA $0320,x                               ; $1C807B |
-  BEQ code_1C808B                           ; $1C807E |
+  BEQ .next_sprite                          ; $1C807E |
   JSR code_1C8102                           ; $1C8080 |
-code_1C8083:
+.code_1C8083:
   LDA $0480,x                               ; $1C8083 |
-  BPL code_1C808B                           ; $1C8086 |
+  BPL .next_sprite                          ; $1C8086 |
   JSR code_1C8097                           ; $1C8088 |
-code_1C808B:
+.next_sprite:
   INC $EF                                   ; $1C808B |
   LDX $EF                                   ; $1C808D |
   CPX #$20                                  ; $1C808F |
-  BEQ code_1C8096                           ; $1C8091 |
-  JMP code_1C8014                           ; $1C8093 |
+  BEQ .ret                                  ; $1C8091 |
+  JMP .loop_sprite                          ; $1C8093 |
 
-code_1C8096:
+.ret:
   RTS                                       ; $1C8096 |
 
 code_1C8097:
   LDA $05C0                                 ; $1C8097 |
   CMP #$A4                                  ; $1C809A |
-  BEQ code_1C8096                           ; $1C809C |
+  BEQ process_sprites.ret                   ; $1C809C |
   STX $0F                                   ; $1C809E |
   LDA $F5                                   ; $1C80A0 |
   PHA                                       ; $1C80A2 |
@@ -162,7 +163,7 @@ code_1C8109:
   JMP code_1C825E                           ; $1C8110 |
 
 code_1C8113:
-  JSR code_1FFB7B                           ; $1C8113 |
+  JSR check_sprite_weapon_collision         ; $1C8113 |
   BCS code_1C8142                           ; $1C8116 |
   LDA $0480,x                               ; $1C8118 |
   AND #$20                                  ; $1C811B |
@@ -578,14 +579,14 @@ sprite_main_ptr_lo:
   db $C8                                    ; $1C841C |
   db $60                                    ; $1C841D |
   db $C8                                    ; $1C841E |
-  db init_robot_master                      ; $1C841F |
-  db init_robot_master                      ; $1C8420 |
-  db init_robot_master                      ; $1C8421 |
-  db init_robot_master                      ; $1C8422 |
-  db init_robot_master                      ; $1C8423 |
-  db init_robot_master                      ; $1C8424 |
-  db init_robot_master                      ; $1C8425 |
-  db init_robot_master                      ; $1C8426 |
+  db main_robot_master_intro                ; $1C841F |
+  db main_robot_master_intro                ; $1C8420 |
+  db main_robot_master_intro                ; $1C8421 |
+  db main_robot_master_intro                ; $1C8422 |
+  db main_robot_master_intro                ; $1C8423 |
+  db main_robot_master_intro                ; $1C8424 |
+  db main_robot_master_intro                ; $1C8425 |
+  db main_robot_master_intro                ; $1C8426 |
   db $C8                                    ; $1C8427 |
   db $C9                                    ; $1C8428 |
   db $93                                    ; $1C8429 |
@@ -682,10 +683,10 @@ sprite_main_ptr_lo:
   db $27                                    ; $1C8484 |
   db $2A                                    ; $1C8485 |
   db $2D                                    ; $1C8486 |
-  db main_needle_man                        ; $1C8487 |
-  db main_magnet_man                        ; $1C8488 |
-  db main_top_man                           ; $1C8489 |
-  db main_shadow_man                        ; $1C848A |
+  db main_needle_man_j                      ; $1C8487 |
+  db main_magnet_man_j                      ; $1C8488 |
+  db main_top_man_j                         ; $1C8489 |
+  db main_shadow_man_j                      ; $1C848A |
   db $0C                                    ; $1C848B |
   db $0F                                    ; $1C848C |
   db $12                                    ; $1C848D |
@@ -698,13 +699,13 @@ sprite_main_ptr_lo:
   db $27                                    ; $1C8494 |
   db $2A                                    ; $1C8495 |
   db $2D                                    ; $1C8496 |
-  db main_hard_man                          ; $1C8497 |
+  db main_hard_man_j                        ; $1C8497 |
   db $03                                    ; $1C8498 |
-  db main_spark_man                         ; $1C8499 |
+  db main_spark_man_j                       ; $1C8499 |
   db $09                                    ; $1C849A |
-  db main_snake_man                         ; $1C849B |
+  db main_snake_man_j                       ; $1C849B |
   db $0F                                    ; $1C849C |
-  db main_gemini_man                        ; $1C849D |
+  db main_gemini_man_j                      ; $1C849D |
   db $15                                    ; $1C849E |
   db $18                                    ; $1C849F |
   db $1B                                    ; $1C84A0 |
@@ -837,14 +838,14 @@ sprite_main_ptr_hi:
   db $85                                    ; $1C851C |
   db $A9                                    ; $1C851D |
   db $85                                    ; $1C851E |
-  db init_robot_master>>8                   ; $1C851F |
-  db init_robot_master>>8                   ; $1C8520 |
-  db init_robot_master>>8                   ; $1C8521 |
-  db init_robot_master>>8                   ; $1C8522 |
-  db init_robot_master>>8                   ; $1C8523 |
-  db init_robot_master>>8                   ; $1C8524 |
-  db init_robot_master>>8                   ; $1C8525 |
-  db init_robot_master>>8                   ; $1C8526 |
+  db main_robot_master_intro>>8             ; $1C851F |
+  db main_robot_master_intro>>8             ; $1C8520 |
+  db main_robot_master_intro>>8             ; $1C8521 |
+  db main_robot_master_intro>>8             ; $1C8522 |
+  db main_robot_master_intro>>8             ; $1C8523 |
+  db main_robot_master_intro>>8             ; $1C8524 |
+  db main_robot_master_intro>>8             ; $1C8525 |
+  db main_robot_master_intro>>8             ; $1C8526 |
   db $85                                    ; $1C8527 |
   db $B7                                    ; $1C8528 |
   db $95                                    ; $1C8529 |
@@ -941,10 +942,10 @@ sprite_main_ptr_hi:
   db $A0                                    ; $1C8584 |
   db $A0                                    ; $1C8585 |
   db $A0                                    ; $1C8586 |
-  db main_needle_man>>8                     ; $1C8587 |
-  db main_magnet_man>>8                     ; $1C8588 |
-  db main_top_man>>8                        ; $1C8589 |
-  db main_shadow_man>>8                     ; $1C858A |
+  db main_needle_man_j>>8                   ; $1C8587 |
+  db main_magnet_man_j>>8                   ; $1C8588 |
+  db main_top_man_j>>8                      ; $1C8589 |
+  db main_shadow_man_j>>8                   ; $1C858A |
   db $A0                                    ; $1C858B |
   db $A0                                    ; $1C858C |
   db $A0                                    ; $1C858D |
@@ -957,13 +958,13 @@ sprite_main_ptr_hi:
   db $A0                                    ; $1C8594 |
   db $A0                                    ; $1C8595 |
   db $A0                                    ; $1C8596 |
-  db main_hard_man>>8                       ; $1C8597 |
+  db main_hard_man_j>>8                     ; $1C8597 |
   db $A0                                    ; $1C8598 |
-  db main_spark_man>>8                      ; $1C8599 |
+  db main_spark_man_j>>8                    ; $1C8599 |
   db $A0                                    ; $1C859A |
-  db main_snake_man>>8                      ; $1C859B |
+  db main_snake_man_j>>8                    ; $1C859B |
   db $A0                                    ; $1C859C |
-  db main_gemini_man>>8                     ; $1C859D |
+  db main_gemini_man_j>>8                   ; $1C859D |
   db $A0                                    ; $1C859E |
   db $A0                                    ; $1C859F |
   db $A0                                    ; $1C85A0 |
@@ -2167,7 +2168,7 @@ code_1C8EAD:
   LDA $0320,x                               ; $1C8EAD |
   CMP #$0A                                  ; $1C8EB0 |
   BNE code_1C8F04                           ; $1C8EB2 |
-  JSR code_1FFB7B                           ; $1C8EB4 |
+  JSR check_sprite_weapon_collision         ; $1C8EB4 |
   BCS code_1C8ED2                           ; $1C8EB7 |
   LDY $10                                   ; $1C8EB9 |
   LDA #$00                                  ; $1C8EBB |
@@ -6795,7 +6796,7 @@ main_walking_bomb:
   LDY #$1A                                  ; $1DB4C4 |
   JSR code_1FF67C                           ; $1DB4C6 |
   ROL $0F                                   ; $1DB4C9 |
-  JSR code_1FFB7B                           ; $1DB4CB |
+  JSR check_sprite_weapon_collision         ; $1DB4CB |
   BCS code_1DB4EC                           ; $1DB4CE |
   LDA #$18                                  ; $1DB4D0 |
   JSR code_1FF89A                           ; $1DB4D2 |
@@ -7199,7 +7200,7 @@ code_1DB7DF:
   db $01, $00, $00, $01, $01, $00, $02, $04 ; $1DB84B |
 
 ; same intro for all 8
-init_robot_master:
+main_robot_master_intro:
   LDA $0300,x                               ; $1DB853 |
   AND #$0F                                  ; $1DB856 |
   BNE code_1DB860                           ; $1DB858 |
@@ -7360,7 +7361,7 @@ code_1DB9AE:
   CMP #$AF                                  ; $1DB9BA |
   BNE code_1DB9DF                           ; $1DB9BC |
 code_1DB9BE:
-  JSR code_1FFB7B                           ; $1DB9BE |
+  JSR check_sprite_weapon_collision         ; $1DB9BE |
   BCS code_1DB9DF                           ; $1DB9C1 |
   LDA #$18                                  ; $1DB9C3 |
   JSR code_1FF89A                           ; $1DB9C5 |
@@ -8013,7 +8014,7 @@ main_surprise_box:
   LDA $05C0,x                               ; $1DBED2 |
   CMP #$71                                  ; $1DBED5 |
   BEQ code_1DBF03                           ; $1DBED7 |
-  JSR code_1FFB7B                           ; $1DBED9 |
+  JSR check_sprite_weapon_collision         ; $1DBED9 |
   BCS code_1DBED1                           ; $1DBEDC |
   LDA $04C0,x                               ; $1DBEDE |
   PHA                                       ; $1DBEE1 |

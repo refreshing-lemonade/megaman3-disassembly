@@ -2956,7 +2956,7 @@ code_12BA2F:
   STA $0520,x                               ; $12BA48 |
   INC $0300,x                               ; $12BA4B |
 code_12BA4E:
-  JSR code_1FFB7B                           ; $12BA4E |
+  JSR check_sprite_weapon_collision         ; $12BA4E |
   BCS code_12BA62                           ; $12BA51 |
   LDA #$18                                  ; $12BA53 |
   JSR code_1FF89A                           ; $12BA55 |
