@@ -25,52 +25,65 @@ code_16801F:
   BNE code_16800C                           ; $168020 |
   RTS                                       ; $168022 |
 
-code_168023:
-  ASL                                       ; $168023 |
-  TAY                                       ; $168024 |
-  INY                                       ; $168025 |
-  PLA                                       ; $168026 |
-  STA $C1                                   ; $168027 |
-  PLA                                       ; $168029 |
-  STA $C2                                   ; $16802A |
-  LDA ($C1),y                               ; $16802C |
-  PHA                                       ; $16802E |
-  INY                                       ; $16802F |
-  LDA ($C1),y                               ; $168030 |
-  STA $C2                                   ; $168032 |
-  PLA                                       ; $168034 |
-  STA $C1                                   ; $168035 |
-  JMP ($00C1)                               ; $168037 |
+; jumps to one of the pointers stored
+; locally next to the JSR call in ROM
+; parameters:
+; local pointer table just after JSR call here
+; A: index into pointer table
+jump_local_ptr:
+  ASL                                       ; $168023 |\
+  TAY                                       ; $168024 | | Y = index * 2 + 1
+  INY                                       ; $168025 |/  word align & just after JSR
+  PLA                                       ; $168026 |\
+  STA $C1                                   ; $168027 | | grab return address
+  PLA                                       ; $168029 | | to get local params
+  STA $C2                                   ; $16802A |/
+  LDA ($C1),y                               ; $16802C |\
+  PHA                                       ; $16802E | | read from ROM at
+  INY                                       ; $16802F | | just after JSR + Y index
+  LDA ($C1),y                               ; $168030 | | to grab local pointer
+  STA $C2                                   ; $168032 | | update $C1~$C2 with this address
+  PLA                                       ; $168034 | | and jump to it
+  STA $C1                                   ; $168035 | |
+  JMP ($00C1)                               ; $168037 |/
 
-code_16803A:
-  STY $C1                                   ; $16803A |
-  LDY #$00                                  ; $16803C |
-  CMP #$C0                                  ; $16803E |
-  BCS code_168047                           ; $168040 |
-  STA $C2                                   ; $168042 |
-  LDA ($C1),y                               ; $168044 |
-  RTS                                       ; $168046 |
+; reads one single byte from a passed in word-sized ROM address
+; from either bank $16, $17, or $18 depending on high byte
+; returns read in accumulator
+; parameters:
+; A: high byte of address (if >= $C0, read bank $18, else $16~$17)
+; Y: low byte of address
+; returns:
+; A: read of passed in word address
+read_ptr:
+  STY $C1                                   ; $16803A | store low byte -> $C1
+  LDY #$00                                  ; $16803C | 0 index for indirect read
+  CMP #$C0                                  ; $16803E |\ if high byte >= $C0
+  BCS .bank_18                              ; $168040 |/ this is a bank $18 read
+  STA $C2                                   ; $168042 |\
+  LDA ($C1),y                               ; $168044 | | else return read of address
+  RTS                                       ; $168046 |/  at $C1~$C2, bank $16~$17
 
-code_168047:
-  SEC                                       ; $168047 |
-  SBC #$20                                  ; $168048 |
-  STA $C2                                   ; $16804A |
-  LDA #$07                                  ; $16804C |
-  STA $8000                                 ; $16804E |
-  LDA #$18                                  ; $168051 |
-  STA $8001                                 ; $168053 |
-  LDA ($C1),y                               ; $168056 |
-  PHA                                       ; $168058 |
-  LDA #$07                                  ; $168059 |
-  STA $8000                                 ; $16805B |
-  LDA #$17                                  ; $16805E |
-  STA $8001                                 ; $168060 |
-  LDA #$20                                  ; $168063 |
-  CLC                                       ; $168065 |
-  ADC $C2                                   ; $168066 |
-  STA $C2                                   ; $168068 |
-  PLA                                       ; $16806A |
-  RTS                                       ; $16806B |
+.bank_18:
+  SEC                                       ; $168047 |\
+  SBC #$20                                  ; $168048 | | high byte -= $20
+  STA $C2                                   ; $16804A |/  (get into $A0~$BF range)
+  LDA #$07                                  ; $16804C |\
+  STA $8000                                 ; $16804E | | set $A000~$BFFF bank
+  LDA #$18                                  ; $168051 | | to $18
+  STA $8001                                 ; $168053 |/
+  LDA ($C1),y                               ; $168056 |\ push read $C1~$C2
+  PHA                                       ; $168058 |/ from bank $18
+  LDA #$07                                  ; $168059 |\
+  STA $8000                                 ; $16805B | | set $A000~$BFFF bank
+  LDA #$17                                  ; $16805E | | back to $17
+  STA $8001                                 ; $168060 |/
+  LDA #$20                                  ; $168063 |\
+  CLC                                       ; $168065 | | and (falsely) go back into
+  ADC $C2                                   ; $168066 | | $C0~$DF range for high byte
+  STA $C2                                   ; $168068 |/
+  PLA                                       ; $16806A |\ pull & return read
+  RTS                                       ; $16806B |/
 
 code_16806C:
   LDA $C0                                   ; $16806C |
@@ -175,54 +188,56 @@ code_1680FE:
   DEC $C0                                   ; $168103 |
   RTS                                       ; $168105 |
 
+; parameters:
+; A: ???
 code_168106:
-  CMP #$F0                                  ; $168106 |
-  BCC code_16810D                           ; $168108 |
+  CMP #$F0                                  ; $168106 |\ if parameter ???
+  BCC .code_16810D                          ; $168108 |/ < $F0
   JMP code_1681AE                           ; $16810A |
 
-code_16810D:
-  CMP $8A40                                 ; $16810D |
-  BCC code_168118                           ; $168110 |
-  SEC                                       ; $168112 |
-  SBC $8A40                                 ; $168113 |
-  BCS code_16810D                           ; $168116 |
-code_168118:
-  ASL                                       ; $168118 |
-  TAX                                       ; $168119 |
-  LDY $8A44,x                               ; $16811A |
-  TYA                                       ; $16811D |
-  ORA $8A43,x                               ; $16811E |
-  BEQ code_16816E                           ; $168121 |
-  LDA $8A43,x                               ; $168123 |
-  JSR code_16803A                           ; $168126 |
-  TAY                                       ; $168129 |
-  BEQ code_16816F                           ; $16812A |
+.code_16810D:
+  CMP $8A40                                 ; $16810D |\
+  BCC .code_168118                          ; $168110 | | A = parameter ???
+  SEC                                       ; $168112 | | mod $39
+  SBC $8A40                                 ; $168113 | |
+  BCS .code_16810D                          ; $168116 |/
+.code_168118:
+  ASL                                       ; $168118 |\
+  TAX                                       ; $168119 | | X = A * 2
+  LDY $8A44,x                               ; $16811A | | index into ???
+  TYA                                       ; $16811D | | grab pointer word in Y & A
+  ORA $8A43,x                               ; $16811E | | if it's $0000, return
+  BEQ .ret                                  ; $168121 | | otherwise, Y = read byte
+  LDA $8A43,x                               ; $168123 | | at pointer
+  JSR read_ptr                              ; $168126 | |
+  TAY                                       ; $168129 |/
+  BEQ code_16816F                           ; $16812A | if value read was $00
   LDY #$00                                  ; $16812C |
   INX                                       ; $16812E |
   STA $C4                                   ; $16812F |
   AND #$7F                                  ; $168131 |
   CMP $CE                                   ; $168133 |
-  BCC code_16816E                           ; $168135 |
+  BCC .ret                                  ; $168135 |
   STA $CE                                   ; $168137 |
-  BNE code_168145                           ; $168139 |
+  BNE .code_168145                          ; $168139 |
   LDA $D6                                   ; $16813B |
-  BPL code_168145                           ; $16813D |
+  BPL .code_168145                          ; $16813D |
   LDA $C4                                   ; $16813F |
-  BMI code_168145                           ; $168141 |
+  BMI .code_168145                          ; $168141 |
   STY $D7                                   ; $168143 |
-code_168145:
+.code_168145:
   STY $D6                                   ; $168145 |
   ASL $C4                                   ; $168147 |
   ROR $D6                                   ; $168149 |
-  BPL code_16814F                           ; $16814B |
+  BPL .code_16814F                          ; $16814B |
   STX $D7                                   ; $16814D |
-code_16814F:
+.code_16814F:
   INC $C1                                   ; $16814F |
   LDA $C1                                   ; $168151 |
   STA $D0                                   ; $168153 |
-  BNE code_168159                           ; $168155 |
+  BNE .code_168159                          ; $168155 |
   INC $C2                                   ; $168157 |
-code_168159:
+.code_168159:
   LDA $C2                                   ; $168159 |
   STA $D1                                   ; $16815B |
   TYA                                       ; $16815D |
@@ -231,11 +246,11 @@ code_168159:
   STA $D4                                   ; $168162 |
   STA $D5                                   ; $168164 |
   LDY #$27                                  ; $168166 |
-code_168168:
-  STA $0700,y                               ; $168168 |
-  DEY                                       ; $16816B |
-  BPL code_168168                           ; $16816C |
-code_16816E:
+.code_168168:
+  STA $0700,y                               ; $168168 |\
+  DEY                                       ; $16816B | | clear $0700~$0727
+  BPL .code_168168                          ; $16816C |/
+.ret:
   RTS                                       ; $16816E |
 
 code_16816F:
@@ -260,7 +275,7 @@ code_168189:
 code_16818F:
   LDY $C1                                   ; $16818F |
   LDA $C2                                   ; $168191 |
-  JSR code_16803A                           ; $168193 |
+  JSR read_ptr                              ; $168193 |
   STA $0754,x                               ; $168196 |
   INC $C1                                   ; $168199 |
   BNE code_16819F                           ; $16819B |
@@ -268,7 +283,7 @@ code_16818F:
 code_16819F:
   LDY $C1                                   ; $16819F |
   LDA $C2                                   ; $1681A1 |
-  JSR code_16803A                           ; $1681A3 |
+  JSR read_ptr                              ; $1681A3 |
   STA $0750,x                               ; $1681A6 |
   DEX                                       ; $1681A9 |
   BPL code_168189                           ; $1681AA |
@@ -276,8 +291,8 @@ code_16819F:
 code_1681AE:
   STY $C3                                   ; $1681AE |
   AND #$07                                  ; $1681B0 |
-  JSR code_168023                           ; $1681B2 |
-
+  JSR jump_local_ptr                        ; $1681B2 |
+; parameters to jump_local_ptr
   dw $81C5                                  ; $1681B5 |
   dw $81C8                                  ; $1681B7 |
   dw $81E4                                  ; $1681B9 |
@@ -390,7 +405,7 @@ code_16825B:
   LDA $D7                                   ; $168265 |
   LSR                                       ; $168267 |
   BCC code_168270                           ; $168268 |
-  JSR code_168118                           ; $16826A |
+  JSR code_168106.code_168118               ; $16826A |
   JMP code_16825B                           ; $16826D |
 
 code_168270:
@@ -504,8 +519,8 @@ code_168320:
   INC $C4                                   ; $168322 |
   BNE code_168311                           ; $168324 |
 code_168326:
-  JSR code_168023                           ; $168326 |
-
+  JSR jump_local_ptr                        ; $168326 |
+; parameters to jump_local_ptr
   dw $866F                                  ; $168329 |
   dw $86AD                                  ; $16832B |
   dw $865A                                  ; $16832D |
@@ -567,7 +582,7 @@ code_168386:
   BNE code_168390                           ; $16838C |
   INC $D1                                   ; $16838E |
 code_168390:
-  JMP code_16803A                           ; $168390 |
+  JMP read_ptr                              ; $168390 |
 
 code_168393:
   TXA                                       ; $168393 |
@@ -728,8 +743,8 @@ code_168497:
   STA $C3                                   ; $1684A0 |
   LDA $C4                                   ; $1684A2 |
 code_1684A4:
-  JSR code_168023                           ; $1684A4 |
-
+  JSR jump_local_ptr                        ; $1684A4 |
+; parameters to jump_local_ptr
   dw $84D9                                  ; $1684A7 |
   dw $84DD                                  ; $1684A9 |
   dw $84E1                                  ; $1684AB |
@@ -873,7 +888,7 @@ code_168592:
   BNE code_1685A0                           ; $16859B |
   INC $072C,x                               ; $16859D |
 code_1685A0:
-  JMP code_16803A                           ; $1685A0 |
+  JMP read_ptr                              ; $1685A0 |
 
 code_1685A3:
   LDA $0704,x                               ; $1685A3 |
@@ -1039,10 +1054,13 @@ code_1686BA:
   STA $C4                                   ; $1686BD |
   LDA $0704,x                               ; $1686BF |
   AND #$07                                  ; $1686C2 |
-  JSR code_168023                           ; $1686C4 |
-
-  db $D1, $86, $E6, $86, $20, $87, $02, $87 ; $1686C7 |
-  db $14, $89                               ; $1686CF |
+  JSR jump_local_ptr                        ; $1686C4 |
+; parameters to jump_local_ptr
+  dw $86D1                                  ; $1686C7 |
+  dw $86E6                                  ; $1686C9 |
+  dw $8720                                  ; $1686CB |
+  dw $8702                                  ; $1686CD |
+  dw $8914                                  ; $1686CF |
 
   LDY #$00                                  ; $1686D1 |
   LDA ($C5),y                               ; $1686D3 |
@@ -1413,21 +1431,68 @@ code_168914:
   db $00, $00, $00, $00, $00, $00, $00, $00 ; $168A25 |
   db $00, $00, $00, $00, $00, $00, $00, $00 ; $168A2D |
   db $00, $00, $00, $00, $00, $00, $00, $00 ; $168A35 |
-  db $00, $00, $00, $39, $8A, $B5, $8C, $9D ; $168A3D |
-  db $90, $DF, $95, $9A, $9A, $06, $9C, $D7 ; $168A45 |
-  db $A0, $BE, $A4, $14, $A7, $C1, $AA, $C2 ; $168A4D |
-  db $AD, $E5, $B1, $23, $B2, $CB, $B4, $16 ; $168A55 |
-  db $B5, $F6, $B8, $2B, $B9, $1E, $BE, $97 ; $168A5D |
-  db $BF, $CF, $C0, $1D, $C5, $33, $C5, $4E ; $168A65 |
-  db $C5, $B4, $C5, $C0, $C5, $DE, $C6, $22 ; $168A6D |
-  db $C6, $2D, $C6, $3D, $C6, $5A, $C6, $6C ; $168A75 |
-  db $C6, $82, $C6, $A9, $C6, $C6, $C6, $D8 ; $168A7D |
-  db $C6, $F7, $C7, $0F, $C7, $33, $C7, $49 ; $168A85 |
-  db $C7, $57, $C7, $68, $C7, $76, $C7, $88 ; $168A8D |
-  db $C7, $A1, $C7, $ED, $C8, $03, $C8, $14 ; $168A95 |
-  db $C8, $25, $C8, $3C, $C8, $4C, $C8, $65 ; $168A9D |
-  db $C8, $87, $C8, $9A, $C8, $A6, $C9, $B3 ; $168AA5 |
-  db $C9, $CA, $CB, $67, $CD, $1E, $CD, $BF ; $168AAD |
+  db $00, $00, $00                          ; $168A3D |
+
+  dw $8A39                                  ; $168A40 |
+  dw $8CB5                                  ; $168A42 |
+  dw $909D                                  ; $168A44 |
+  dw $95DF                                  ; $168A46 |
+  dw $9A9A                                  ; $168A48 |
+  dw $9C06                                  ; $168A4A |
+  dw $A0D7                                  ; $168A4C |
+  dw $A4BE                                  ; $168A4E |
+  dw $A714                                  ; $168A50 |
+  dw $AAC1                                  ; $168A52 |
+  dw $ADC2                                  ; $168A54 |
+  dw $B1E5                                  ; $168A56 |
+  dw $B223                                  ; $168A58 |
+  dw $B4CB                                  ; $168A5A |
+  dw $B516                                  ; $168A5C |
+  dw $B8F6                                  ; $168A5E |
+  dw $B92B                                  ; $168A60 |
+  dw $BE1E                                  ; $168A62 |
+  dw $BF97                                  ; $168A64 |
+  dw $C0CF                                  ; $168A66 |
+  dw $C51D                                  ; $168A68 |
+  dw $C533                                  ; $168A6A |
+  dw $C54E                                  ; $168A6C |
+  dw $C5B4                                  ; $168A6E |
+  dw $C5C0                                  ; $168A70 |
+  dw $C6DE                                  ; $168A72 |
+  dw $C622                                  ; $168A74 |
+  dw $C62D                                  ; $168A76 |
+  dw $C63D                                  ; $168A78 |
+  dw $C65A                                  ; $168A7A |
+  dw $C66C                                  ; $168A7C |
+  dw $C682                                  ; $168A7E |
+  dw $C6A9                                  ; $168A80 |
+  dw $C6C6                                  ; $168A82 |
+  dw $C6D8                                  ; $168A84 |
+  dw $C7F7                                  ; $168A86 |
+  dw $C70F                                  ; $168A88 |
+  dw $C733                                  ; $168A8A |
+  dw $C749                                  ; $168A8C |
+  dw $C757                                  ; $168A8E |
+  dw $C768                                  ; $168A90 |
+  dw $C776                                  ; $168A92 |
+  dw $C788                                  ; $168A94 |
+  dw $C7A1                                  ; $168A96 |
+  dw $C8ED                                  ; $168A98 |
+  dw $C803                                  ; $168A9A |
+  dw $C814                                  ; $168A9C |
+  dw $C825                                  ; $168A9E |
+  dw $C83C                                  ; $168AA0 |
+  dw $C84C                                  ; $168AA2 |
+  dw $C865                                  ; $168AA4 |
+  dw $C887                                  ; $168AA6 |
+  dw $C89A                                  ; $168AA8 |
+  dw $C9A6                                  ; $168AAA |
+  dw $C9B3                                  ; $168AAC |
+  dw $CBCA                                  ; $168AAE |
+  dw $CD67                                  ; $168AB0 |
+  dw $CD1E                                  ; $168AB2 |
+
+  db $BF                                    ; $168AB4 |
   db $1F, $01, $F0, $18, $80, $00, $00, $00 ; $168AB5 |
   db $1F, $01, $F0, $18, $E4, $06, $00, $00 ; $168ABD |
   db $1E, $00, $F0, $10, $80, $00, $00, $80 ; $168AC5 |

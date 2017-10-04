@@ -9,7 +9,7 @@ process_sprites_j:
   JMP process_sprites                       ; $1C8000 |
 
 code_1C8003:
-  JMP code_1C8109                           ; $1C8003 |
+  JMP code_1C8102.code_1C8109               ; $1C8003 |
 
   JMP code_1C82B8                           ; $1C8006 |
 
@@ -18,17 +18,17 @@ code_1C8003:
 process_sprites:
   LDA #$55                                  ; $1C800C |
   STA $99                                   ; $1C800E |
-  LDX #$01                                  ; $1C8010 |
-  STX $EF                                   ; $1C8012 |
+  LDX #$01                                  ; $1C8010 |\ start at weapons
+  STX $EF                                   ; $1C8012 |/ (skip mega man)
 .loop_sprite:
   LDY #$01                                  ; $1C8014 |
   CPX $5B                                   ; $1C8016 |
-  BEQ .code_1C8060                          ; $1C8018 |
+  BEQ .check_weapon_collision               ; $1C8018 |
   INY                                       ; $1C801A |
   CPX $5C                                   ; $1C801B |
-  BEQ .code_1C8060                          ; $1C801D |
+  BEQ .check_weapon_collision               ; $1C801D |
   LDA $0300,x                               ; $1C801F |\ if sprite inactive,
-  BPL .next_sprite                          ; $1C8022 |/ skip & continue loop
+  BPL .next_sprite                          ; $1C8022 |/ continue loop
   LDY #$1D                                  ; $1C8024 |\  select $A000~$BFFF bank
   LDA $0320,x                               ; $1C8026 | | bank $1D for main routine
   CMP #$E0                                  ; $1C8029 | | indices $00~$9F
@@ -65,7 +65,7 @@ process_sprites:
   LDA #.sprite_return-1                     ; $1C805A | | (skips some code below)
   PHA                                       ; $1C805C |/
   JMP ($0000)                               ; $1C805D | jump to sprite main
-.code_1C8060:
+.check_weapon_collision:
   LDA #$00                                  ; $1C8060 |
   STA $005A,y                               ; $1C8062 |
   JSR check_sprite_weapon_collision         ; $1C8065 |
@@ -77,21 +77,21 @@ process_sprites:
   STA $05E0,x                               ; $1C8072 |
   BEQ .code_1C8083                          ; $1C8075 |
 .sprite_return:
-  CPX #$10                                  ; $1C8077 |
-  BCC .next_sprite                          ; $1C8079 |
-  LDA $0320,x                               ; $1C807B |
-  BEQ .next_sprite                          ; $1C807E |
-  JSR code_1C8102                           ; $1C8080 |
+  CPX #$10                                  ; $1C8077 |\
+  BCC .next_sprite                          ; $1C8079 | | call ??? routine
+  LDA $0320,x                               ; $1C807B | | only for enemies with
+  BEQ .next_sprite                          ; $1C807E | | nonzero main indices
+  JSR code_1C8102                           ; $1C8080 |/
 .code_1C8083:
   LDA $0480,x                               ; $1C8083 |
   BPL .next_sprite                          ; $1C8086 |
   JSR code_1C8097                           ; $1C8088 |
 .next_sprite:
-  INC $EF                                   ; $1C808B |
-  LDX $EF                                   ; $1C808D |
-  CPX #$20                                  ; $1C808F |
-  BEQ .ret                                  ; $1C8091 |
-  JMP .loop_sprite                          ; $1C8093 |
+  INC $EF                                   ; $1C808B |\
+  LDX $EF                                   ; $1C808D | | go to next sprite
+  CPX #$20                                  ; $1C808F | | in X as well as $EF
+  BEQ .ret                                  ; $1C8091 | | stop at $20
+  JMP .loop_sprite                          ; $1C8093 |/
 
 .ret:
   RTS                                       ; $1C8096 |
@@ -153,22 +153,21 @@ code_1C80F9:
   RTS                                       ; $1C8101 |
 
 code_1C8102:
-  LDA $0480,x                               ; $1C8102 |
-  AND #$60                                  ; $1C8105 |
-  BEQ code_1C8142                           ; $1C8107 |
-code_1C8109:
-  LDA $05C0                                 ; $1C8109 |
-  CMP #$A3                                  ; $1C810C |
-  BNE code_1C8113                           ; $1C810E |
-  JMP code_1C825E                           ; $1C8110 |
-
-code_1C8113:
-  JSR check_sprite_weapon_collision         ; $1C8113 |
-  BCS code_1C8142                           ; $1C8116 |
-  LDA $0480,x                               ; $1C8118 |
-  AND #$20                                  ; $1C811B |
-  BEQ code_1C8144                           ; $1C811D |
-code_1C811F:
+  LDA $0480,x                               ; $1C8102 |\
+  AND #$60                                  ; $1C8105 | | if ??? flag not on
+  BEQ .ret                                  ; $1C8107 |/  return
+.code_1C8109:
+  LDA $05C0                                 ; $1C8109 |\
+  CMP #$A3                                  ; $1C810C | | if sprite ID == $A3
+  BNE .check_weapon_collision               ; $1C810E | |
+  JMP code_1C825E                           ; $1C8110 |/
+.check_weapon_collision:
+  JSR check_sprite_weapon_collision         ; $1C8113 |\ if no weapon collision
+  BCS .ret                                  ; $1C8116 |/ return
+  LDA $0480,x                               ; $1C8118 |\
+  AND #$20                                  ; $1C811B | | if ??? flag on
+  BEQ code_1C8144                           ; $1C811D |/
+.code_1C811F:
   LDA #$19                                  ; $1C811F |
   JSR code_1FF89A                           ; $1C8121 |
   LDY $10                                   ; $1C8124 |
@@ -183,7 +182,7 @@ code_1C811F:
   STA $0480,y                               ; $1C813A |
   LDA #$0F                                  ; $1C813D |
   STA $0320,y                               ; $1C813F |
-code_1C8142:
+.ret:
   SEC                                       ; $1C8142 |
   RTS                                       ; $1C8143 |
 
@@ -205,7 +204,7 @@ code_1C8144:
   LDY $0320,x                               ; $1C8163 |
   LDA ($00),y                               ; $1C8166 |
   BNE code_1C8170                           ; $1C8168 |
-  JSR code_1C811F                           ; $1C816A |
+  JSR code_1C8102.code_1C811F               ; $1C816A |
   JMP code_1C824D                           ; $1C816D |
 
 code_1C8170:

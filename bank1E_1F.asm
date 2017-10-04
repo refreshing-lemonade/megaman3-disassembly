@@ -7034,7 +7034,7 @@ code_1FF883:
 code_1FF898:
   STA $D9                                   ; $1FF898 |
 code_1FF89A:
-  STX $00                                   ; $1FF89A |
+  STX $00                                   ; $1FF89A | preserve X
   LDX $DA                                   ; $1FF89C |
   STA $01                                   ; $1FF89E |
   LDA $DC,x                                 ; $1FF8A0 |
@@ -7047,7 +7047,7 @@ code_1FF89A:
   AND #$07                                  ; $1FF8AC |
   STA $DA                                   ; $1FF8AE |
 code_1FF8B0:
-  LDX $00                                   ; $1FF8B0 |
+  LDX $00                                   ; $1FF8B0 | restore X
   RTS                                       ; $1FF8B2 |
 
 code_1FF8B3:
@@ -7429,6 +7429,7 @@ code_1FFB3A:
 ; X: sprite slot to check weapon collision for
 ; returns:
 ; Carry flag off = sprite is colliding with player's weapons, on = not
+; $10: sprite slot of weapon collided with (if carry off)
 check_sprite_weapon_collision:
   LDA $30                                   ; $1FFB7B |\
   CMP #$0E                                  ; $1FFB7D | | is player dead
