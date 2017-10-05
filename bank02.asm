@@ -239,7 +239,7 @@ code_02A18B:
 
 code_02A18E:
   LDA #$1A                                  ; $02A18E |
-  JSR code_1FF89A                           ; $02A190 |
+  JSR submit_sound_ID                       ; $02A190 |
   LDA $50                                   ; $02A193 |
   PHA                                       ; $02A195 |
   INC $50                                   ; $02A196 |
@@ -683,7 +683,7 @@ code_02A477:
   CMP $A1                                   ; $02A478 |
   BEQ code_02A481                           ; $02A47A |
   LDA #$1B                                  ; $02A47C |
-  JSR code_1FF89A                           ; $02A47E |
+  JSR submit_sound_ID                       ; $02A47E |
 code_02A481:
   LDX #$00                                  ; $02A481 |
 code_02A483:
@@ -765,7 +765,7 @@ code_02A50A:
 
 code_02A50D:
   LDA #$1C                                  ; $02A50D |
-  JSR code_1FF89A                           ; $02A50F |
+  JSR submit_sound_ID                       ; $02A50F |
   LDA $A1                                   ; $02A512 |
   ASL                                       ; $02A514 |
   TAY                                       ; $02A515 |

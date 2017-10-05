@@ -12,7 +12,7 @@ org $8000
   JSR code_1EC628                           ; $0C8013 |
   JSR code_1FFF21                           ; $0C8016 |
   LDA #$F0                                  ; $0C8019 |
-  JSR code_1FF898                           ; $0C801B |
+  JSR submit_sound_ID_D9                    ; $0C801B |
   LDA #$00                                  ; $0C801E |
   STA $B1                                   ; $0C8020 |
   STA $B2                                   ; $0C8022 |
@@ -159,7 +159,7 @@ code_0C813F:
   CPX #$0C                                  ; $0C815D |
   BNE code_0C8166                           ; $0C815F |
   LDA #$12                                  ; $0C8161 |
-  JSR code_1FF898                           ; $0C8163 |
+  JSR submit_sound_ID_D9                    ; $0C8163 |
 code_0C8166:
   JSR $A006                                 ; $0C8166 |
   JMP code_0C81AA                           ; $0C8169 |
@@ -546,7 +546,7 @@ code_0C8466:
   STA $A000                                 ; $0C8481 |
   STA $0300                                 ; $0C8484 |
   LDA #$0F                                  ; $0C8487 |
-  JSR code_1FF898                           ; $0C8489 |
+  JSR submit_sound_ID_D9                    ; $0C8489 |
   LDA #$13                                  ; $0C848C |
   STA $F5                                   ; $0C848E |
   STA $22                                   ; $0C8490 |

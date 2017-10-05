@@ -95,7 +95,7 @@ code_12A058:
   LDA #$8E                                  ; $12A079 |
   STA $B3                                   ; $12A07B |
   LDA #$0D                                  ; $12A07D |
-  JSR code_1FF898                           ; $12A07F |
+  JSR submit_sound_ID_D9                    ; $12A07F |
 code_12A082:
   LDA $B0                                   ; $12A082 |
   CMP #$9C                                  ; $12A084 |
@@ -789,7 +789,7 @@ code_12A7BA:
   LDA #$8E                                  ; $12A7E1 |
   STA $B3                                   ; $12A7E3 |
   LDA #$0D                                  ; $12A7E5 |
-  JSR code_1FF898                           ; $12A7E7 |
+  JSR submit_sound_ID_D9                    ; $12A7E7 |
   LDA #$00                                  ; $12A7EA |
   STA $69                                   ; $12A7EC |
   STA $6B                                   ; $12A7EE |
@@ -1302,7 +1302,7 @@ code_12AC19:
   AND #$03                                  ; $12AC1C |
   BNE code_12AC4B                           ; $12AC1E |
   LDA #$1C                                  ; $12AC20 |
-  JSR code_1FF89A                           ; $12AC22 |
+  JSR submit_sound_ID                       ; $12AC22 |
   INC $B0                                   ; $12AC25 |
   LDA $B0                                   ; $12AC27 |
   CMP #$9C                                  ; $12AC29 |
@@ -1475,7 +1475,7 @@ code_12ADE0:
   LDA #$8E                                  ; $12ADF6 |
   STA $B3                                   ; $12ADF8 |
   LDA #$0D                                  ; $12ADFA |
-  JSR code_1FF898                           ; $12ADFC |
+  JSR submit_sound_ID_D9                    ; $12ADFC |
   LDA #$30                                  ; $12ADFF |
   STA $0500,x                               ; $12AE01 |
   LDA #$6C                                  ; $12AE04 |
@@ -2489,7 +2489,7 @@ code_12B664:
   LDA #$8E                                  ; $12B679 |
   STA $B3                                   ; $12B67B |
   LDA #$0D                                  ; $12B67D |
-  JSR code_1FF898                           ; $12B67F |
+  JSR submit_sound_ID_D9                    ; $12B67F |
 code_12B682:
   LDA $B0                                   ; $12B682 |
   CMP #$9C                                  ; $12B684 |
@@ -2959,7 +2959,7 @@ code_12BA4E:
   JSR check_sprite_weapon_collision         ; $12BA4E |
   BCS code_12BA62                           ; $12BA51 |
   LDA #$18                                  ; $12BA53 |
-  JSR code_1FF89A                           ; $12BA55 |
+  JSR submit_sound_ID                       ; $12BA55 |
   LDY $10                                   ; $12BA58 |
   LDA #$00                                  ; $12BA5A |
   STA $0300,y                               ; $12BA5C |
@@ -3246,7 +3246,7 @@ code_12BC7D:
   LDA #$8E                                  ; $12BC90 |
   STA $B3                                   ; $12BC92 |
   LDA #$0D                                  ; $12BC94 |
-  JSR code_1FF898                           ; $12BC96 |
+  JSR submit_sound_ID_D9                    ; $12BC96 |
 code_12BC99:
   LDA $B0                                   ; $12BC99 |
   CMP #$9C                                  ; $12BC9B |

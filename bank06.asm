@@ -413,7 +413,7 @@ code_06A333:
   BNE code_06A375                           ; $06A345 |
   JSR code_06A425                           ; $06A347 |
   LDA #$2A                                  ; $06A34A |
-  JSR code_1FF89A                           ; $06A34C |
+  JSR submit_sound_ID                       ; $06A34C |
   INC $0520,x                               ; $06A34F |
   LDA $0520,x                               ; $06A352 |
   CMP #$03                                  ; $06A355 |
@@ -957,7 +957,7 @@ code_06A7B4:
   DEC $0500,x                               ; $06A7B9 |
   BNE code_06A7CE                           ; $06A7BC |
   LDA #$2E                                  ; $06A7BE |
-  JSR code_1FF89A                           ; $06A7C0 |
+  JSR submit_sound_ID                       ; $06A7C0 |
   LDA #$01                                  ; $06A7C3 |
   STA $05A0,x                               ; $06A7C5 |
   LDA #$00                                  ; $06A7C8 |

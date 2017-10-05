@@ -201,7 +201,7 @@ code_09815D:
   AND #$03                                  ; $0981A6 |
   BNE code_0981AF                           ; $0981A8 |
   LDA #$27                                  ; $0981AA |
-  JSR code_1FF89A                           ; $0981AC |
+  JSR submit_sound_ID                       ; $0981AC |
 code_0981AF:
   INC $55                                   ; $0981AF |
 code_0981B1:
@@ -254,7 +254,7 @@ code_0981CA:
   LDA $82BB,y                               ; $098221 |
   STA $0360,x                               ; $098224 |
   LDA #$27                                  ; $098227 |
-  JMP code_1FF89A                           ; $098229 |
+  JMP submit_sound_ID                       ; $098229 |
 
 code_09822C:
   LDA $68                                   ; $09822C |
@@ -442,7 +442,7 @@ code_09838F:
   DEC $00                                   ; $0983C4 |
   BPL code_09838F                           ; $0983C6 |
   LDA #$23                                  ; $0983C8 |
-  JSR code_1FF89A                           ; $0983CA |
+  JSR submit_sound_ID                       ; $0983CA |
   LDA #$3C                                  ; $0983CD |
   STA $65                                   ; $0983CF |
   LDY $64                                   ; $0983D1 |

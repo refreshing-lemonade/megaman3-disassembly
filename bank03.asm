@@ -2,7 +2,7 @@ bank $03
 org $A000
 
   LDA #$33                                  ; $03A000 |
-  JSR code_1FF898                           ; $03A002 |
+  JSR submit_sound_ID_D9                    ; $03A002 |
   LDA #$80                                  ; $03A005 |
   STA $0310                                 ; $03A007 |
   STA $0590                                 ; $03A00A |

@@ -164,7 +164,7 @@ code_07A128:
   LDA #$00                                  ; $07A134 |
   STA $05E0,x                               ; $07A136 |
   LDA #$30                                  ; $07A139 |
-  JSR code_1FF89A                           ; $07A13B |
+  JSR submit_sound_ID                       ; $07A13B |
   LDY #$26                                  ; $07A13E |
   JSR code_1FF606                           ; $07A140 |
   BCC code_07A127                           ; $07A143 |

@@ -151,10 +151,10 @@ code_1EC0FE:
   PLP                                       ; $1EC11F |/
   RTI                                       ; $1EC120 | FAKE RETURN
 ; does not actually return, stack is hardcoded to go right here
-; another preserve & restore just to call NMI_cleanup
+; another preserve & restore just to call play_sounds
 ; this is done in case NMI happened in the middle of selecting PRG banks
-; because NMI_cleanup also selects PRG banks - possible race condition
-; is handled in NMI_cleanup routine
+; because play_sounds also selects PRG banks - possible race condition
+; is handled in play_sounds routine
   PHP                                       ; $1EC121 |\ leave a stack slot for word sized
   PHP                                       ; $1EC122 |/ return address for the RTS
   PHP                                       ; $1EC123 |\
@@ -171,7 +171,7 @@ code_1EC0FE:
   LDA $7D                                   ; $1EC132 | | (for RTS)
   SBC #$00                                  ; $1EC134 | |
   STA $0106,x                               ; $1EC136 |/
-  JSR NMI_cleanup                           ; $1EC139 |
+  JSR play_sounds                           ; $1EC139 |
   PLA                                       ; $1EC13C |\
   TAY                                       ; $1EC13D | |
   PLA                                       ; $1EC13E | | once again, restore X, Y & flags
@@ -1163,7 +1163,7 @@ code_1EC8B4:
   LDA #$01                                  ; $1EC8E0 |
   STA $9B                                   ; $1EC8E2 |
   LDA #$00                                  ; $1EC8E4 |
-  JSR code_1FF898                           ; $1EC8E6 |
+  JSR submit_sound_ID_D9                    ; $1EC8E6 |
   LDA #$40                                  ; $1EC8E9 |
   STA $99                                   ; $1EC8EB |
   LDA #$18                                  ; $1EC8ED |
@@ -1216,7 +1216,7 @@ code_1EC909:
   STA $6F                                   ; $1EC94F |
   LDY $22                                   ; $1EC951 |
   LDA $CD0C,y                               ; $1EC953 |
-  JSR code_1FF898                           ; $1EC956 |
+  JSR submit_sound_ID_D9                    ; $1EC956 |
   LDA #$01                                  ; $1EC959 |
   STA $31                                   ; $1EC95B |
   STA $23                                   ; $1EC95D |
@@ -1403,9 +1403,9 @@ code_1ECAB5:
   CMP #$0E                                  ; $1ECAC5 |
   BNE code_1ECAD3                           ; $1ECAC7 |
   LDA #$F2                                  ; $1ECAC9 |
-  JSR code_1FF89A                           ; $1ECACB |
+  JSR submit_sound_ID                       ; $1ECACB |
   LDA #$17                                  ; $1ECACE |
-  JSR code_1FF89A                           ; $1ECAD0 |
+  JSR submit_sound_ID                       ; $1ECAD0 |
 code_1ECAD3:
   LDA #$00                                  ; $1ECAD3 |
   STA $3D                                   ; $1ECAD5 |
@@ -1653,7 +1653,7 @@ code_1ECC99:
   STA $2D                                   ; $1ECCA5 |
   LDY $22                                   ; $1ECCA7 |
   LDA $CD0C,y                               ; $1ECCA9 |
-  JSR code_1FF898                           ; $1ECCAC |
+  JSR submit_sound_ID_D9                    ; $1ECCAC |
   LDA #$01                                  ; $1ECCAF |
   STA $31                                   ; $1ECCB1 |
   STA $23                                   ; $1ECCB3 |
@@ -2096,7 +2096,7 @@ code_1ED01D:
   BNE code_1ED084                           ; $1ED03C |
   INC $BA                                   ; $1ED03E |
   LDA #$1F                                  ; $1ED040 |
-  JSR code_1FF89A                           ; $1ED042 |
+  JSR submit_sound_ID                       ; $1ED042 |
   LDA #$80                                  ; $1ED045 |
   STA $0304                                 ; $1ED047 |
   LDA $0580                                 ; $1ED04A |
@@ -2130,7 +2130,7 @@ code_1ED084:
   LDA $30                                   ; $1ED08A |
   BEQ code_1ED0A6                           ; $1ED08C |
   LDA #$13                                  ; $1ED08E |
-  JSR code_1FF89A                           ; $1ED090 |
+  JSR submit_sound_ID                       ; $1ED090 |
   LDA #$00                                  ; $1ED093 |
   STA $30                                   ; $1ED095 |
   LDA #$0D                                  ; $1ED097 |
@@ -2226,7 +2226,7 @@ code_1ED134:
 code_1ED135:
   LDX $A0                                   ; $1ED135 |
   LDA $D349,x                               ; $1ED137 |
-  JSR code_1FF89A                           ; $1ED13A |
+  JSR submit_sound_ID                       ; $1ED13A |
   LDX #$00                                  ; $1ED13D |
   LDA #$80                                  ; $1ED13F |
   STA $0300,y                               ; $1ED141 |
@@ -2393,7 +2393,7 @@ code_1ED292:
   BEQ code_1ED2D2                           ; $1ED2AA |
   JSR reset_sprite_anim                     ; $1ED2AC |
   LDA #$2C                                  ; $1ED2AF |
-  JMP code_1FF89A                           ; $1ED2B1 |
+  JMP submit_sound_ID                       ; $1ED2B1 |
 
   JSR code_1ED103                           ; $1ED2B4 |
   BCC code_1ED2D2                           ; $1ED2B7 |
@@ -2837,7 +2837,7 @@ code_1ED5EB:
   CMP #$01                                  ; $1ED5F3 |
   BNE code_1ED5FC                           ; $1ED5F5 |
   LDA #$34                                  ; $1ED5F7 |
-  JSR code_1FF89A                           ; $1ED5F9 |
+  JSR submit_sound_ID                       ; $1ED5F9 |
 code_1ED5FC:
   LDA $05A0                                 ; $1ED5FC |
   CMP #$04                                  ; $1ED5FF |
@@ -3274,7 +3274,7 @@ code_1ED973:
   CMP #$81                                  ; $1ED983 |
   BEQ code_1ED990                           ; $1ED985 |
   LDA #$1C                                  ; $1ED987 |
-  JMP code_1FF89A                           ; $1ED989 |
+  JMP submit_sound_ID                       ; $1ED989 |
 
 code_1ED98C:
   LDA #$00                                  ; $1ED98C |
@@ -3346,7 +3346,7 @@ code_1EDA02:
 
 code_1EDA03:
   LDA #$31                                  ; $1EDA03 |
-  JSR code_1FF89A                           ; $1EDA05 |
+  JSR submit_sound_ID                       ; $1EDA05 |
   LDY $22                                   ; $1EDA08 |
   LDA $DD04,y                               ; $1EDA0A |
   STA $A1                                   ; $1EDA0D |
@@ -3435,7 +3435,7 @@ code_1EDAA6:
   CMP $D9                                   ; $1EDAA8 |
   BEQ code_1EDAB4                           ; $1EDAAA |
 code_1EDAAC:
-  JSR code_1FF898                           ; $1EDAAC |
+  JSR submit_sound_ID_D9                    ; $1EDAAC |
   LDA #$FF                                  ; $1EDAAF |
   STA $0520                                 ; $1EDAB1 |
 code_1EDAB4:
@@ -3539,7 +3539,7 @@ code_1EDB42:
   CPY #$0F                                  ; $1EDB7D |
   BNE code_1EDB42                           ; $1EDB7F |
   LDA #$32                                  ; $1EDB81 |
-  JSR code_1FF89A                           ; $1EDB83 |
+  JSR submit_sound_ID                       ; $1EDB83 |
   LDX #$00                                  ; $1EDB86 |
 code_1EDB88:
   RTS                                       ; $1EDB88 |
@@ -3557,7 +3557,7 @@ code_1EDB89:
   STA $30                                   ; $1EDB9B |
   LDY $22                                   ; $1EDB9D |
   LDA $CD0C,y                               ; $1EDB9F |
-  JSR code_1FF898                           ; $1EDBA2 |
+  JSR submit_sound_ID_D9                    ; $1EDBA2 |
   RTS                                       ; $1EDBA5 |
 
 code_1EDBA6:
@@ -3626,7 +3626,7 @@ code_1EDC18:
   BEQ code_1EDC2C                           ; $1EDC1D |
   JSR reset_sprite_anim                     ; $1EDC1F |
   LDA #$34                                  ; $1EDC22 |
-  JSR code_1FF89A                           ; $1EDC24 |
+  JSR submit_sound_ID                       ; $1EDC24 |
   LDA #$04                                  ; $1EDC27 |
   STA $05A0                                 ; $1EDC29 |
 code_1EDC2C:
@@ -3848,7 +3848,7 @@ code_1EDE1E:
   CMP #$08                                  ; $1EDE37 |
   BNE code_1EDE40                           ; $1EDE39 |
   LDA #$0A                                  ; $1EDE3B |
-  JSR code_1FF898                           ; $1EDE3D |
+  JSR submit_sound_ID_D9                    ; $1EDE3D |
 code_1EDE40:
   JSR code_1FFF21                           ; $1EDE40 |
   JSR code_1EC74C                           ; $1EDE43 |
@@ -6172,9 +6172,9 @@ code_1FF0AF:
   BEQ code_1FF0D8                           ; $1FF0CA |
   STA $30                                   ; $1FF0CC |
   LDA #$F2                                  ; $1FF0CE |
-  JSR code_1FF89A                           ; $1FF0D0 |
+  JSR submit_sound_ID                       ; $1FF0D0 |
   LDA #$17                                  ; $1FF0D3 |
-  JSR code_1FF89A                           ; $1FF0D5 |
+  JSR submit_sound_ID                       ; $1FF0D5 |
 code_1FF0D8:
   RTS                                       ; $1FF0D8 |
 
@@ -7031,22 +7031,28 @@ code_1FF883:
   STA $0580,x                               ; $1FF894 |
   RTS                                       ; $1FF897 |
 
-code_1FF898:
-  STA $D9                                   ; $1FF898 |
-code_1FF89A:
+; submit a sound ID to global buffer for playing
+; if full, do nothing
+; parameters:
+; A: sound ID
+submit_sound_ID_D9:
+  STA $D9                                   ; $1FF898 | also store ID in $D9
+
+; this version doesn't store in $D9
+submit_sound_ID:
   STX $00                                   ; $1FF89A | preserve X
-  LDX $DA                                   ; $1FF89C |
-  STA $01                                   ; $1FF89E |
-  LDA $DC,x                                 ; $1FF8A0 |
-  CMP #$88                                  ; $1FF8A2 |
-  BNE code_1FF8B0                           ; $1FF8A4 |
-  LDA $01                                   ; $1FF8A6 |
-  STA $DC,x                                 ; $1FF8A8 |
-  INX                                       ; $1FF8AA |
-  TXA                                       ; $1FF8AB |
-  AND #$07                                  ; $1FF8AC |
-  STA $DA                                   ; $1FF8AE |
-code_1FF8B0:
+  LDX $DA                                   ; $1FF89C | X = current circular buffer index
+  STA $01                                   ; $1FF89E | sound ID -> $01 temp
+  LDA $DC,x                                 ; $1FF8A0 |\  if current slot != $88
+  CMP #$88                                  ; $1FF8A2 | | buffer FULL, return
+  BNE .ret                                  ; $1FF8A4 |/
+  LDA $01                                   ; $1FF8A6 |\ add sound ID to current
+  STA $DC,x                                 ; $1FF8A8 |/ buffer slot
+  INX                                       ; $1FF8AA |\
+  TXA                                       ; $1FF8AB | | increment circular buffer index
+  AND #$07                                  ; $1FF8AC | | with wraparound $07 -> $00
+  STA $DA                                   ; $1FF8AE |/
+.ret:
   LDX $00                                   ; $1FF8B0 | restore X
   RTS                                       ; $1FF8B2 |
 
@@ -7417,6 +7423,7 @@ code_1FFB3A:
   db $18, $18, $1C, $10, $24, $24, $34, $14 ; $1FFB43 |
   db $20, $0E, $1C, $1C, $3C, $1C, $2C, $14 ; $1FFB4B |
   db $2C, $2C, $14, $34, $0C, $0C, $0C, $0C ; $1FFB53 |
+
   db $0F, $14, $14, $14, $10, $20, $18, $14 ; $1FFB5B |
   db $10, $18, $18, $0C, $14, $20, $10, $18 ; $1FFB63 |
   db $1C, $14, $40, $0C, $0C, $0F, $0C, $10 ; $1FFB6B |
@@ -8026,11 +8033,12 @@ select_PRG_banks:
   STA $8001                                 ; $1FFF86 |/
   DEC $F6                                   ; $1FFF89 | flag selecting back off (done)
   LDA $F7                                   ; $1FFF8B |\ if NMI and non-NMI race condition
-  BNE NMI_cleanup                           ; $1FFF8D |/ we still need to perform NMI cleanup (???)
+  BNE play_sounds                           ; $1FFF8D |/ we still need to play sounds
   RTS                                       ; $1FFF8F | else just return
 
-; some kind of cleanup called by NMI ???
-NMI_cleanup:
+; go through circular sound buffer and pop for play
+; handle NMI simultaneous bank changes as well
+play_sounds:
   LDA $F6                                   ; $1FFF90 |\ this means both NMI and non
   BNE .flag_simultaneous                    ; $1FFF92 |/ are trying to select banks
   LDA #$06                                  ; $1FFF94 |\
@@ -8041,21 +8049,21 @@ NMI_cleanup:
   STA $8000                                 ; $1FFFA0 | |
   LDA #$17                                  ; $1FFFA3 | |
   STA $8001                                 ; $1FFFA5 |/
-.code_1FFFA8:
-  LDX $DB                                   ; $1FFFA8 |
-  LDA $DC,x                                 ; $1FFFAA |
-  CMP #$88                                  ; $1FFFAC |
-  BEQ .code_1FFFC2                          ; $1FFFAE |
-  PHA                                       ; $1FFFB0 |
-  LDA #$88                                  ; $1FFFB1 |
-  STA $DC,x                                 ; $1FFFB3 |
-  INX                                       ; $1FFFB5 |
-  TXA                                       ; $1FFFB6 |
-  AND #$07                                  ; $1FFFB7 |
-  STA $DB                                   ; $1FFFB9 |
-  PLA                                       ; $1FFFBB |
-  JSR $8003                                 ; $1FFFBC |
-  JMP .code_1FFFA8                          ; $1FFFBF |
+.loop_sound:
+  LDX $DB                                   ; $1FFFA8 |\  is current sound slot in buffer
+  LDA $DC,x                                 ; $1FFFAA | | == $88? this means
+  CMP #$88                                  ; $1FFFAC | | no sound, skip processing
+  BEQ .code_1FFFC2                          ; $1FFFAE |/
+  PHA                                       ; $1FFFB0 | push sound ID
+  LDA #$88                                  ; $1FFFB1 |\ clear sound ID immediately
+  STA $DC,x                                 ; $1FFFB3 |/ in circular buffer
+  INX                                       ; $1FFFB5 |\
+  TXA                                       ; $1FFFB6 | | increment circular buffer index
+  AND #$07                                  ; $1FFFB7 | | with wraparound $07 -> $00
+  STA $DB                                   ; $1FFFB9 |/
+  PLA                                       ; $1FFFBB |\ play sound ID
+  JSR $8003                                 ; $1FFFBC |/
+  JMP .loop_sound                           ; $1FFFBF | check next slot
 
 .code_1FFFC2:
   JSR $8000                                 ; $1FFFC2 |

@@ -14,7 +14,7 @@ org $8000
   JSR code_1EC628                           ; $0B8014 |
   JSR code_1FFF21                           ; $0B8017 |
   LDA #$F0                                  ; $0B801A |
-  JSR code_1FF898                           ; $0B801C |
+  JSR submit_sound_ID_D9                    ; $0B801C |
   LDA #$00                                  ; $0B801F |
   STA $B1                                   ; $0B8021 |
   STA $B2                                   ; $0B8023 |
@@ -301,7 +301,7 @@ code_0B827E:
   AND #$0F                                  ; $0B8280 |
   BNE code_0B8289                           ; $0B8282 |
   LDA #$28                                  ; $0B8284 |
-  JSR code_1FF89A                           ; $0B8286 |
+  JSR submit_sound_ID                       ; $0B8286 |
 code_0B8289:
   INC $18                                   ; $0B8289 |
   JSR code_1FFD6E                           ; $0B828B |
@@ -497,7 +497,7 @@ code_0B8422:
   AND #$0F                                  ; $0B8427 |
   BNE code_0B8430                           ; $0B8429 |
   LDA #$28                                  ; $0B842B |
-  JSR code_1FF89A                           ; $0B842D |
+  JSR submit_sound_ID                       ; $0B842D |
 code_0B8430:
   JSR code_1FFD80                           ; $0B8430 |
   INC $0560                                 ; $0B8433 |
@@ -508,7 +508,7 @@ code_0B8439:
   STA $EE                                   ; $0B843B |
   JSR code_1EC752                           ; $0B843D |
   LDA #$36                                  ; $0B8440 |
-  JSR code_1FF898                           ; $0B8442 |
+  JSR submit_sound_ID_D9                    ; $0B8442 |
   LDA #$04                                  ; $0B8445 |
   STA $97                                   ; $0B8447 |
   JSR code_1EC5E9                           ; $0B8449 |
@@ -710,7 +710,7 @@ code_0B85A0:
   INY                                       ; $0B85BF |
   STY $10                                   ; $0B85C0 |
   LDA #$1C                                  ; $0B85C2 |
-  JSR code_1FF89A                           ; $0B85C4 |
+  JSR submit_sound_ID                       ; $0B85C4 |
   JSR code_0B8525                           ; $0B85C7 |
   JSR code_0B8525                           ; $0B85CA |
   JSR code_0B8525                           ; $0B85CD |

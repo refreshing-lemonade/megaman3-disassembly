@@ -30,7 +30,7 @@ code_108006:
   LDA #$00                                  ; $10803D |
   STA $078C                                 ; $10803F |
   LDA #$1D                                  ; $108042 |
-  JSR code_1FF89A                           ; $108044 |
+  JSR submit_sound_ID                       ; $108044 |
   LDA #$04                                  ; $108047 |
   STA $02                                   ; $108049 |
 code_10804B:
@@ -156,7 +156,7 @@ code_1081F3:
   LDA #$00                                  ; $108228 |
   STA $078A                                 ; $10822A |
   LDA #$1D                                  ; $10822D |
-  JSR code_1FF89A                           ; $10822F |
+  JSR submit_sound_ID                       ; $10822F |
   LDA #$04                                  ; $108232 |
   STA $02                                   ; $108234 |
 code_108236:

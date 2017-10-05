@@ -184,27 +184,28 @@ code_1680EC:
 
 code_1680FE:
   INC $C0                                   ; $1680FE |
-  JSR code_168106                           ; $168100 |
+  JSR play_sound_ID                         ; $168100 |
   DEC $C0                                   ; $168103 |
   RTS                                       ; $168105 |
 
+; plays sound effect
 ; parameters:
-; A: ???
-code_168106:
-  CMP #$F0                                  ; $168106 |\ if parameter ???
-  BCC .code_16810D                          ; $168108 |/ < $F0
+; A: sound ID to play
+play_sound_ID:
+  CMP #$F0                                  ; $168106 |\ if sound ID < $F0
+  BCC .modulus                              ; $168108 |/
   JMP code_1681AE                           ; $16810A |
 
-.code_16810D:
+.modulus:
   CMP $8A40                                 ; $16810D |\
-  BCC .code_168118                          ; $168110 | | A = parameter ???
-  SEC                                       ; $168112 | | mod $39
+  BCC .read_sound_ptr                       ; $168110 | |
+  SEC                                       ; $168112 | | A = sound ID mod $39
   SBC $8A40                                 ; $168113 | |
-  BCS .code_16810D                          ; $168116 |/
-.code_168118:
+  BCS .modulus                              ; $168116 |/
+.read_sound_ptr:
   ASL                                       ; $168118 |\
   TAX                                       ; $168119 | | X = A * 2
-  LDY $8A44,x                               ; $16811A | | index into ???
+  LDY $8A44,x                               ; $16811A | | index into sound pointers
   TYA                                       ; $16811D | | grab pointer word in Y & A
   ORA $8A43,x                               ; $16811E | | if it's $0000, return
   BEQ .ret                                  ; $168121 | | otherwise, Y = read byte
@@ -214,7 +215,7 @@ code_168106:
   BEQ code_16816F                           ; $16812A | if value read was $00
   LDY #$00                                  ; $16812C |
   INX                                       ; $16812E |
-  STA $C4                                   ; $16812F |
+  STA $C4                                   ; $16812F | first byte of sound data -> $C4
   AND #$7F                                  ; $168131 |
   CMP $CE                                   ; $168133 |
   BCC .ret                                  ; $168135 |
@@ -405,7 +406,7 @@ code_16825B:
   LDA $D7                                   ; $168265 |
   LSR                                       ; $168267 |
   BCC code_168270                           ; $168268 |
-  JSR code_168106.code_168118               ; $16826A |
+  JSR play_sound_ID.read_sound_ptr          ; $16826A |
   JMP code_16825B                           ; $16826D |
 
 code_168270:
@@ -1433,6 +1434,7 @@ code_168914:
   db $00, $00, $00, $00, $00, $00, $00, $00 ; $168A35 |
   db $00, $00, $00                          ; $168A3D |
 
+; sound pointers
   dw $8A39                                  ; $168A40 |
   dw $8CB5                                  ; $168A42 |
   dw $909D                                  ; $168A44 |

@@ -636,7 +636,7 @@ code_1890DD:
 code_1890F2:
   STY $0F                                   ; $1890F2 |
   LDA $9BFD,y                               ; $1890F4 |
-  JSR code_1FF898                           ; $1890F7 |
+  JSR submit_sound_ID_D9                    ; $1890F7 |
   LDA #$00                                  ; $1890FA |
   STA $70                                   ; $1890FC |
   LDA $9C63,y                               ; $1890FE |
@@ -790,7 +790,7 @@ code_189216:
   STA $F5                                   ; $189221 |
   JSR select_PRG_banks                      ; $189223 |
   LDA #$10                                  ; $189226 |
-  JSR code_1FF898                           ; $189228 |
+  JSR submit_sound_ID_D9                    ; $189228 |
   LDA #$00                                  ; $18922B |
   STA $70                                   ; $18922D |
   STA $28                                   ; $18922F |
@@ -831,7 +831,7 @@ code_189261:
   BCS code_189279                           ; $189270 |
   STA $12                                   ; $189272 |
   LDA #$1B                                  ; $189274 |
-  JSR code_1FF89A                           ; $189276 |
+  JSR submit_sound_ID                       ; $189276 |
 code_189279:
   LDA $14                                   ; $189279 |
   AND #$0C                                  ; $18927B |
@@ -844,7 +844,7 @@ code_189279:
   BCS code_189291                           ; $189288 |
   STA $13                                   ; $18928A |
   LDA #$1B                                  ; $18928C |
-  JSR code_1FF89A                           ; $18928E |
+  JSR submit_sound_ID                       ; $18928E |
 code_189291:
   LDA $12                                   ; $189291 |
   CLC                                       ; $189293 |
@@ -1082,7 +1082,7 @@ code_189428:
   JSR code_1EC5E9                           ; $18942F |
   JSR code_1FFF21                           ; $189432 |
   LDA #$35                                  ; $189435 |
-  JSR code_1FF898                           ; $189437 |
+  JSR submit_sound_ID_D9                    ; $189437 |
   JSR code_189936                           ; $18943A |
   LDA $22                                   ; $18943D |
   PHA                                       ; $18943F |
@@ -1267,7 +1267,7 @@ code_18958A:
   JSR code_1FFF21                           ; $189594 |
   JSR code_189936                           ; $189597 |
   LDA #$10                                  ; $18959A |
-  JSR code_1FF898                           ; $18959C |
+  JSR submit_sound_ID_D9                    ; $18959C |
   LDA #$13                                  ; $18959F |
   STA $F5                                   ; $1895A1 |
   JSR select_PRG_banks                      ; $1895A3 |
@@ -1611,7 +1611,7 @@ code_18985D:
   JSR code_1EC5E9                           ; $189864 |
   JSR code_1FFF21                           ; $189867 |
   LDA #$0E                                  ; $18986A |
-  JSR code_1FF898                           ; $18986C |
+  JSR submit_sound_ID_D9                    ; $18986C |
   JSR code_189936                           ; $18986F |
   LDA #$01                                  ; $189872 |
   STA $FD                                   ; $189874 |
@@ -2031,7 +2031,7 @@ code_189B38:
   LDA #$30                                  ; $189BA4 |
   STA $0360                                 ; $189BA6 |
   LDA #$0C                                  ; $189BA9 |
-  JSR code_1FF898                           ; $189BAB |
+  JSR submit_sound_ID_D9                    ; $189BAB |
   JSR code_1FFF21                           ; $189BAE |
   JSR code_1EC74C                           ; $189BB1 |
   JMP code_1EC9B3                           ; $189BB4 |

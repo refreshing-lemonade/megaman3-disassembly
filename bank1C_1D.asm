@@ -121,7 +121,7 @@ code_1C8097:
   LDA #$06                                  ; $1C80C3 |
   STA $30                                   ; $1C80C5 |
   LDA #$16                                  ; $1C80C7 |
-  JSR code_1FF89A                           ; $1C80C9 |
+  JSR submit_sound_ID                       ; $1C80C9 |
   LDA $A2                                   ; $1C80CC |
   AND #$1F                                  ; $1C80CE |
   BEQ code_1C80F9                           ; $1C80D0 |
@@ -142,9 +142,9 @@ code_1C80E7:
   LDA #$0E                                  ; $1C80EB |
   STA $30                                   ; $1C80ED |
   LDA #$F2                                  ; $1C80EF |
-  JSR code_1FF89A                           ; $1C80F1 |
+  JSR submit_sound_ID                       ; $1C80F1 |
   LDA #$17                                  ; $1C80F4 |
-  JSR code_1FF89A                           ; $1C80F6 |
+  JSR submit_sound_ID                       ; $1C80F6 |
 code_1C80F9:
   PLA                                       ; $1C80F9 |
   STA $F5                                   ; $1C80FA |
@@ -169,7 +169,7 @@ code_1C8102:
   BEQ code_1C8144                           ; $1C811D |/
 .code_1C811F:
   LDA #$19                                  ; $1C811F |
-  JSR code_1FF89A                           ; $1C8121 |
+  JSR submit_sound_ID                       ; $1C8121 |
   LDY $10                                   ; $1C8124 |
   LDA $04A0,y                               ; $1C8126 |
   EOR #$03                                  ; $1C8129 |
@@ -188,7 +188,7 @@ code_1C8102:
 
 code_1C8144:
   LDA #$18                                  ; $1C8144 |
-  JSR code_1FF89A                           ; $1C8146 |
+  JSR submit_sound_ID                       ; $1C8146 |
   LDA $F5                                   ; $1C8149 |
   PHA                                       ; $1C814B |
   STX $0F                                   ; $1C814C |
@@ -375,9 +375,9 @@ code_1C82AA:
 
 code_1C82B8:
   LDA #$F2                                  ; $1C82B8 |
-  JSR code_1FF898                           ; $1C82BA |
+  JSR submit_sound_ID_D9                    ; $1C82BA |
   LDA #$17                                  ; $1C82BD |
-  JSR code_1FF89A                           ; $1C82BF |
+  JSR submit_sound_ID                       ; $1C82BF |
   LDY #$1F                                  ; $1C82C2 |
 code_1C82C4:
   LDA $5A                                   ; $1C82C4 |
@@ -3389,7 +3389,7 @@ code_1C990F:
   LDA #$6F                                  ; $1C991E |
   JSR code_1FF846                           ; $1C9920 |
   LDA #$1E                                  ; $1C9923 |
-  JSR code_1FF89A                           ; $1C9925 |
+  JSR submit_sound_ID                       ; $1C9925 |
   LDA #$C0                                  ; $1C9928 |
   STA $0480,y                               ; $1C992A |
   LDA #$13                                  ; $1C992D |
@@ -3925,7 +3925,7 @@ code_1C9D51:
   STA $05A0,x                               ; $1C9D5F |
   STA $05E0,x                               ; $1C9D62 |
   LDA #$20                                  ; $1C9D65 |
-  JSR code_1FF89A                           ; $1C9D67 |
+  JSR submit_sound_ID                       ; $1C9D67 |
   RTS                                       ; $1C9D6A |
 
 code_1C9D6B:
@@ -4561,7 +4561,7 @@ code_1DA25D:
   LDA #$11                                  ; $1DA25D |
   CMP $D9                                   ; $1DA25F |
   BEQ code_1DA26B                           ; $1DA261 |
-  JSR code_1FF898                           ; $1DA263 |
+  JSR submit_sound_ID_D9                    ; $1DA263 |
   LDA #$B4                                  ; $1DA266 |
   STA $0500,x                               ; $1DA268 |
 code_1DA26B:
@@ -4583,7 +4583,7 @@ code_1DA28A:
   CLC                                       ; $1DA28C |
   ADC #$01                                  ; $1DA28D |
 code_1DA28F:
-  JSR code_1FF898                           ; $1DA28F |
+  JSR submit_sound_ID_D9                    ; $1DA28F |
 code_1DA292:
   RTS                                       ; $1DA292 |
 
@@ -4988,7 +4988,7 @@ code_1DA60B:
   LDA #$71                                  ; $1DA619 |
   JSR reset_sprite_anim                     ; $1DA61B |
   LDA #$24                                  ; $1DA61E |
-  JSR code_1FF89A                           ; $1DA620 |
+  JSR submit_sound_ID                       ; $1DA620 |
   INC $0300,x                               ; $1DA623 |
 code_1DA626:
   RTS                                       ; $1DA626 |
@@ -5264,7 +5264,7 @@ code_1DA82E:
   JSR find_enemy_freeslot_y                 ; $1DA849 |
   BCS code_1DA8BB                           ; $1DA84C |
   LDA #$27                                  ; $1DA84E |
-  JSR code_1FF89A                           ; $1DA850 |
+  JSR submit_sound_ID                       ; $1DA850 |
   LDA #$71                                  ; $1DA853 |
   JSR code_1FF846                           ; $1DA855 |
   LDA #$19                                  ; $1DA858 |
@@ -5798,7 +5798,7 @@ code_1DACBE:
   LDA $0560,x                               ; $1DACBE |
   BNE code_1DACCB                           ; $1DACC1 |
   LDA #$25                                  ; $1DACC3 |
-  JSR code_1FF89A                           ; $1DACC5 |
+  JSR submit_sound_ID                       ; $1DACC5 |
   INC $0560,x                               ; $1DACC8 |
 code_1DACCB:
   LDA #$01                                  ; $1DACCB |
@@ -6235,7 +6235,7 @@ main_wanaan:
   BNE .ret                                  ; $1DB041 |/ not expired yet? return
   INC $0300,x                               ; $1DB043 |\
   LDA #$22                                  ; $1DB046 | | on expiration,
-  JSR code_1FF89A                           ; $1DB048 |/  $02 -> state
+  JSR submit_sound_ID                       ; $1DB048 |/  $02 -> state
   RTS                                       ; $1DB04B |
 
 .postsnap:
@@ -6703,7 +6703,7 @@ code_1DB3E4:
 
 code_1DB3E7:
   LDA #$26                                  ; $1DB3E7 |
-  JSR code_1FF89A                           ; $1DB3E9 |
+  JSR submit_sound_ID                       ; $1DB3E9 |
   LDA #$56                                  ; $1DB3EC |
   JSR reset_sprite_anim                     ; $1DB3EE |
   STX $00                                   ; $1DB3F1 |
@@ -6798,7 +6798,7 @@ main_walking_bomb:
   JSR check_sprite_weapon_collision         ; $1DB4CB |
   BCS code_1DB4EC                           ; $1DB4CE |
   LDA #$18                                  ; $1DB4D0 |
-  JSR code_1FF89A                           ; $1DB4D2 |
+  JSR submit_sound_ID                       ; $1DB4D2 |
   LDY $10                                   ; $1DB4D5 |
   LDA #$00                                  ; $1DB4D7 |
   STA $0300,y                               ; $1DB4D9 |
@@ -7182,7 +7182,7 @@ code_1DB7DF:
   LDA #$8E                                  ; $1DB7E9 |
   STA $B3                                   ; $1DB7EB |
   LDA #$0C                                  ; $1DB7ED |
-  JSR code_1FF898                           ; $1DB7EF |
+  JSR submit_sound_ID_D9                    ; $1DB7EF |
   RTS                                       ; $1DB7F2 |
 
   db $16, $1A, $14, $18, $15, $13, $19, $17 ; $1DB7F3 |
@@ -7363,7 +7363,7 @@ code_1DB9BE:
   JSR check_sprite_weapon_collision         ; $1DB9BE |
   BCS code_1DB9DF                           ; $1DB9C1 |
   LDA #$18                                  ; $1DB9C3 |
-  JSR code_1FF89A                           ; $1DB9C5 |
+  JSR submit_sound_ID                       ; $1DB9C5 |
   LDY $10                                   ; $1DB9C8 |
   LDA #$00                                  ; $1DB9CA |
   STA $0300,y                               ; $1DB9CC |
@@ -7964,7 +7964,7 @@ code_1DBE72:
   ADC #$01                                  ; $1DBE7F |
   STA $00A2,y                               ; $1DBE81 |
   LDA #$1C                                  ; $1DBE84 |
-  JSR code_1FF89A                           ; $1DBE86 |
+  JSR submit_sound_ID                       ; $1DBE86 |
   DEC $0F                                   ; $1DBE89 |
   BEQ code_1DBE98                           ; $1DBE8B |
 code_1DBE8D:
@@ -7979,7 +7979,7 @@ code_1DBE98:
   RTS                                       ; $1DBE9C |
 
   LDA #$14                                  ; $1DBE9D |
-  JSR code_1FF89A                           ; $1DBE9F |
+  JSR submit_sound_ID                       ; $1DBE9F |
   LDA $AF                                   ; $1DBEA2 |
   CMP #$09                                  ; $1DBEA4 |
   BEQ code_1DBEAA                           ; $1DBEA6 |
@@ -7988,7 +7988,7 @@ code_1DBEAA:
   RTS                                       ; $1DBEAA |
 
   LDA #$14                                  ; $1DBEAB |
-  JSR code_1FF89A                           ; $1DBEAD |
+  JSR submit_sound_ID                       ; $1DBEAD |
   LDA $AE                                   ; $1DBEB0 |
   CMP #$99                                  ; $1DBEB2 |
   BEQ code_1DBED1                           ; $1DBEB4 |
