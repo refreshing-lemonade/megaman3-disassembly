@@ -8109,8 +8109,14 @@ code_1DBF7D:
 code_1DBF96:
   RTS                                       ; $1DBF96 |
 
-  db $1D, $1B, $0C, $0A, $01, $FB, $FC, $F9 ; $1DBF97 |
-  db $FA, $FE, $66, $67, $64, $65, $69, $ED ; $1DBF9F |
+  db $1D, $1B, $0C, $0A, $01                ; $1DBF97 |
+
+  db $FB, $FC, $F9, $FA, $FE                ; $1DBF9C |
+
+  db $66, $67, $64, $65, $69                ; $1DBFA1 |
+
+; freespace
+  db $ED                                    ; $1DBFA6 |
   db $40, $40, $01, $C6, $15, $ED, $00, $A6 ; $1DBFA7 |
   db $41, $97, $11, $59, $54, $93, $44, $CD ; $1DBFAF |
   db $84, $66, $04, $08, $41, $75, $51, $9B ; $1DBFB7 |
