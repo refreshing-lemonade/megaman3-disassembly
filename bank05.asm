@@ -137,13 +137,13 @@ code_05A0FF:
   LDA $04A0,x                               ; $05A0FF |
   AND #$02                                  ; $05A102 |
   BEQ code_05A113                           ; $05A104 |
-  JSR code_1FF73B                           ; $05A106 |
+  JSR move_sprite_left                      ; $05A106 |
   LDA $0360,x                               ; $05A109 |
   CMP $0520,x                               ; $05A10C |
   BCS code_05A12B                           ; $05A10F |
   BCC code_05A11E                           ; $05A111 |
 code_05A113:
-  JSR code_1FF71D                           ; $05A113 |
+  JSR move_sprite_right                     ; $05A113 |
   LDA $0360,x                               ; $05A116 |
   CMP $0520,x                               ; $05A119 |
   BCC code_05A12B                           ; $05A11C |
@@ -651,11 +651,11 @@ code_05A539:
   LDA $04A0,x                               ; $05A539 |
   AND #$08                                  ; $05A53C |
   BEQ code_05A546                           ; $05A53E |
-  JSR code_1FF779                           ; $05A540 |
+  JSR move_sprite_up                        ; $05A540 |
   JMP code_05A549                           ; $05A543 |
 
 code_05A546:
-  JSR code_1FF759                           ; $05A546 |
+  JSR move_sprite_down                      ; $05A546 |
 code_05A549:
   LDA $0580,x                               ; $05A549 |
   BMI code_05A554                           ; $05A54C |
@@ -668,10 +668,10 @@ code_05A554:
   LDA $04A0,x                               ; $05A554 |
   AND #$02                                  ; $05A557 |
   BEQ code_05A55E                           ; $05A559 |
-  JMP code_1FF73B                           ; $05A55B |
+  JMP move_sprite_left                      ; $05A55B |
 
 code_05A55E:
-  JMP code_1FF71D                           ; $05A55E |
+  JMP move_sprite_right                     ; $05A55E |
 
 code_05A561:
   LDA $0300,x                               ; $05A561 |
@@ -891,11 +891,11 @@ code_05A796:
   LDA $04A0,x                               ; $05A796 |
   AND #$08                                  ; $05A799 |
   BEQ code_05A7A3                           ; $05A79B |
-  JSR code_1FF779                           ; $05A79D |
+  JSR move_sprite_up                        ; $05A79D |
   JMP code_05A7A6                           ; $05A7A0 |
 
 code_05A7A3:
-  JSR code_1FF759                           ; $05A7A3 |
+  JSR move_sprite_down                      ; $05A7A3 |
 code_05A7A6:
   LDA $0580,x                               ; $05A7A6 |
   BMI code_05A7B1                           ; $05A7A9 |
@@ -907,10 +907,10 @@ code_05A7B1:
   LDA $04A0,x                               ; $05A7B1 |
   AND #$02                                  ; $05A7B4 |
   BEQ code_05A7BB                           ; $05A7B6 |
-  JMP code_1FF73B                           ; $05A7B8 |
+  JMP move_sprite_left                      ; $05A7B8 |
 
 code_05A7BB:
-  JMP code_1FF71D                           ; $05A7BB |
+  JMP move_sprite_right                     ; $05A7BB |
 
 code_05A7BE:
   LDA $0500,x                               ; $05A7BE |
@@ -935,7 +935,7 @@ code_05A7E3:
   LDA $0580,x                               ; $05A7E3 |
   ORA #$40                                  ; $05A7E6 |
   STA $0580,x                               ; $05A7E8 |
-  JSR code_1FF71D                           ; $05A7EB |
+  JSR move_sprite_right                     ; $05A7EB |
   JMP code_05A833                           ; $05A7EE |
 
 code_05A7F1:
@@ -949,7 +949,7 @@ code_05A7FE:
   LDA $0580,x                               ; $05A7FE |
   AND #$BF                                  ; $05A801 |
   STA $0580,x                               ; $05A803 |
-  JSR code_1FF73B                           ; $05A806 |
+  JSR move_sprite_left                      ; $05A806 |
   JMP code_05A833                           ; $05A809 |
 
 code_05A80C:
@@ -980,7 +980,7 @@ code_05A833:
   BNE code_05A84B                           ; $05A841 |
   LDA #$4B                                  ; $05A843 |
   STA $05C0,x                               ; $05A845 |
-  JMP code_1FF759                           ; $05A848 |
+  JMP move_sprite_down                      ; $05A848 |
 
 code_05A84B:
   LDY #$12                                  ; $05A84B |
@@ -994,7 +994,7 @@ code_05A858:
   BNE code_05A865                           ; $05A85B |
   LDA #$4C                                  ; $05A85D |
   STA $05C0,x                               ; $05A85F |
-  JMP code_1FF779                           ; $05A862 |
+  JMP move_sprite_up                        ; $05A862 |
 
 code_05A865:
   LDY #$13                                  ; $05A865 |

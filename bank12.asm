@@ -453,11 +453,11 @@ code_12A378:
   LDA $04A0,x                               ; $12A38D |
   AND #$01                                  ; $12A390 |
   BEQ code_12A39A                           ; $12A392 |
-  JSR code_1FF71D                           ; $12A394 |
+  JSR move_sprite_right                     ; $12A394 |
   JMP code_12A39D                           ; $12A397 |
 
 code_12A39A:
-  JSR code_1FF73B                           ; $12A39A |
+  JSR move_sprite_left                      ; $12A39A |
 code_12A39D:
   LDA $A5B5,y                               ; $12A39D |
   CMP $0360,x                               ; $12A3A0 |
@@ -592,7 +592,7 @@ code_12A4B5:
 code_12A4BB:
   LDA $0500,x                               ; $12A4BB |
   BEQ code_12A4D0                           ; $12A4BE |
-  JSR code_1FF759                           ; $12A4C0 |
+  JSR move_sprite_down                      ; $12A4C0 |
   LDA $03C0,x                               ; $12A4C3 |
   CMP #$98                                  ; $12A4C6 |
   BNE code_12A4CF                           ; $12A4C8 |
@@ -643,7 +643,7 @@ code_12A50E:
   STA $03C0,x                               ; $12A51F |
   BCC code_12A4DF                           ; $12A522 |
 code_12A524:
-  JSR code_1FF71D                           ; $12A524 |
+  JSR move_sprite_right                     ; $12A524 |
   LDA $0540,x                               ; $12A527 |
   CMP $0360,x                               ; $12A52A |
   BCS code_12A4CF                           ; $12A52D |
@@ -694,7 +694,7 @@ code_12A597:
   RTS                                       ; $12A597 |
 
 code_12A598:
-  JMP code_1FF759                           ; $12A598 |
+  JMP move_sprite_down                      ; $12A598 |
 
   db $6F, $70, $98, $58, $88, $98, $68, $78 ; $12A59B |
   db $88, $58, $68, $88, $78, $68, $78, $98 ; $12A5A3 |
@@ -1362,20 +1362,20 @@ code_12AC97:
   LDA $04A0,x                               ; $12AC97 |
   AND #$01                                  ; $12AC9A |
   BEQ code_12ACA4                           ; $12AC9C |
-  JSR code_1FF71D                           ; $12AC9E |
+  JSR move_sprite_right                     ; $12AC9E |
   JMP code_12ACA7                           ; $12ACA1 |
 
 code_12ACA4:
-  JSR code_1FF73B                           ; $12ACA4 |
+  JSR move_sprite_left                      ; $12ACA4 |
 code_12ACA7:
   LDA $04A0,x                               ; $12ACA7 |
   AND #$08                                  ; $12ACAA |
   BEQ code_12ACB4                           ; $12ACAC |
-  JSR code_1FF779                           ; $12ACAE |
+  JSR move_sprite_up                        ; $12ACAE |
   JMP code_12ACB7                           ; $12ACB1 |
 
 code_12ACB4:
-  JSR code_1FF759                           ; $12ACB4 |
+  JSR move_sprite_down                      ; $12ACB4 |
 code_12ACB7:
   LDY $0500,x                               ; $12ACB7 |
   LDA #$00                                  ; $12ACBA |
@@ -1433,10 +1433,10 @@ code_12AD25:
   LDA $04A0,x                               ; $12AD28 |
   AND #$01                                  ; $12AD2B |
   BEQ code_12AD32                           ; $12AD2D |
-  JMP code_1FF71D                           ; $12AD2F |
+  JMP move_sprite_right                     ; $12AD2F |
 
 code_12AD32:
-  JMP code_1FF73B                           ; $12AD32 |
+  JMP move_sprite_left                      ; $12AD32 |
 
   db $D3, $1D, $A7, $A8, $A3, $C6, $05, $28 ; $12AD35 |
   db $2E, $51, $8F, $B2, $2D, $6C, $A8, $A8 ; $12AD3D |
@@ -2147,10 +2147,10 @@ code_12B39A:
   LDA $04A0,x                               ; $12B39A |
   AND #$01                                  ; $12B39D |
   BEQ code_12B3A4                           ; $12B39F |
-  JMP code_1FF71D                           ; $12B3A1 |
+  JMP move_sprite_right                     ; $12B3A1 |
 
 code_12B3A4:
-  JMP code_1FF73B                           ; $12B3A4 |
+  JMP move_sprite_left                      ; $12B3A4 |
 
 code_12B3A7:
   JSR code_1FF797                           ; $12B3A7 |
@@ -2210,10 +2210,10 @@ code_12B41D:
   LDA $04A0,x                               ; $12B41D |
   AND #$01                                  ; $12B420 |
   BEQ code_12B427                           ; $12B422 |
-  JMP code_1FF71D                           ; $12B424 |
+  JMP move_sprite_right                     ; $12B424 |
 
 code_12B427:
-  JMP code_1FF73B                           ; $12B427 |
+  JMP move_sprite_left                      ; $12B427 |
 
 code_12B42A:
   INC $0500,x                               ; $12B42A |
@@ -2358,14 +2358,14 @@ code_12B548:
   LDA $04A0,x                               ; $12B548 |
   AND #$04                                  ; $12B54B |
   BNE code_12B55E                           ; $12B54D |
-  JSR code_1FF779                           ; $12B54F |
+  JSR move_sprite_up                        ; $12B54F |
   LDA #$48                                  ; $12B552 |
   CMP $03C0,x                               ; $12B554 |
   BCC code_12B573                           ; $12B557 |
   STA $03C0,x                               ; $12B559 |
   BCS code_12B56B                           ; $12B55C |
 code_12B55E:
-  JSR code_1FF759                           ; $12B55E |
+  JSR move_sprite_down                      ; $12B55E |
   LDA #$80                                  ; $12B561 |
   CMP $03C0,x                               ; $12B563 |
   BCS code_12B573                           ; $12B566 |
@@ -2969,7 +2969,7 @@ code_12BA62:
   LDA $0300,x                               ; $12BA62 |
   AND #$02                                  ; $12BA65 |
   BNE code_12BA7A                           ; $12BA67 |
-  JSR code_1FF779                           ; $12BA69 |
+  JSR move_sprite_up                        ; $12BA69 |
   DEC $0500,x                               ; $12BA6C |
   BNE code_12BA79                           ; $12BA6F |
   LDA #$02                                  ; $12BA71 |
@@ -2982,11 +2982,11 @@ code_12BA7A:
   LDA $04A0,x                               ; $12BA7A |
   AND #$01                                  ; $12BA7D |
   BNE code_12BA87                           ; $12BA7F |
-  JSR code_1FF779                           ; $12BA81 |
+  JSR move_sprite_up                        ; $12BA81 |
   JMP code_12BA8A                           ; $12BA84 |
 
 code_12BA87:
-  JSR code_1FF759                           ; $12BA87 |
+  JSR move_sprite_down                      ; $12BA87 |
 code_12BA8A:
   DEC $0500,x                               ; $12BA8A |
   BNE code_12BA9C                           ; $12BA8D |
@@ -3302,14 +3302,14 @@ code_12BCFB:
   LDA $0580,x                               ; $12BD02 |
   ORA #$40                                  ; $12BD05 |
   STA $0580,x                               ; $12BD07 |
-  JSR code_1FF71D                           ; $12BD0A |
+  JSR move_sprite_right                     ; $12BD0A |
   JMP code_12BD1B                           ; $12BD0D |
 
 code_12BD10:
   LDA $0580,x                               ; $12BD10 |
   AND #$BF                                  ; $12BD13 |
   STA $0580,x                               ; $12BD15 |
-  JSR code_1FF73B                           ; $12BD18 |
+  JSR move_sprite_left                      ; $12BD18 |
 code_12BD1B:
   DEC $0520,x                               ; $12BD1B |
   BNE code_12BD30                           ; $12BD1E |

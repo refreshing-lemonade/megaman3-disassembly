@@ -1983,7 +1983,7 @@ code_1ECF59:
   LDA $14                                   ; $1ECF5C |
   AND #$40                                  ; $1ECF5E |
   BEQ code_1ECF65                           ; $1ECF60 |
-  JSR code_1ED0DA                           ; $1ECF62 |
+  JSR weapon_fire                           ; $1ECF62 |
 code_1ECF65:
   RTS                                       ; $1ECF65 |
 
@@ -2045,7 +2045,7 @@ code_1ECFD3:
   LDA $14                                   ; $1ECFD6 |
   AND #$40                                  ; $1ECFD8 |
   BEQ code_1ECFDF                           ; $1ECFDA |
-  JSR code_1ED0DA                           ; $1ECFDC |
+  JSR weapon_fire                           ; $1ECFDC |
 code_1ECFDF:
   RTS                                       ; $1ECFDF |
 
@@ -2166,64 +2166,65 @@ code_1ED0CC:
   LDA $14                                   ; $1ED0CF |
   AND #$40                                  ; $1ED0D1 |
   BEQ code_1ED0D8                           ; $1ED0D3 |
-  JSR code_1ED0DA                           ; $1ED0D5 |
+  JSR weapon_fire                           ; $1ED0D5 |
 code_1ED0D8:
   CLC                                       ; $1ED0D8 |
   RTS                                       ; $1ED0D9 |
 
-code_1ED0DA:
-  LDY $A0                                   ; $1ED0DA |
-  LDA $00A2,y                               ; $1ED0DC |
-  AND #$1F                                  ; $1ED0DF |
-  BEQ code_1ED134                           ; $1ED0E1 |
-  LDA weapon_max_shots,y                    ; $1ED0E3 |
-  TAY                                       ; $1ED0E6 |
-code_1ED0E7:
-  LDA $0300,y                               ; $1ED0E7 |
-  BPL code_1ED0F1                           ; $1ED0EA |
-  DEY                                       ; $1ED0EC |
-  BNE code_1ED0E7                           ; $1ED0ED |
-  BEQ code_1ED134                           ; $1ED0EF |
-code_1ED0F1:
-  LDY $A0                                   ; $1ED0F1 |
-  JSR decrease_ammo                         ; $1ED0F3 |
-  LDA $D303,y                               ; $1ED0F6 |
-  STA $00                                   ; $1ED0F9 |
-  LDA $D30F,y                               ; $1ED0FB |
-  STA $01                                   ; $1ED0FE |
-  JMP ($0000)                               ; $1ED100 |
+; player intends to fire the active weapon
+; check if enough ammo and if free slot available
+weapon_fire:
+  LDY $A0                                   ; $1ED0DA |\
+  LDA $00A2,y                               ; $1ED0DC | | ammo run out?
+  AND #$1F                                  ; $1ED0DF | | return
+  BEQ code_1ED103.ret                       ; $1ED0E1 |/
+  LDA weapon_max_shots,y                    ; $1ED0E3 |\ Y = starting loop index
+  TAY                                       ; $1ED0E6 |/ to check for weapons
+.loop_freeslot:
+  LDA $0300,y                               ; $1ED0E7 |\
+  BPL .fire                                 ; $1ED0EA | | check free slot for weapons
+  DEY                                       ; $1ED0EC | | by $0300,x active table
+  BNE .loop_freeslot                        ; $1ED0ED |/
+  BEQ code_1ED103.ret                       ; $1ED0EF | no free slots, return
+.fire:
+  LDY $A0                                   ; $1ED0F1 |\ decrease ammo
+  JSR decrease_ammo                         ; $1ED0F3 |/
+  LDA weapon_init_ptr_lo,y                  ; $1ED0F6 |\
+  STA $00                                   ; $1ED0F9 | | jump to weapon init
+  LDA weapon_init_ptr_hi,y                  ; $1ED0FB | | routine to spawn
+  STA $01                                   ; $1ED0FE | | the shot sprite
+  JMP ($0000)                               ; $1ED100 |/
 
 code_1ED103:
   LDA $32                                   ; $1ED103 |
-  BNE code_1ED10A                           ; $1ED105 |
+  BNE .code_1ED10A                          ; $1ED105 |
   JSR code_1ED370                           ; $1ED107 |
-code_1ED10A:
+.code_1ED10A:
   LDA $05C0                                 ; $1ED10A |
   CMP #$05                                  ; $1ED10D |
-  BEQ code_1ED121                           ; $1ED10F |
+  BEQ .code_1ED121                          ; $1ED10F |
   CMP #$0E                                  ; $1ED111 |
-  BEQ code_1ED121                           ; $1ED113 |
+  BEQ .code_1ED121                          ; $1ED113 |
   CMP #$0F                                  ; $1ED115 |
-  BEQ code_1ED121                           ; $1ED117 |
+  BEQ .code_1ED121                          ; $1ED117 |
   LDA #$00                                  ; $1ED119 |
   STA $05A0                                 ; $1ED11B |
   STA $05E0                                 ; $1ED11E |
-code_1ED121:
+.code_1ED121:
   LDA #$10                                  ; $1ED121 |
   STA $32                                   ; $1ED123 |
   LDY $A0                                   ; $1ED125 |
   LDA weapon_max_shots,y                    ; $1ED127 |
   TAY                                       ; $1ED12A |
-code_1ED12B:
-  LDA $0300,y                               ; $1ED12B |
-  BPL code_1ED135                           ; $1ED12E |
-  DEY                                       ; $1ED130 |
-  BNE code_1ED12B                           ; $1ED131 |
-  CLC                                       ; $1ED133 |
-code_1ED134:
+.loop_freeslot:
+  LDA $0300,y                               ; $1ED12B |\
+  BPL .spawn_shot                           ; $1ED12E | | check free slot for weapons
+  DEY                                       ; $1ED130 | | by $0300,x active table
+  BNE .loop_freeslot                        ; $1ED131 |/
+  CLC                                       ; $1ED133 | no free slots, return carry off
+.ret:
   RTS                                       ; $1ED134 |
-
-code_1ED135:
+.spawn_shot:
   LDX $A0                                   ; $1ED135 |
   LDA $D349,x                               ; $1ED137 |
   JSR submit_sound_ID                       ; $1ED13A |
@@ -2328,9 +2329,9 @@ code_1ED211:
   JSR code_1ED103                           ; $1ED212 |
   BCC code_1ED24C                           ; $1ED215 |
   INY                                       ; $1ED217 |
-  JSR code_1ED135                           ; $1ED218 |
+  JSR code_1ED103.spawn_shot                ; $1ED218 |
   INY                                       ; $1ED21B |
-  JSR code_1ED135                           ; $1ED21C |
+  JSR code_1ED103.spawn_shot                ; $1ED21C |
   LDA #$B4                                  ; $1ED21F |
   STA $0501                                 ; $1ED221 |
   STA $0502                                 ; $1ED224 |
@@ -2432,15 +2433,34 @@ code_1ED2E1:
 code_1ED302:
   RTS                                       ; $1ED302 |
 
-_lo:
-  db $03, $12, $FB, $4D                     ; $1ED303 |
-  db $03, $9F, $B4, $A6                     ; $1ED307 |
-  db $03, $A6, $D3, $A6                     ; $1ED30B |
+; routine pointers for weapon init upon firing
+weapon_init_ptr_lo:
+  db $03                                    ; $1ED303 | Mega Buster
+  db $12                                    ; $1ED304 | Gemini Laser
+  db $FB                                    ; $1ED305 | Needle Cannon
+  db $4D                                    ; $1ED306 | Hard Knuckle
+  db $03                                    ; $1ED307 | Magnet Missile
+  db $9F                                    ; $1ED308 | Top Spin
+  db $B4                                    ; $1ED309 | Search Snake
+  db $A6                                    ; $1ED30A | Rush Coil
+  db $03                                    ; $1ED30B | Spark Shock
+  db $A6                                    ; $1ED30C | Rush Marine
+  db $D3                                    ; $1ED30D | Shadow Blade
+  db $A6                                    ; $1ED30E | Rush Jet
 
-_hi:
-  db $D1, $D2, $D1, $D2                     ; $1ED30F |
-  db $D1, $D2, $D2, $D1                     ; $1ED313 |
-  db $D1, $D1, $D2, $D1                     ; $1ED317 |
+weapon_init_ptr_hi:
+  db $D1                                    ; $1ED30F | Mega Buster
+  db $D2                                    ; $1ED310 | Gemini Laser
+  db $D1                                    ; $1ED311 | Needle Cannon
+  db $D2                                    ; $1ED312 | Hard Knuckle
+  db $D1                                    ; $1ED313 | Magnet Missile
+  db $D2                                    ; $1ED314 | Top Spin
+  db $D2                                    ; $1ED315 | Search Snake
+  db $D1                                    ; $1ED316 | Rush Coil
+  db $D1                                    ; $1ED317 | Spark Shock
+  db $D1                                    ; $1ED318 | Rush Marine
+  db $D2                                    ; $1ED319 | Shadow Blade
+  db $D1                                    ; $1ED31A | Rush Jet
 
   db $0F, $00, $F0, $FF, $17, $00, $E8, $FF ; $1ED31B |
   db $18, $9F, $A2, $AC, $97, $18, $A5, $18 ; $1ED323 |
@@ -2707,7 +2727,7 @@ code_1ED4C8:
   EOR #$40                                  ; $1ED503 |
   STA $0580                                 ; $1ED505 |
 code_1ED508:
-  JSR code_1ED0DA                           ; $1ED508 |
+  JSR weapon_fire                           ; $1ED508 |
 code_1ED50B:
   LDA $32                                   ; $1ED50B |
   BNE code_1ED4C7                           ; $1ED50D |
@@ -3075,7 +3095,7 @@ code_1ED78B:
   LDA #$03                                  ; $1ED7E2 |
   STA $0460                                 ; $1ED7E4 |
 code_1ED7E7:
-  JSR code_1FF779                           ; $1ED7E7 |
+  JSR move_sprite_up                        ; $1ED7E7 |
 code_1ED7EA:
   INC $3F                                   ; $1ED7EA |
   BNE code_1ED7F0                           ; $1ED7EC |
@@ -3217,7 +3237,7 @@ code_1ED910:
   LDA $14                                   ; $1ED917 |
   AND #$40                                  ; $1ED919 |
   BEQ code_1ED920                           ; $1ED91B |
-  JSR code_1ED0DA                           ; $1ED91D |
+  JSR weapon_fire                           ; $1ED91D |
 code_1ED920:
   LDA #$00                                  ; $1ED920 |
   STA $32                                   ; $1ED922 |
@@ -3642,7 +3662,7 @@ code_1EDC2C:
   LDA $0460                                 ; $1EDC41 |
   ADC #$00                                  ; $1EDC44 |
   STA $0460                                 ; $1EDC46 |
-  JSR code_1FF779                           ; $1EDC49 |
+  JSR move_sprite_up                        ; $1EDC49 |
   LDA $03E0                                 ; $1EDC4C |
   BEQ code_1EDC73                           ; $1EDC4F |
   LDY $22                                   ; $1EDC51 |
@@ -3976,7 +3996,7 @@ code_1EDF51:
   LDA $05A0                                 ; $1EDF51 |
   BNE code_1EDF89                           ; $1EDF54 |
   STA $05E0                                 ; $1EDF56 |
-  JSR code_1FF779                           ; $1EDF59 |
+  JSR move_sprite_up                        ; $1EDF59 |
   LDA $03E0                                 ; $1EDF5C |
   BNE code_1EDF73                           ; $1EDF5F |
   LDA $0440                                 ; $1EDF61 |
@@ -6594,7 +6614,7 @@ code_1FF588:
   LDA $0380                                 ; $1FF591 |
   STA $03                                   ; $1FF594 |
 code_1FF596:
-  JSR code_1FF71D                           ; $1FF596 |
+  JSR move_sprite_right                     ; $1FF596 |
   CPX #$00                                  ; $1FF599 |
   BNE code_1FF5B2                           ; $1FF59B |
   JSR code_1FFA00                           ; $1FF59D |
@@ -6634,7 +6654,7 @@ code_1FF5CC:
   LDA $0380                                 ; $1FF5D5 |
   STA $03                                   ; $1FF5D8 |
 code_1FF5DA:
-  JSR code_1FF73B                           ; $1FF5DA |
+  JSR move_sprite_left                      ; $1FF5DA |
   CPX #$00                                  ; $1FF5DD |
   BNE code_1FF5F4                           ; $1FF5DF |
   JSR code_1FFA00                           ; $1FF5E1 |
@@ -6669,7 +6689,7 @@ code_1FF606:
   LDA $0380                                 ; $1FF60F |
   STA $03                                   ; $1FF612 |
 code_1FF614:
-  JSR code_1FF759                           ; $1FF614 |
+  JSR move_sprite_down                      ; $1FF614 |
   CPX #$00                                  ; $1FF617 |
   BNE code_1FF630                           ; $1FF619 |
   JSR code_1FF97E                           ; $1FF61B |
@@ -6705,7 +6725,7 @@ code_1FF642:
   LDA $0380                                 ; $1FF64B |
   STA $03                                   ; $1FF64E |
 code_1FF650:
-  JSR code_1FF779                           ; $1FF650 |
+  JSR move_sprite_up                        ; $1FF650 |
   CPX #$00                                  ; $1FF653 |
   BNE code_1FF66A                           ; $1FF655 |
   JSR code_1FF97E                           ; $1FF657 |
@@ -6823,65 +6843,77 @@ code_1FF700:
 code_1FF71C:
   RTS                                       ; $1FF71C |
 
-code_1FF71D:
-  LDA $0340,x                               ; $1FF71D |
-  CLC                                       ; $1FF720 |
-  ADC $0400,x                               ; $1FF721 |
-  STA $0340,x                               ; $1FF724 |
-  LDA $0360,x                               ; $1FF727 |
-  ADC $0420,x                               ; $1FF72A |
-  STA $0360,x                               ; $1FF72D |
-  BCC code_1FF73A                           ; $1FF730 |
-  LDA $0380,x                               ; $1FF732 |
-  ADC #$00                                  ; $1FF735 |
-  STA $0380,x                               ; $1FF737 |
-code_1FF73A:
+; moves sprite right by its X speeds
+; parameters:
+; X: sprite slot
+move_sprite_right:
+  LDA $0340,x                               ; $1FF71D |\
+  CLC                                       ; $1FF720 | | X subpixel += X subpixel speed
+  ADC $0400,x                               ; $1FF721 | |
+  STA $0340,x                               ; $1FF724 |/
+  LDA $0360,x                               ; $1FF727 |\
+  ADC $0420,x                               ; $1FF72A | | X pixel += X velocity
+  STA $0360,x                               ; $1FF72D |/  (with carry from sub)
+  BCC .ret                                  ; $1FF730 | no carry? no screen change
+  LDA $0380,x                               ; $1FF732 |\
+  ADC #$00                                  ; $1FF735 | | X screen += 1
+  STA $0380,x                               ; $1FF737 |/
+.ret:
   RTS                                       ; $1FF73A |
 
-code_1FF73B:
-  LDA $0340,x                               ; $1FF73B |
-  SEC                                       ; $1FF73E |
-  SBC $0400,x                               ; $1FF73F |
-  STA $0340,x                               ; $1FF742 |
-  LDA $0360,x                               ; $1FF745 |
-  SBC $0420,x                               ; $1FF748 |
-  STA $0360,x                               ; $1FF74B |
-  BCS code_1FF758                           ; $1FF74E |
-  LDA $0380,x                               ; $1FF750 |
-  SBC #$00                                  ; $1FF753 |
-  STA $0380,x                               ; $1FF755 |
-code_1FF758:
+; moves sprite left by its X speeds
+; parameters:
+; X: sprite slot
+move_sprite_left:
+  LDA $0340,x                               ; $1FF73B |\
+  SEC                                       ; $1FF73E | | X subpixel -= X subpixel speed
+  SBC $0400,x                               ; $1FF73F | |
+  STA $0340,x                               ; $1FF742 |/
+  LDA $0360,x                               ; $1FF745 |\
+  SBC $0420,x                               ; $1FF748 | | X pixel -= X speed
+  STA $0360,x                               ; $1FF74B |/  (with carry from sub)
+  BCS .ret                                  ; $1FF74E | carry on? no screen change
+  LDA $0380,x                               ; $1FF750 |\
+  SBC #$00                                  ; $1FF753 | | X screen -= 1
+  STA $0380,x                               ; $1FF755 |/
+.ret:
   RTS                                       ; $1FF758 |
 
-code_1FF759:
-  LDA $03A0,x                               ; $1FF759 |
-  CLC                                       ; $1FF75C |
-  ADC $0440,x                               ; $1FF75D |
-  STA $03A0,x                               ; $1FF760 |
-  LDA $03C0,x                               ; $1FF763 |
-  ADC $0460,x                               ; $1FF766 |
-  STA $03C0,x                               ; $1FF769 |
-  CMP #$F0                                  ; $1FF76C |
-  BCC code_1FF778                           ; $1FF76E |
-  ADC #$0F                                  ; $1FF770 |
-  STA $03C0,x                               ; $1FF772 |
-  INC $03E0,x                               ; $1FF775 |
-code_1FF778:
+; moves sprite down by its Y speeds
+; parameters:
+; X: sprite slot
+move_sprite_down:
+  LDA $03A0,x                               ; $1FF759 |\
+  CLC                                       ; $1FF75C | | Y subpixel += Y subpixel speed
+  ADC $0440,x                               ; $1FF75D | |
+  STA $03A0,x                               ; $1FF760 |/
+  LDA $03C0,x                               ; $1FF763 |\
+  ADC $0460,x                               ; $1FF766 | | Y pixel += Y speed
+  STA $03C0,x                               ; $1FF769 |/  (with carry from sub)
+  CMP #$F0                                  ; $1FF76C |\
+  BCC .ret                                  ; $1FF76E | | Y screens are only $F0 tall
+  ADC #$0F                                  ; $1FF770 | | if Y < $F0, return
+  STA $03C0,x                               ; $1FF772 | | else push down $F more and
+  INC $03E0,x                               ; $1FF775 |/  increment Y screen
+.ret:
   RTS                                       ; $1FF778 |
 
-code_1FF779:
-  LDA $03A0,x                               ; $1FF779 |
-  SEC                                       ; $1FF77C |
-  SBC $0440,x                               ; $1FF77D |
-  STA $03A0,x                               ; $1FF780 |
-  LDA $03C0,x                               ; $1FF783 |
-  SBC $0460,x                               ; $1FF786 |
-  STA $03C0,x                               ; $1FF789 |
-  BCS code_1FF796                           ; $1FF78C |
-  SBC #$0F                                  ; $1FF78E |
-  STA $03C0,x                               ; $1FF790 |
-  DEC $03E0,x                               ; $1FF793 |
-code_1FF796:
+; moves sprite up by its Y speeds
+; parameters:
+; X: sprite slot
+move_sprite_up:
+  LDA $03A0,x                               ; $1FF779 |\
+  SEC                                       ; $1FF77C | | Y subpixel += Y subpixel speed
+  SBC $0440,x                               ; $1FF77D | |
+  STA $03A0,x                               ; $1FF780 |/
+  LDA $03C0,x                               ; $1FF783 |\
+  SBC $0460,x                               ; $1FF786 | | Y pixel += Y speed
+  STA $03C0,x                               ; $1FF789 |/  (with carry from sub)
+  BCS .ret                                  ; $1FF78C |\  Y screens are only $F0 tall
+  SBC #$0F                                  ; $1FF78E | | if result >= $00, return
+  STA $03C0,x                               ; $1FF790 | | else push up $F more and
+  DEC $03E0,x                               ; $1FF793 |/  decrement Y screen
+.ret:
   RTS                                       ; $1FF796 |
 
 code_1FF797:

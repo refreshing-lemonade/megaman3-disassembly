@@ -336,13 +336,13 @@ code_07A28F:
   LDA $04A0,x                               ; $07A296 |
   AND #$08                                  ; $07A299 |
   BEQ code_07A2A8                           ; $07A29B |
-  JSR code_1FF779                           ; $07A29D |
+  JSR move_sprite_up                        ; $07A29D |
   LDA $03E0,x                               ; $07A2A0 |
   BNE code_07A302                           ; $07A2A3 |
   JMP code_07A2B0                           ; $07A2A5 |
 
 code_07A2A8:
-  JSR code_1FF759                           ; $07A2A8 |
+  JSR move_sprite_down                      ; $07A2A8 |
   LDA $03E0,x                               ; $07A2AB |
   BNE code_07A302                           ; $07A2AE |
 code_07A2B0:
@@ -350,11 +350,11 @@ code_07A2B0:
   LDA $04A0,x                               ; $07A2B3 |
   AND #$01                                  ; $07A2B6 |
   BEQ code_07A2C0                           ; $07A2B8 |
-  JSR code_1FF71D                           ; $07A2BA |
+  JSR move_sprite_right                     ; $07A2BA |
   JMP code_07A2C3                           ; $07A2BD |
 
 code_07A2C0:
-  JSR code_1FF73B                           ; $07A2C0 |
+  JSR move_sprite_left                      ; $07A2C0 |
 code_07A2C3:
   LDA $0500,x                               ; $07A2C3 |
   BNE code_07A2D3                           ; $07A2C6 |

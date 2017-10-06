@@ -317,14 +317,14 @@ code_06A24E:
   LDA $0580,x                               ; $06A27F |
   ORA #$40                                  ; $06A282 |
   STA $0580,x                               ; $06A284 |
-  JSR code_1FF71D                           ; $06A287 |
+  JSR move_sprite_right                     ; $06A287 |
   JMP code_06A298                           ; $06A28A |
 
 code_06A28D:
   LDA $0580,x                               ; $06A28D |
   AND #$BF                                  ; $06A290 |
   STA $0580,x                               ; $06A292 |
-  JSR code_1FF73B                           ; $06A295 |
+  JSR move_sprite_left                      ; $06A295 |
 code_06A298:
   LDY #$22                                  ; $06A298 |
   JSR code_1FF67C                           ; $06A29A |
@@ -564,11 +564,11 @@ code_06A472:
   LDA $04A0,x                               ; $06A480 |
   AND #$01                                  ; $06A483 |
   BEQ code_06A48D                           ; $06A485 |
-  JSR code_1FF71D                           ; $06A487 |
+  JSR move_sprite_right                     ; $06A487 |
   JMP code_06A490                           ; $06A48A |
 
 code_06A48D:
-  JSR code_1FF73B                           ; $06A48D |
+  JSR move_sprite_left                      ; $06A48D |
 code_06A490:
   JSR code_1FF8C2                           ; $06A490 |
   CMP #$06                                  ; $06A493 |
@@ -684,14 +684,14 @@ code_06A564:
   LDA $0560,x                               ; $06A575 |
   AND #$01                                  ; $06A578 |
   BEQ code_06A589                           ; $06A57A |
-  JSR code_1FF71D                           ; $06A57C |
+  JSR move_sprite_right                     ; $06A57C |
   LDA $0360,x                               ; $06A57F |
   CMP #$D0                                  ; $06A582 |
   BCS code_06A593                           ; $06A584 |
   JMP code_06A5BB                           ; $06A586 |
 
 code_06A589:
-  JSR code_1FF73B                           ; $06A589 |
+  JSR move_sprite_left                      ; $06A589 |
   LDA $0360,x                               ; $06A58C |
   CMP #$30                                  ; $06A58F |
   BCS code_06A5BB                           ; $06A591 |
@@ -769,13 +769,13 @@ code_06A62B:
   LDA $04A0,x                               ; $06A632 |
   AND #$01                                  ; $06A635 |
   BEQ code_06A63F                           ; $06A637 |
-  JSR code_1FF71D                           ; $06A639 |
+  JSR move_sprite_right                     ; $06A639 |
   JMP code_06A642                           ; $06A63C |
 
 code_06A63F:
-  JSR code_1FF73B                           ; $06A63F |
+  JSR move_sprite_left                      ; $06A63F |
 code_06A642:
-  JSR code_1FF779                           ; $06A642 |
+  JSR move_sprite_up                        ; $06A642 |
   DEC $0500,x                               ; $06A645 |
   BNE code_06A652                           ; $06A648 |
   LDA #$00                                  ; $06A64A |
@@ -808,19 +808,19 @@ code_06A67B:
   LDA $04A0,x                               ; $06A67B |
   AND #$08                                  ; $06A67E |
   BEQ code_06A688                           ; $06A680 |
-  JSR code_1FF779                           ; $06A682 |
+  JSR move_sprite_up                        ; $06A682 |
   JMP code_06A68B                           ; $06A685 |
 
 code_06A688:
-  JSR code_1FF759                           ; $06A688 |
+  JSR move_sprite_down                      ; $06A688 |
 code_06A68B:
   LDA $04A0,x                               ; $06A68B |
   AND #$01                                  ; $06A68E |
   BEQ code_06A695                           ; $06A690 |
-  JMP code_1FF71D                           ; $06A692 |
+  JMP move_sprite_right                     ; $06A692 |
 
 code_06A695:
-  JMP code_1FF73B                           ; $06A695 |
+  JMP move_sprite_left                      ; $06A695 |
 
 code_06A698:
   LDA $0300,x                               ; $06A698 |

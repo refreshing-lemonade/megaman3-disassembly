@@ -199,19 +199,19 @@ code_04A182:
   LDA $04A0,x                               ; $04A187 |
   AND #$08                                  ; $04A18A |
   BEQ code_04A194                           ; $04A18C |
-  JSR code_1FF779                           ; $04A18E |
+  JSR move_sprite_up                        ; $04A18E |
   JMP code_04A197                           ; $04A191 |
 
 code_04A194:
-  JSR code_1FF759                           ; $04A194 |
+  JSR move_sprite_down                      ; $04A194 |
 code_04A197:
   LDA $04A0,x                               ; $04A197 |
   AND #$01                                  ; $04A19A |
   BEQ code_04A1A1                           ; $04A19C |
-  JMP code_1FF71D                           ; $04A19E |
+  JMP move_sprite_right                     ; $04A19E |
 
 code_04A1A1:
-  JMP code_1FF73B                           ; $04A1A1 |
+  JMP move_sprite_left                      ; $04A1A1 |
 
   db $24, $0C, $10, $00, $E0, $F4, $10, $F8 ; $04A1A4 |
   db $18, $F0, $08, $10, $00, $F0, $00, $E8 ; $04A1AC |
@@ -498,7 +498,7 @@ code_04A44D:
   LDA #$00                                  ; $04A44D |
   STA $05E0,x                               ; $04A44F |
   STA $05A0,x                               ; $04A452 |
-  JSR code_1FF779                           ; $04A455 |
+  JSR move_sprite_up                        ; $04A455 |
   LDA $03C0,x                               ; $04A458 |
   CMP #$04                                  ; $04A45B |
   BCS code_04A464                           ; $04A45D |
@@ -518,13 +518,13 @@ code_04A474:
   LDA $04A0,x                               ; $04A474 |
   AND #$01                                  ; $04A477 |
   BEQ code_04A481                           ; $04A479 |
-  JSR code_1FF71D                           ; $04A47B |
+  JSR move_sprite_right                     ; $04A47B |
   JMP code_04A484                           ; $04A47E |
 
 code_04A481:
-  JSR code_1FF73B                           ; $04A481 |
+  JSR move_sprite_left                      ; $04A481 |
 code_04A484:
-  JSR code_1FF759                           ; $04A484 |
+  JSR move_sprite_down                      ; $04A484 |
   DEC $0500,x                               ; $04A487 |
   BNE code_04A499                           ; $04A48A |
   LDA $04A0,x                               ; $04A48C |
@@ -911,11 +911,11 @@ code_04A78B:
   LDA $04A0,x                               ; $04A78B |
   AND #$01                                  ; $04A78E |
   BEQ code_04A798                           ; $04A790 |
-  JSR code_1FF71D                           ; $04A792 |
+  JSR move_sprite_right                     ; $04A792 |
   JMP code_04A79B                           ; $04A795 |
 
 code_04A798:
-  JSR code_1FF73B                           ; $04A798 |
+  JSR move_sprite_left                      ; $04A798 |
 code_04A79B:
   LDY #$1E                                  ; $04A79B |
   JSR code_1FF67C                           ; $04A79D |
@@ -1040,11 +1040,11 @@ code_04A8A1:
   LDA $04A0,x                               ; $04A8A1 |
   AND #$08                                  ; $04A8A4 |
   BEQ code_04A8AE                           ; $04A8A6 |
-  JSR code_1FF779                           ; $04A8A8 |
+  JSR move_sprite_up                        ; $04A8A8 |
   JMP code_04A8B1                           ; $04A8AB |
 
 code_04A8AE:
-  JSR code_1FF759                           ; $04A8AE |
+  JSR move_sprite_down                      ; $04A8AE |
 code_04A8B1:
   JMP code_04A197                           ; $04A8B1 |
 
