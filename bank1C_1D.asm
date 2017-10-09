@@ -6420,9 +6420,9 @@ code_1DB1A8:
   RTS                                       ; $1DB1BC |
 
 main_mechakkero:
-  LDA $0300,x                               ; $1DB1BD |
-  AND #$0F                                  ; $1DB1C0 |
-  BNE code_1DB1F8                           ; $1DB1C2 |
+  LDA $0300,x                               ; $1DB1BD |\  state nonzero
+  AND #$0F                                  ; $1DB1C0 | | means on ground
+  BNE code_1DB1F8                           ; $1DB1C2 |/
   LDA $04A0,x                               ; $1DB1C4 |
   AND #$01                                  ; $1DB1C7 |
   BEQ code_1DB1D3                           ; $1DB1C9 |
@@ -6453,26 +6453,26 @@ code_1DB1F5:
 code_1DB1F8:
   LDA $05C0,x                               ; $1DB1F8 |
   CMP #$2B                                  ; $1DB1FB |
-  BNE code_1DB20A                           ; $1DB1FD |
+  BNE .code_1DB20A                          ; $1DB1FD |
   LDA $05A0,x                               ; $1DB1FF |
   CMP #$02                                  ; $1DB202 |
-  BNE code_1DB21F                           ; $1DB204 |
+  BNE .ret                                  ; $1DB204 |
   LDA #$29                                  ; $1DB206 |
-  BNE code_1DB20C                           ; $1DB208 |
-code_1DB20A:
+  BNE .code_1DB20C                          ; $1DB208 |
+.code_1DB20A:
   LDA #$29                                  ; $1DB20A |
-code_1DB20C:
+.code_1DB20C:
   JSR reset_sprite_anim                     ; $1DB20C |
-  LDA $0500,x                               ; $1DB20F |
-  BNE code_1DB220                           ; $1DB212 |
-  LDA #$3C                                  ; $1DB214 |
-  STA $0500,x                               ; $1DB216 |
-  DEC $0300,x                               ; $1DB219 |
-  JSR face_player                           ; $1DB21C |
-code_1DB21F:
+  LDA $0500,x                               ; $1DB20F |\ timer not expired yet?
+  BNE .tick                                 ; $1DB212 |/
+  LDA #$3C                                  ; $1DB214 |\  on timer expiration,
+  STA $0500,x                               ; $1DB216 | | set hopping state
+  DEC $0300,x                               ; $1DB219 | | with timer 60 frames
+  JSR face_player                           ; $1DB21C |/  and hop toward player
+.ret:
   RTS                                       ; $1DB21F |
 
-code_1DB220:
+.tick:
   DEC $0500,x                               ; $1DB220 |
   RTS                                       ; $1DB223 |
 

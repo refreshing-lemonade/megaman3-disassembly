@@ -2238,10 +2238,10 @@ code_1ED103:
   AND #$40                                  ; $1ED149 |
   ORA #$90                                  ; $1ED14B |
   STA $0580,y                               ; $1ED14D |
-  LDA #$00                                  ; $1ED150 |
-  STA $0400,y                               ; $1ED152 |
-  LDA #$04                                  ; $1ED155 |
-  STA $0420,y                               ; $1ED157 |
+  LDA #$00                                  ; $1ED150 |\
+  STA $0400,y                               ; $1ED152 | | default weapon X speed:
+  LDA #$04                                  ; $1ED155 | | 4 pixels per frame
+  STA $0420,y                               ; $1ED157 |/
   LDA $31                                   ; $1ED15A |
   STA $04A0,y                               ; $1ED15C |
   AND #$02                                  ; $1ED15F |
@@ -2326,29 +2326,30 @@ code_1ED1FA:
 code_1ED211:
   RTS                                       ; $1ED211 |
 
+init_gemini_laser:
   JSR code_1ED103                           ; $1ED212 |
-  BCC code_1ED24C                           ; $1ED215 |
-  INY                                       ; $1ED217 |
-  JSR code_1ED103.spawn_shot                ; $1ED218 |
-  INY                                       ; $1ED21B |
-  JSR code_1ED103.spawn_shot                ; $1ED21C |
-  LDA #$B4                                  ; $1ED21F |
-  STA $0501                                 ; $1ED221 |
-  STA $0502                                 ; $1ED224 |
-  STA $0503                                 ; $1ED227 |
-  LDA #$00                                  ; $1ED22A |
-  STA $0441                                 ; $1ED22C |
-  STA $0442                                 ; $1ED22F |
-  STA $0443                                 ; $1ED232 |
-  STA $0461                                 ; $1ED235 |
-  STA $0462                                 ; $1ED238 |
-  STA $0463                                 ; $1ED23B |
-  LDA $0361                                 ; $1ED23E |
-  AND #$FC                                  ; $1ED241 |
-  STA $0361                                 ; $1ED243 |
-  STA $0362                                 ; $1ED246 |
-  STA $0363                                 ; $1ED249 |
-code_1ED24C:
+  BCC .ret                                  ; $1ED215 |
+  INY                                       ; $1ED217 |\
+  JSR code_1ED103.spawn_shot                ; $1ED218 | | spawn 2 more shots
+  INY                                       ; $1ED21B | | uses all 3 slots
+  JSR code_1ED103.spawn_shot                ; $1ED21C |/
+  LDA #$B4                                  ; $1ED21F |\
+  STA $0501                                 ; $1ED221 | | store $B4
+  STA $0502                                 ; $1ED224 | | wildcard 1
+  STA $0503                                 ; $1ED227 |/  all 3 slots
+  LDA #$00                                  ; $1ED22A |\
+  STA $0441                                 ; $1ED22C | |
+  STA $0442                                 ; $1ED22F | | clear Y speeds
+  STA $0443                                 ; $1ED232 | | all 3 slots
+  STA $0461                                 ; $1ED235 | |
+  STA $0462                                 ; $1ED238 | |
+  STA $0463                                 ; $1ED23B |/
+  LDA $0361                                 ; $1ED23E |\
+  AND #$FC                                  ; $1ED241 | | take first slot's
+  STA $0361                                 ; $1ED243 | | X, chop off low two bits
+  STA $0362                                 ; $1ED246 | | store into all three X slots
+  STA $0363                                 ; $1ED249 |/
+.ret:
   RTS                                       ; $1ED24C |
 
   LDA $0301                                 ; $1ED24D |
@@ -6243,27 +6244,27 @@ code_1FF114:
   BEQ code_1FF13B                           ; $1FF122 |
   BNE code_1FF132                           ; $1FF124 |
 code_1FF126:
-  LDY #$1A                                  ; $1FF126 |
-  LDA $05C0,x                               ; $1FF128 |
-  BPL code_1FF12E                           ; $1FF12B |
-  INY                                       ; $1FF12D |
+  LDY #$1A                                  ; $1FF126 |\  for OAM ID's
+  LDA $05C0,x                               ; $1FF128 | | $00~$7F, select bank $1A
+  BPL code_1FF12E                           ; $1FF12B | | $80~$FF, select bank $1B
+  INY                                       ; $1FF12D |/
 code_1FF12E:
-  CPY $F4                                   ; $1FF12E |
-  BEQ code_1FF13B                           ; $1FF130 |
+  CPY $F4                                   ; $1FF12E |\
+  BEQ code_1FF13B                           ; $1FF130 |/ if not already selected
 code_1FF132:
-  STY $F4                                   ; $1FF132 |
-  STX $00                                   ; $1FF134 |
-  JSR select_PRG_banks                      ; $1FF136 |
-  LDX $00                                   ; $1FF139 |
+  STY $F4                                   ; $1FF132 |\
+  STX $00                                   ; $1FF134 | | select $8000~$9FFF bank
+  JSR select_PRG_banks                      ; $1FF136 | | ($1A or $1B)
+  LDX $00                                   ; $1FF139 |/  preserve & restore X
 code_1FF13B:
-  LDA $05C0,x                               ; $1FF13B |
-  BEQ code_1FF107                           ; $1FF13E |
+  LDA $05C0,x                               ; $1FF13B |\ OAM ID $00?
+  BEQ code_1FF107                           ; $1FF13E |/ return
   AND #$7F                                  ; $1FF140 |
   TAY                                       ; $1FF142 |
-  LDA $8000,y                               ; $1FF143 |
-  STA $00                                   ; $1FF146 |
-  LDA $8080,y                               ; $1FF148 |
-  STA $01                                   ; $1FF14B |
+  LDA $8000,y                               ; $1FF143 |\
+  STA $00                                   ; $1FF146 | |
+  LDA $8080,y                               ; $1FF148 | |
+  STA $01                                   ; $1FF14B |/
   LDA $17                                   ; $1FF14D |
   AND #$08                                  ; $1FF14F |
   BEQ code_1FF15F                           ; $1FF151 |
@@ -7505,7 +7506,7 @@ check_sprite_weapon_collision:
   STA $01                                   ; $1FFBC0 | | for collision routine
   LDA $03C0,y                               ; $1FFBC2 | |
   STA $02                                   ; $1FFBC5 |/
-  JSR check_sprite_collision                ; $1FFBC7 |\ carry cleared == collision
+  JSR check_weapon_collision                ; $1FFBC7 |\ carry cleared == collision
   BCC .ret                                  ; $1FFBCA |/ return carry off
 .next_weapon:
   DEC $10                                   ; $1FFBCC |\ continue loop,
@@ -7522,7 +7523,7 @@ check_sprite_weapon_collision:
 ; $02: comparison sprite's Y position
 ; returns:
 ; Carry flag off = collision, on = no collision
-check_sprite_collision:
+check_weapon_collision:
   SEC                                       ; $1FFBD2 |\
   LDA $0480,x                               ; $1FFBD3 | | Y = shape index
   AND #$1F                                  ; $1FFBD6 | | (mod $1F)
