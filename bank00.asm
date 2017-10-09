@@ -106,7 +106,7 @@ enemy_shape_g:
   db $AA, $FF, $EE, $FF, $AA, $FF, $BA, $FE ; $00A2F0 |
   db $EB, $FF, $BA, $FB, $AA, $FF, $BA, $FF ; $00A2F8 |
 
-enemy_sprite_ID_g:
+enemy_OAM_ID_g:
   db $21, $22, $59, $26, $69, $4F, $47, $13 ; $00A300 |
   db $74, $1C, $6E, $70, $4E, $4E, $32, $62 ; $00A308 |
   db $65, $38, $31, $72, $00, $4F, $36, $5B ; $00A310 |

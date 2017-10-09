@@ -1048,7 +1048,7 @@ spawn_enemy:
   STA $0320,x                               ; $1A9CDF |/
   LDA enemy_shape_g,y                       ; $1A9CE2 |\ shape properties
   STA $0480,x                               ; $1A9CE5 |/
-  LDA enemy_sprite_ID_g,y                   ; $1A9CE8 |\ sprite ID & init anim
+  LDA enemy_OAM_ID_g,y                      ; $1A9CE8 |\ OAM ID & init anim
   JSR reset_sprite_anim                     ; $1A9CEB |/
   JSR face_player                           ; $1A9CEE | facing
   LDA enemy_health_g,y                      ; $1A9CF1 |\ health

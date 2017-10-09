@@ -9,7 +9,7 @@ process_sprites_j:
   JMP process_sprites                       ; $1C8000 |
 
 code_1C8003:
-  JMP code_1C8102.code_1C8109               ; $1C8003 |
+  JMP check_weapon_hit.code_1C8109          ; $1C8003 |
 
   JMP code_1C82B8                           ; $1C8006 |
 
@@ -81,7 +81,7 @@ process_sprites:
   BCC .next_sprite                          ; $1C8079 | | call ??? routine
   LDA $0320,x                               ; $1C807B | | only for enemies with
   BEQ .next_sprite                          ; $1C807E | | nonzero main indices
-  JSR code_1C8102                           ; $1C8080 |/
+  JSR check_weapon_hit                      ; $1C8080 |/
 .code_1C8083:
   LDA $0480,x                               ; $1C8083 |
   BPL .next_sprite                          ; $1C8086 |
@@ -96,6 +96,8 @@ process_sprites:
 .ret:
   RTS                                       ; $1C8096 |
 
+; parameters:
+; X: sprite slot
 code_1C8097:
   LDA $05C0                                 ; $1C8097 |
   CMP #$A4                                  ; $1C809A |
@@ -152,138 +154,146 @@ code_1C80F9:
   LDX $0F                                   ; $1C80FF |
   RTS                                       ; $1C8101 |
 
-code_1C8102:
-  LDA $0480,x                               ; $1C8102 |\
-  AND #$60                                  ; $1C8105 | | if ??? flag not on
+; checks for and applies effects/damage
+; from a sprite being hit by a weapon
+; parameters:
+; X: sprite slot
+check_weapon_hit:
+  LDA $0480,x                               ; $1C8102 |\  if vulnerable & shot tink
+  AND #$60                                  ; $1C8105 | | flags BOTH off,
   BEQ .ret                                  ; $1C8107 |/  return
 .code_1C8109:
   LDA $05C0                                 ; $1C8109 |\
-  CMP #$A3                                  ; $1C810C | | if sprite ID == $A3
+  CMP #$A3                                  ; $1C810C | | if Mega Man OAM ID == $A3
   BNE .check_weapon_collision               ; $1C810E | |
   JMP code_1C825E                           ; $1C8110 |/
 .check_weapon_collision:
   JSR check_sprite_weapon_collision         ; $1C8113 |\ if no weapon collision
   BCS .ret                                  ; $1C8116 |/ return
   LDA $0480,x                               ; $1C8118 |\
-  AND #$20                                  ; $1C811B | | if ??? flag on
-  BEQ code_1C8144                           ; $1C811D |/
-.code_1C811F:
-  LDA #$19                                  ; $1C811F |
-  JSR submit_sound_ID                       ; $1C8121 |
-  LDY $10                                   ; $1C8124 |
-  LDA $04A0,y                               ; $1C8126 |
-  EOR #$03                                  ; $1C8129 |
-  STA $04A0,y                               ; $1C812B |
-  LDA #$00                                  ; $1C812E |
-  STA $0440,y                               ; $1C8130 |
-  LDA #$FC                                  ; $1C8133 |
-  STA $0460,y                               ; $1C8135 |
-  LDA #$00                                  ; $1C8138 |
-  STA $0480,y                               ; $1C813A |
-  LDA #$0F                                  ; $1C813D |
-  STA $0320,y                               ; $1C813F |
+  AND #$20                                  ; $1C811B | | if shot tink flag on,
+  BEQ .damage_table                         ; $1C811D |/  bounce diagonally up
+.shot_tink:
+  LDA #$19                                  ; $1C811F |\ play tink sound
+  JSR submit_sound_ID                       ; $1C8121 |/
+  LDY $10                                   ; $1C8124 | y = tinked weapon slot
+  LDA $04A0,y                               ; $1C8126 |\
+  EOR #$03                                  ; $1C8129 | | flip horizontal facing
+  STA $04A0,y                               ; $1C812B |/
+  LDA #$00                                  ; $1C812E |\
+  STA $0440,y                               ; $1C8130 | | 4 pixel per frame
+  LDA #$FC                                  ; $1C8133 | | upward speed
+  STA $0460,y                               ; $1C8135 |/
+  LDA #$00                                  ; $1C8138 |\ clear hitbox flags
+  STA $0480,y                               ; $1C813A |/
+  LDA #$0F                                  ; $1C813D |\ tinked shot routine
+  STA $0320,y                               ; $1C813F |/
 .ret:
-  SEC                                       ; $1C8142 |
+  SEC                                       ; $1C8142 | return carry on
   RTS                                       ; $1C8143 |
 
-code_1C8144:
-  LDA #$18                                  ; $1C8144 |
-  JSR submit_sound_ID                       ; $1C8146 |
-  LDA $F5                                   ; $1C8149 |
-  PHA                                       ; $1C814B |
-  STX $0F                                   ; $1C814C |
-  LDA #$0A                                  ; $1C814E |
-  STA $F5                                   ; $1C8150 |
-  JSR select_PRG_banks                      ; $1C8152 |
-  LDX $0F                                   ; $1C8155 |
-  LDY $A0                                   ; $1C8157 |
-  LDA $83AF,y                               ; $1C8159 |
-  STA $00                                   ; $1C815C |
-  LDA $83BB,y                               ; $1C815E |
-  STA $01                                   ; $1C8161 |
-  LDY $0320,x                               ; $1C8163 |
-  LDA ($00),y                               ; $1C8166 |
-  BNE code_1C8170                           ; $1C8168 |
-  JSR code_1C8102.code_1C811F               ; $1C816A |
+.damage_table:
+  LDA #$18                                  ; $1C8144 |\ play damage sound
+  JSR submit_sound_ID                       ; $1C8146 |/
+  LDA $F5                                   ; $1C8149 |\
+  PHA                                       ; $1C814B | | preserve and select
+  STX $0F                                   ; $1C814C | | $0A as $A000~$BFFF bank
+  LDA #$0A                                  ; $1C814E | |
+  STA $F5                                   ; $1C8150 | |
+  JSR select_PRG_banks                      ; $1C8152 |/
+  LDX $0F                                   ; $1C8155 | restore X (sprite slot)
+  LDY $A0                                   ; $1C8157 |\
+  LDA weapon_damage_ptr_lo,y                ; $1C8159 | | grab damage table pointer for
+  STA $00                                   ; $1C815C | | currently equipped weapon
+  LDA weapon_damage_ptr_hi,y                ; $1C815E | |
+  STA $01                                   ; $1C8161 |/
+  LDY $0320,x                               ; $1C8163 |\  if damage for main routine index
+  LDA ($00),y                               ; $1C8166 | | is nonzero, do stuff
+  BNE .check_spark                          ; $1C8168 |/
+  JSR .shot_tink                            ; $1C816A | else tink shot
   JMP code_1C824D                           ; $1C816D |
 
-code_1C8170:
-  LDA $A0                                   ; $1C8170 |
-  CMP #$08                                  ; $1C8172 |
-  BNE code_1C81B6                           ; $1C8174 |
-  LDA ($00),y                               ; $1C8176 |
-  BEQ code_1C81B3                           ; $1C8178 |
-  CMP #$58                                  ; $1C817A |
-  BNE code_1C81B6                           ; $1C817C |
-  TXA                                       ; $1C817E |
-  LDY $10                                   ; $1C817F |
-  STA $005A,y                               ; $1C8181 |
-  LDA $0300,y                               ; $1C8184 |
-  ORA #$01                                  ; $1C8187 |
-  STA $0300,y                               ; $1C8189 |
-  LDA #$9D                                  ; $1C818C |
-  CMP $05C0,y                               ; $1C818E |
-  BEQ code_1C81B3                           ; $1C8191 |
-  STA $05C0,y                               ; $1C8193 |
-  LDA #$00                                  ; $1C8196 |
-  STA $05A0,y                               ; $1C8198 |
-  STA $05E0,y                               ; $1C819B |
-  STA $0500,y                               ; $1C819E |
-  LDA $0360,x                               ; $1C81A1 |
-  STA $0360,y                               ; $1C81A4 |
-  LDA $0380,x                               ; $1C81A7 |
-  STA $0380,y                               ; $1C81AA |
-  LDA $03C0,x                               ; $1C81AD |
-  STA $03C0,y                               ; $1C81B0 |
-code_1C81B3:
+.check_spark:
+  LDA $A0                                   ; $1C8170 |\  if weapon is
+  CMP #$08                                  ; $1C8172 | | anything but spark
+  BNE .check_damage                         ; $1C8174 |/  apply normal damage
+  LDA ($00),y                               ; $1C8176 |\ if damage value is zero,
+  BEQ .code_1C81B3                          ; $1C8178 |/ don't do anything
+  CMP #$58                                  ; $1C817A |\ if damage isn't magic number $58,
+  BNE .check_damage                         ; $1C817C |/ apply normal damage
+; apply spark freeze effect
+  TXA                                       ; $1C817E |\  Y = spark slot
+  LDY $10                                   ; $1C817F | | set shot sprite slot
+  STA $005A,y                               ; $1C8181 |/  for this weapon slot
+  LDA $0300,y                               ; $1C8184 |\
+  ORA #$01                                  ; $1C8187 | | turn on freeze state for
+  STA $0300,y                               ; $1C8189 |/  spark shot
+  LDA #$9D                                  ; $1C818C |\  if OAM ID is already
+  CMP $05C0,y                               ; $1C818E | | electric shocking, don't
+  BEQ .code_1C81B3                          ; $1C8191 |/  bother resetting it up
+; initialize spark freeze animation & position
+  STA $05C0,y                               ; $1C8193 |\
+  LDA #$00                                  ; $1C8196 | | set OAM ID to $9D (shocking),
+  STA $05A0,y                               ; $1C8198 | | reset animation frame & counter
+  STA $05E0,y                               ; $1C819B | | & reset shock timer
+  STA $0500,y                               ; $1C819E |/
+  LDA $0360,x                               ; $1C81A1 |\
+  STA $0360,y                               ; $1C81A4 | |
+  LDA $0380,x                               ; $1C81A7 | | set shock position same
+  STA $0380,y                               ; $1C81AA | | as shot sprite's position
+  LDA $03C0,x                               ; $1C81AD | |
+  STA $03C0,y                               ; $1C81B0 |/
+.code_1C81B3:
   JMP code_1C824D                           ; $1C81B3 |
 
-code_1C81B6:
-  LDA $04E0,x                               ; $1C81B6 |
-  AND #$E0                                  ; $1C81B9 |
-  BEQ code_1C81C0                           ; $1C81BB |
-  JMP code_1C822F                           ; $1C81BD |
+.check_damage:
+  LDA $04E0,x                               ; $1C81B6 |\  if all three ??? flags
+  AND #$E0                                  ; $1C81B9 | | are off, apply damage
+  BEQ .apply_damage                         ; $1C81BB |/
+  JMP code_1C822F                           ; $1C81BD | else jump
 
-code_1C81C0:
-  LDY $0320,x                               ; $1C81C0 |
-  LDA $04E0,x                               ; $1C81C3 |
-  SEC                                       ; $1C81C6 |
-  SBC ($00),y                               ; $1C81C7 |
-  BCS code_1C81CD                           ; $1C81C9 |
-  LDA #$00                                  ; $1C81CB |
-code_1C81CD:
-  STA $04E0,x                               ; $1C81CD |
-  BNE code_1C8207                           ; $1C81D0 |
-  LDA $0320,x                               ; $1C81D2 |
-  CMP #$52                                  ; $1C81D5 |
-  BEQ code_1C8207                           ; $1C81D7 |
-  CMP #$53                                  ; $1C81D9 |
-  BEQ code_1C8207                           ; $1C81DB |
-  LDA $5A                                   ; $1C81DD |
-  BPL code_1C81E5                           ; $1C81DF |
-  LDA #$59                                  ; $1C81E1 |
-  BNE code_1C81E7                           ; $1C81E3 |
-code_1C81E5:
+.apply_damage:
+  LDY $0320,x                               ; $1C81C0 |\
+  LDA $04E0,x                               ; $1C81C3 | | subtract health by
+  SEC                                       ; $1C81C6 | | damage table value
+  SBC ($00),y                               ; $1C81C7 | | indexed by main routine index
+  BCS .store_health                         ; $1C81C9 | | minimum health is 00
+  LDA #$00                                  ; $1C81CB |/  (no negatives)
+.store_health:
+  STA $04E0,x                               ; $1C81CD |\ store new health value
+  BNE code_1C8207                           ; $1C81D0 |/ if nonzero, we're still alive
+; dead
+  LDA $0320,x                               ; $1C81D2 |\
+  CMP #$52                                  ; $1C81D5 | | if proto man or ???
+  BEQ code_1C8207                           ; $1C81D7 | | don't do normal death
+  CMP #$53                                  ; $1C81D9 | |
+  BEQ code_1C8207                           ; $1C81DB |/
+  LDA $5A                                   ; $1C81DD |\
+  BPL .code_1C81E5                          ; $1C81DF | | OAM ID $71 for ???
+  LDA #$59                                  ; $1C81E1 | | else OAM ID $59
+  BNE .death_animation                      ; $1C81E3 |/
+.code_1C81E5:
   LDA #$71                                  ; $1C81E5 |
-code_1C81E7:
-  JSR reset_sprite_anim                     ; $1C81E7 |
-  LDA #$00                                  ; $1C81EA |
-  STA $0480,x                               ; $1C81EC |
-  LDA $0320,x                               ; $1C81EF |
-  CMP #$30                                  ; $1C81F2 |
-  BNE code_1C81FD                           ; $1C81F4 |
-  LDA #$00                                  ; $1C81F6 |
-  STA $0320,x                               ; $1C81F8 |
-  BEQ code_1C8202                           ; $1C81FB |
-code_1C81FD:
-  LDA #$7A                                  ; $1C81FD |
-  STA $0320,x                               ; $1C81FF |
-code_1C8202:
+.death_animation:
+  JSR reset_sprite_anim                     ; $1C81E7 | animate enemy's death
+  LDA #$00                                  ; $1C81EA |\ turn off collision
+  STA $0480,x                               ; $1C81EC |/
+  LDA $0320,x                               ; $1C81EF |\
+  CMP #$30                                  ; $1C81F2 | | if not bolton and nutton
+  BNE .death_routine                        ; $1C81F4 |/
+  LDA #$00                                  ; $1C81F6 |\ use $00 death routine index
+  STA $0320,x                               ; $1C81F8 |/ for bolton and nutton
+  BEQ .death_flags                          ; $1C81FB |
+.death_routine:
+  LDA #$7A                                  ; $1C81FD |\ for everything else,
+  STA $0320,x                               ; $1C81FF |/ use $7A routine
+.death_flags:
   LDA #$90                                  ; $1C8202 |
   STA $0580,x                               ; $1C8204 |
 code_1C8207:
-  LDA $04E0,x                               ; $1C8207 |
-  BEQ code_1C822F                           ; $1C820A |
+  LDA $04E0,x                               ; $1C8207 |\ health zero?
+  BEQ code_1C822F                           ; $1C820A |/ skip over some code
+; not dead
   LDA $0300,x                               ; $1C820C |
   AND #$40                                  ; $1C820F |
   BNE code_1C821D                           ; $1C8211 |
@@ -316,10 +326,10 @@ code_1C822F:
   STA $0302                                 ; $1C8247 |
   STA $0303                                 ; $1C824A |
 code_1C824D:
-  PLA                                       ; $1C824D |
-  STA $F5                                   ; $1C824E |
-  JSR select_PRG_banks                      ; $1C8250 |
-  LDX $0F                                   ; $1C8253 |
+  PLA                                       ; $1C824D |\
+  STA $F5                                   ; $1C824E | | restore bank
+  JSR select_PRG_banks                      ; $1C8250 | | and sprite slot
+  LDX $0F                                   ; $1C8253 |/
   CLC                                       ; $1C8255 |
   LDA $0300,x                               ; $1C8256 |
   AND #$40                                  ; $1C8259 |
@@ -341,9 +351,9 @@ code_1C825E:
   JSR select_PRG_banks                      ; $1C8273 |
   LDX $0F                                   ; $1C8276 |
   LDY $0320,x                               ; $1C8278 |
-  LDA $83AF                                 ; $1C827B |
+  LDA weapon_damage_ptr_lo                  ; $1C827B |
   STA $00                                   ; $1C827E |
-  LDA $83BB                                 ; $1C8280 |
+  LDA weapon_damage_ptr_hi                  ; $1C8280 |
   STA $01                                   ; $1C8283 |
   LDA $A7                                   ; $1C8285 |
   AND #$1F                                  ; $1C8287 |
@@ -362,7 +372,7 @@ code_1C8290:
   STA $00                                   ; $1C82A0 |
   LDA $83C0                                 ; $1C82A2 |
   STA $01                                   ; $1C82A5 |
-  JMP code_1C81B6                           ; $1C82A7 |
+  JMP check_weapon_hit.check_damage         ; $1C82A7 |
 
 code_1C82AA:
   LDA $04E0,x                               ; $1C82AA |
@@ -484,9 +494,34 @@ code_1C83AD:
   CLC                                       ; $1C83AD |
   RTS                                       ; $1C83AE |
 
-  db $00, $00, $00, $00, $00, $00, $00, $00 ; $1C83AF |
-  db $00, $00, $00, $00, $A1, $A4, $A2, $A5 ; $1C83B7 |
-  db $A3, $A6, $A7, $A1, $A8, $A1, $A9, $A1 ; $1C83BF |
+; weapon damage table pointers, low then high
+weapon_damage_ptr_lo:
+  db buster_damage_table                    ; $1C83AF | Mega Buster
+  db gemini_damage_table                    ; $1C83B0 | Gemini Laser
+  db needle_damage_table                    ; $1C83B1 | Needle Cannon
+  db hard_knuckle_damage_table              ; $1C83B2 | Hard Knuckle
+  db magnet_damage_table                    ; $1C83B3 | Magnet Missile
+  db top_spin_damage_table                  ; $1C83B4 | Top Spin
+  db snake_damage_table                     ; $1C83B5 | Search Snake
+  db buster_damage_table                    ; $1C83B6 | Rush Coil
+  db spark_damage_table                     ; $1C83B7 | Spark Shock
+  db buster_damage_table                    ; $1C83B8 | Rush Marine
+  db shadow_damage_table                    ; $1C83B9 | Shadow Blade
+  db buster_damage_table                    ; $1C83BA | Rush Jet
+
+weapon_damage_ptr_hi:
+  db buster_damage_table>>8                 ; $1C83BB | Mega Buster
+  db gemini_damage_table>>8                 ; $1C83BC | Gemini Laser
+  db needle_damage_table>>8                 ; $1C83BD | Needle Cannon
+  db hard_knuckle_damage_table>>8           ; $1C83BE | Hard Knuckle
+  db magnet_damage_table>>8                 ; $1C83BF | Magnet Missile
+  db top_spin_damage_table>>8               ; $1C83C0 | Top Spin
+  db snake_damage_table>>8                  ; $1C83C1 | Search Snake
+  db buster_damage_table>>8                 ; $1C83C2 | Rush Coil
+  db spark_damage_table>>8                  ; $1C83C3 | Spark Shock
+  db buster_damage_table>>8                 ; $1C83C4 | Rush Marine
+  db shadow_damage_table>>8                 ; $1C83C5 | Shadow Blade
+  db buster_damage_table>>8                 ; $1C83C6 | Rush Jet
 
 ; low bytes of sprite main routine pointers
 sprite_main_ptr_lo:

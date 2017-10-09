@@ -7007,10 +7007,10 @@ reset_gravity:
 
 ; resets sprite's animation & sets ID
 ; parameters:
-; A: sprite ID
+; A: OAM ID
 ; X: sprite slot
 reset_sprite_anim:
-  STA $05C0,x                               ; $1FF835 | store parameter -> sprite ID
+  STA $05C0,x                               ; $1FF835 | store parameter -> OAM ID
   LDA #$00                                  ; $1FF838 |\ reset animation
   STA $05A0,x                               ; $1FF83A |/
   LDA $05E0,x                               ; $1FF83D |\
@@ -7488,7 +7488,7 @@ check_sprite_weapon_collision:
   CMP #$0F                                  ; $1FFB98 | | or main routine index ???
   BEQ .next_weapon                          ; $1FFB9A | |
   LDA $05C0,y                               ; $1FFB9C | |
-  CMP #$13                                  ; $1FFB9F | | or sprite ID $13
+  CMP #$13                                  ; $1FFB9F | | or OAM ID $13
   BEQ .next_weapon                          ; $1FFBA1 | |
   CMP #$D7                                  ; $1FFBA3 | | or $D7
   BEQ .next_weapon                          ; $1FFBA5 | |
