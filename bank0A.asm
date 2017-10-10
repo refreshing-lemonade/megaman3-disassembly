@@ -1,7 +1,7 @@
 bank $0A
 org $A000
 
-; weapon damage tables: per main routine index
+; weapon damage tables: per main routine ID
 
   db $00, $00, $02, $02, $04, $04, $04, $04 ; $0AA000 |
   db $04, $02, $02, $04, $02, $03, $04, $02 ; $0AA008 |

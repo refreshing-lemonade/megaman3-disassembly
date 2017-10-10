@@ -38,7 +38,7 @@ enemy_flags_g:
   db $FB, $FD, $EA, $FF, $FA, $FD, $AA, $FF ; $00A0F8 |
 
 ; main routine indices
-enemy_main_index_g:
+enemy_main_ID_g:
   db $02, $03, $05, $06, $08, $15, $0A, $00 ; $00A100 |
   db $0D, $0E, $12, $14, $17, $18, $1E, $1A ; $00A108 |
   db $1B, $1F, $20, $21, $22, $16, $23, $24 ; $00A110 |

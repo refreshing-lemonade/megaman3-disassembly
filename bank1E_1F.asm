@@ -2177,7 +2177,7 @@ weapon_fire:
   LDY $A0                                   ; $1ED0DA |\
   LDA $00A2,y                               ; $1ED0DC | | ammo run out?
   AND #$1F                                  ; $1ED0DF | | return
-  BEQ code_1ED103.ret                       ; $1ED0E1 |/
+  BEQ init_weapon.ret                       ; $1ED0E1 |/
   LDA weapon_max_shots,y                    ; $1ED0E3 |\ Y = starting loop index
   TAY                                       ; $1ED0E6 |/ to check for weapons
 .loop_freeslot:
@@ -2185,7 +2185,7 @@ weapon_fire:
   BPL .fire                                 ; $1ED0EA | | check free slot for weapons
   DEY                                       ; $1ED0EC | | by $0300,x active table
   BNE .loop_freeslot                        ; $1ED0ED |/
-  BEQ code_1ED103.ret                       ; $1ED0EF | no free slots, return
+  BEQ init_weapon.ret                       ; $1ED0EF | no free slots, return
 .fire:
   LDY $A0                                   ; $1ED0F1 |\ decrease ammo
   JSR decrease_ammo                         ; $1ED0F3 |/
@@ -2195,27 +2195,28 @@ weapon_fire:
   STA $01                                   ; $1ED0FE | | the shot sprite
   JMP ($0000)                               ; $1ED100 |/
 
-code_1ED103:
+; common weapon init routine: spawns the shot
+init_weapon:
   LDA $32                                   ; $1ED103 |
-  BNE .code_1ED10A                          ; $1ED105 |
+  BNE .animate_player                       ; $1ED105 |
   JSR code_1ED370                           ; $1ED107 |
-.code_1ED10A:
-  LDA $05C0                                 ; $1ED10A |
-  CMP #$05                                  ; $1ED10D |
-  BEQ .code_1ED121                          ; $1ED10F |
-  CMP #$0E                                  ; $1ED111 |
-  BEQ .code_1ED121                          ; $1ED113 |
-  CMP #$0F                                  ; $1ED115 |
-  BEQ .code_1ED121                          ; $1ED117 |
-  LDA #$00                                  ; $1ED119 |
-  STA $05A0                                 ; $1ED11B |
-  STA $05E0                                 ; $1ED11E |
+.animate_player:
+  LDA $05C0                                 ; $1ED10A |\
+  CMP #$05                                  ; $1ED10D | | if Mega Man OAM ID
+  BEQ .code_1ED121                          ; $1ED10F | | is $05, $0E, or $0F
+  CMP #$0E                                  ; $1ED111 | |
+  BEQ .code_1ED121                          ; $1ED113 | |
+  CMP #$0F                                  ; $1ED115 | |
+  BEQ .code_1ED121                          ; $1ED117 |/
+  LDA #$00                                  ; $1ED119 |\  any other ID
+  STA $05A0                                 ; $1ED11B | | reset Mega Man animation
+  STA $05E0                                 ; $1ED11E |/  to $00 frame & timer
 .code_1ED121:
   LDA #$10                                  ; $1ED121 |
   STA $32                                   ; $1ED123 |
-  LDY $A0                                   ; $1ED125 |
-  LDA weapon_max_shots,y                    ; $1ED127 |
-  TAY                                       ; $1ED12A |
+  LDY $A0                                   ; $1ED125 |\  use max shot value as
+  LDA weapon_max_shots,y                    ; $1ED127 | | max slot to start loop
+  TAY                                       ; $1ED12A |/
 .loop_freeslot:
   LDA $0300,y                               ; $1ED12B |\
   BPL .spawn_shot                           ; $1ED12E | | check free slot for weapons
@@ -2225,12 +2226,12 @@ code_1ED103:
 .ret:
   RTS                                       ; $1ED134 |
 .spawn_shot:
-  LDX $A0                                   ; $1ED135 |
-  LDA $D349,x                               ; $1ED137 |
-  JSR submit_sound_ID                       ; $1ED13A |
+  LDX $A0                                   ; $1ED135 |\
+  LDA weapon_fire_sound,x                   ; $1ED137 | | play weapon sound effect
+  JSR submit_sound_ID                       ; $1ED13A |/
   LDX #$00                                  ; $1ED13D |
-  LDA #$80                                  ; $1ED13F |
-  STA $0300,y                               ; $1ED141 |
+  LDA #$80                                  ; $1ED13F |\ set active
+  STA $0300,y                               ; $1ED141 |/
   LDA $31                                   ; $1ED144 |
   ROR                                       ; $1ED146 |
   ROR                                       ; $1ED147 |
@@ -2242,37 +2243,38 @@ code_1ED103:
   STA $0400,y                               ; $1ED152 | | default weapon X speed:
   LDA #$04                                  ; $1ED155 | | 4 pixels per frame
   STA $0420,y                               ; $1ED157 |/
-  LDA $31                                   ; $1ED15A |
-  STA $04A0,y                               ; $1ED15C |
-  AND #$02                                  ; $1ED15F |
-  TAX                                       ; $1ED161 |
-  LDA $0360                                 ; $1ED162 |
-  CLC                                       ; $1ED165 |
-  ADC $D31B,x                               ; $1ED166 |
-  STA $0360,y                               ; $1ED169 |
-  LDA $0380                                 ; $1ED16C |
-  ADC $D31C,x                               ; $1ED16F |
-  STA $0380,y                               ; $1ED172 |
-  LDA $03C0                                 ; $1ED175 |
-  STA $03C0,y                               ; $1ED178 |
-  LDA $03E0                                 ; $1ED17B |
-  STA $03E0,y                               ; $1ED17E |
-  LDA #$00                                  ; $1ED181 |
-  STA $0480,y                               ; $1ED183 |
-  STA $05A0,y                               ; $1ED186 |
-  STA $05E0,y                               ; $1ED189 |
-  STA $0340,y                               ; $1ED18C |
-  STA $0500,y                               ; $1ED18F |
-  LDX $A0                                   ; $1ED192 |
-  LDA $D323,x                               ; $1ED194 |
-  STA $05C0,y                               ; $1ED197 |
-  LDA $D32F,x                               ; $1ED19A |
-  STA $0320,y                               ; $1ED19D |
+  LDA $31                                   ; $1ED15A |\ set L/R facing of shot
+  STA $04A0,y                               ; $1ED15C |/ = player facing
+  AND #$02                                  ; $1ED15F |\
+  TAX                                       ; $1ED161 | |
+  LDA $0360                                 ; $1ED162 | | fetch X pixel & screen offsets
+  CLC                                       ; $1ED165 | | based on player facing
+  ADC weapon_x_offset,x                     ; $1ED166 | | weapon X = player X + offset
+  STA $0360,y                               ; $1ED169 | |
+  LDA $0380                                 ; $1ED16C | |
+  ADC weapon_x_offset+1,x                   ; $1ED16F | |
+  STA $0380,y                               ; $1ED172 |/
+  LDA $03C0                                 ; $1ED175 |\
+  STA $03C0,y                               ; $1ED178 | | weapon Y = player Y
+  LDA $03E0                                 ; $1ED17B | |
+  STA $03E0,y                               ; $1ED17E |/
+  LDA #$00                                  ; $1ED181 |\
+  STA $0480,y                               ; $1ED183 | | clear animation, hitbox,
+  STA $05A0,y                               ; $1ED186 | | wildcard & X subpixel
+  STA $05E0,y                               ; $1ED189 | |
+  STA $0340,y                               ; $1ED18C | |
+  STA $0500,y                               ; $1ED18F |/
+  LDX $A0                                   ; $1ED192 |\
+  LDA weapon_OAM_ID,x                       ; $1ED194 | | set OAM & main
+  STA $05C0,y                               ; $1ED197 | | ID's for weapon
+  LDA weapon_main_ID,x                      ; $1ED19A | |
+  STA $0320,y                               ; $1ED19D |/
   INC $3B                                   ; $1ED1A0 |
   LDX #$00                                  ; $1ED1A2 |
   SEC                                       ; $1ED1A4 |
   RTS                                       ; $1ED1A5 |
 
+init_rush:
   LDA $05C0                                 ; $1ED1A6 |
   CMP #$D7                                  ; $1ED1A9 |
   BCS code_1ED1B7                           ; $1ED1AB |
@@ -2281,7 +2283,7 @@ code_1ED103:
   LDA $0301                                 ; $1ED1B2 |
   BPL code_1ED1BA                           ; $1ED1B5 |
 code_1ED1B7:
-  JMP code_1ED103                           ; $1ED1B7 |
+  JMP init_weapon                           ; $1ED1B7 |
 
 code_1ED1BA:
   LDY #$01                                  ; $1ED1BA |
@@ -2313,7 +2315,8 @@ code_1ED1BA:
 code_1ED1FA:
   RTS                                       ; $1ED1FA |
 
-  JSR code_1ED103                           ; $1ED1FB |
+init_needle_cannon:
+  JSR init_weapon                           ; $1ED1FB |
   BCC code_1ED211                           ; $1ED1FE |
   LDA $3B                                   ; $1ED200 |
   AND #$01                                  ; $1ED202 |
@@ -2327,12 +2330,12 @@ code_1ED211:
   RTS                                       ; $1ED211 |
 
 init_gemini_laser:
-  JSR code_1ED103                           ; $1ED212 |
+  JSR init_weapon                           ; $1ED212 |
   BCC .ret                                  ; $1ED215 |
   INY                                       ; $1ED217 |\
-  JSR code_1ED103.spawn_shot                ; $1ED218 | | spawn 2 more shots
+  JSR init_weapon.spawn_shot                ; $1ED218 | | spawn 2 more shots
   INY                                       ; $1ED21B | | uses all 3 slots
-  JSR code_1ED103.spawn_shot                ; $1ED21C |/
+  JSR init_weapon.spawn_shot                ; $1ED21C |/
   LDA #$B4                                  ; $1ED21F |\
   STA $0501                                 ; $1ED221 | | store $B4
   STA $0502                                 ; $1ED224 | | wildcard 1
@@ -2352,6 +2355,7 @@ init_gemini_laser:
 .ret:
   RTS                                       ; $1ED24C |
 
+init_hard_knuckle:
   LDA $0301                                 ; $1ED24D |
   BMI code_1ED292                           ; $1ED250 |
   LDY $30                                   ; $1ED252 |
@@ -2359,7 +2363,7 @@ init_gemini_laser:
   BCS code_1ED292                           ; $1ED256 |
   LDA $D293,y                               ; $1ED258 |
   BEQ code_1ED292                           ; $1ED25B |
-  JSR code_1ED103                           ; $1ED25D |
+  JSR init_weapon                           ; $1ED25D |
   LDY $30                                   ; $1ED260 |
   LDA $D293,y                               ; $1ED262 |
   JSR reset_sprite_anim                     ; $1ED265 |
@@ -2387,6 +2391,7 @@ code_1ED292:
   db $AA, $AB, $00, $AD, $01, $07, $00, $0A ; $1ED293 |
   db $FC, $FF, $04, $00                     ; $1ED29B |
 
+init_top_spin:
   LDA $30                                   ; $1ED29F |
   CMP #$01                                  ; $1ED2A1 |
   BNE code_1ED2D2                           ; $1ED2A3 |
@@ -2397,7 +2402,8 @@ code_1ED292:
   LDA #$2C                                  ; $1ED2AF |
   JMP submit_sound_ID                       ; $1ED2B1 |
 
-  JSR code_1ED103                           ; $1ED2B4 |
+init_search_snake:
+  JSR init_weapon                           ; $1ED2B4 |
   BCC code_1ED2D2                           ; $1ED2B7 |
   LDA #$44                                  ; $1ED2B9 |
   STA $0440,y                               ; $1ED2BB |
@@ -2412,7 +2418,8 @@ code_1ED292:
 code_1ED2D2:
   RTS                                       ; $1ED2D2 |
 
-  JSR code_1ED103                           ; $1ED2D3 |
+init_shadow_blade:
+  JSR init_weapon                           ; $1ED2D3 |
   BCC code_1ED302                           ; $1ED2D6 |
   LDA $16                                   ; $1ED2D8 |
   AND #$0B                                  ; $1ED2DA |
@@ -2436,37 +2443,69 @@ code_1ED302:
 
 ; routine pointers for weapon init upon firing
 weapon_init_ptr_lo:
-  db $03                                    ; $1ED303 | Mega Buster
-  db $12                                    ; $1ED304 | Gemini Laser
-  db $FB                                    ; $1ED305 | Needle Cannon
-  db $4D                                    ; $1ED306 | Hard Knuckle
-  db $03                                    ; $1ED307 | Magnet Missile
-  db $9F                                    ; $1ED308 | Top Spin
-  db $B4                                    ; $1ED309 | Search Snake
-  db $A6                                    ; $1ED30A | Rush Coil
-  db $03                                    ; $1ED30B | Spark Shock
-  db $A6                                    ; $1ED30C | Rush Marine
-  db $D3                                    ; $1ED30D | Shadow Blade
-  db $A6                                    ; $1ED30E | Rush Jet
+  db init_weapon                            ; $1ED303 | Mega Buster
+  db init_gemini_laser                      ; $1ED304 | Gemini Laser
+  db init_needle_cannon                     ; $1ED305 | Needle Cannon
+  db init_hard_knuckle                      ; $1ED306 | Hard Knuckle
+  db init_weapon                            ; $1ED307 | Magnet Missile
+  db init_top_spin                          ; $1ED308 | Top Spin
+  db init_search_snake                      ; $1ED309 | Search Snake
+  db init_rush                              ; $1ED30A | Rush Coil
+  db init_weapon                            ; $1ED30B | Spark Shock
+  db init_rush                              ; $1ED30C | Rush Marine
+  db init_shadow_blade                      ; $1ED30D | Shadow Blade
+  db init_rush                              ; $1ED30E | Rush Jet
 
 weapon_init_ptr_hi:
-  db $D1                                    ; $1ED30F | Mega Buster
-  db $D2                                    ; $1ED310 | Gemini Laser
-  db $D1                                    ; $1ED311 | Needle Cannon
-  db $D2                                    ; $1ED312 | Hard Knuckle
-  db $D1                                    ; $1ED313 | Magnet Missile
-  db $D2                                    ; $1ED314 | Top Spin
-  db $D2                                    ; $1ED315 | Search Snake
-  db $D1                                    ; $1ED316 | Rush Coil
-  db $D1                                    ; $1ED317 | Spark Shock
-  db $D1                                    ; $1ED318 | Rush Marine
-  db $D2                                    ; $1ED319 | Shadow Blade
-  db $D1                                    ; $1ED31A | Rush Jet
+  db init_weapon>>8                         ; $1ED30F | Mega Buster
+  db init_gemini_laser>>8                   ; $1ED310 | Gemini Laser
+  db init_needle_cannon>>8                  ; $1ED311 | Needle Cannon
+  db init_hard_knuckle>>8                   ; $1ED312 | Hard Knuckle
+  db init_weapon>>8                         ; $1ED313 | Magnet Missile
+  db init_top_spin>>8                       ; $1ED314 | Top Spin
+  db init_search_snake>>8                   ; $1ED315 | Search Snake
+  db init_rush>>8                           ; $1ED316 | Rush Coil
+  db init_weapon>>8                         ; $1ED317 | Spark Shock
+  db init_rush>>8                           ; $1ED318 | Rush Marine
+  db init_shadow_blade>>8                   ; $1ED319 | Shadow Blade
+  db init_rush>>8                           ; $1ED31A | Rush Jet
 
-  db $0F, $00, $F0, $FF, $17, $00, $E8, $FF ; $1ED31B |
-  db $18, $9F, $A2, $AC, $97, $18, $A5, $18 ; $1ED323 |
-  db $9C, $18, $9E, $18, $01, $84, $01, $85 ; $1ED32B |
-  db $83, $01, $86, $01, $87, $01, $88, $01 ; $1ED333 |
+; on weapon fire, weapon is placed at an offset from Mega Man
+; based on left vs. right facing
+; right X pixel, right X screen, left X pixel, left X screen
+weapon_x_offset:
+  db $0F, $00, $F0, $FF                     ; $1ED31B |
+
+  db $17, $00, $E8, $FF                     ; $1ED31F |
+
+weapon_OAM_ID:
+  db $18                                    ; $1ED323 | Mega Buster
+  db $9F                                    ; $1ED324 | Gemini Laser
+  db $A2                                    ; $1ED325 | Needle Cannon
+  db $AC                                    ; $1ED326 | Hard Knuckle
+  db $97                                    ; $1ED327 | Magnet Missile
+  db $18                                    ; $1ED328 | Top Spin
+  db $A5                                    ; $1ED329 | Search Snake
+  db $18                                    ; $1ED32A | Rush Coil
+  db $9C                                    ; $1ED32B | Spark Shock
+  db $18                                    ; $1ED32C | Rush Marine
+  db $9E                                    ; $1ED32D | Shadow Blade
+  db $18                                    ; $1ED32E | Rush Jet
+
+weapon_main_ID:
+  db $01                                    ; $1ED32F | Mega Buster
+  db $84                                    ; $1ED330 | Gemini Laser
+  db $01                                    ; $1ED331 | Needle Cannon
+  db $85                                    ; $1ED332 | Hard Knuckle
+  db $83                                    ; $1ED333 | Magnet Missile
+  db $01                                    ; $1ED334 | Top Spin
+  db $86                                    ; $1ED335 | Search Snake
+  db $01                                    ; $1ED336 | Rush Coil
+  db $87                                    ; $1ED337 | Spark Shock
+  db $01                                    ; $1ED338 | Rush Marine
+  db $88                                    ; $1ED339 | Shadow Blade
+  db $01                                    ; $1ED33A | Rush Jet
+
   db $FE, $02                               ; $1ED33B |
 
 ; maximum # of shots on screen at once
@@ -2484,9 +2523,20 @@ weapon_max_shots:
   db $01                                    ; $1ED347 | Shadow Blade
   db $03                                    ; $1ED348 | Rush Jet
 
-  db $15, $2B                               ; $1ED349 |
-  db $15, $15, $2A, $2C, $15, $15, $2D, $15 ; $1ED34B |
-  db $2E, $15                               ; $1ED353 |
+; sound ID played on weapon fire
+weapon_fire_sound:
+  db $15                                    ; $1ED349 | Mega Buster
+  db $2B                                    ; $1ED34A | Gemini Laser
+  db $15                                    ; $1ED34B | Needle Cannon
+  db $15                                    ; $1ED34C | Hard Knuckle
+  db $2A                                    ; $1ED34D | Magnet Missile
+  db $2C                                    ; $1ED34E | Top Spin
+  db $15                                    ; $1ED34F | Search Snake
+  db $15                                    ; $1ED350 | Rush Coil
+  db $2D                                    ; $1ED351 | Spark Shock
+  db $15                                    ; $1ED352 | Rush Marine
+  db $2E                                    ; $1ED353 | Shadow Blade
+  db $15                                    ; $1ED354 | Rush Jet
 
 code_1ED355:
   LDA $32                                   ; $1ED355 |
@@ -2504,14 +2554,14 @@ code_1ED36F:
   RTS                                       ; $1ED36F |
 
 code_1ED370:
-  PHA                                       ; $1ED370 |
+  PHA                                       ; $1ED370 | preserve A
   INC $05C0                                 ; $1ED371 |
   LDA $A0                                   ; $1ED374 |
   CMP #$0A                                  ; $1ED376 |
   BNE code_1ED37D                           ; $1ED378 |
   INC $05C0                                 ; $1ED37A |
 code_1ED37D:
-  PLA                                       ; $1ED37D |
+  PLA                                       ; $1ED37D | restore A
   RTS                                       ; $1ED37E |
 
 code_1ED37F:

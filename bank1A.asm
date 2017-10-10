@@ -1044,7 +1044,7 @@ spawn_enemy:
   STA $0300,x                               ; $1A9CD3 |/
   LDA enemy_flags_g,y                       ; $1A9CD6 |\ sprite flags
   STA $0580,x                               ; $1A9CD9 |/
-  LDA enemy_main_index_g,y                  ; $1A9CDC |\ main routine pointer
+  LDA enemy_main_ID_g,y                     ; $1A9CDC |\ main routine pointer
   STA $0320,x                               ; $1A9CDF |/
   LDA enemy_shape_g,y                       ; $1A9CE2 |\ shape properties
   STA $0480,x                               ; $1A9CE5 |/
