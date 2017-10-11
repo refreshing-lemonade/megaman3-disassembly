@@ -2392,19 +2392,19 @@ code_1ED292:
   db $FC, $FF, $04, $00                     ; $1ED29B |
 
 init_top_spin:
-  LDA $30                                   ; $1ED29F |
-  CMP #$01                                  ; $1ED2A1 |
-  BNE code_1ED2D2                           ; $1ED2A3 |
-  LDA #$A3                                  ; $1ED2A5 |
-  CMP $05C0                                 ; $1ED2A7 |
-  BEQ code_1ED2D2                           ; $1ED2AA |
-  JSR reset_sprite_anim                     ; $1ED2AC |
-  LDA #$2C                                  ; $1ED2AF |
-  JMP submit_sound_ID                       ; $1ED2B1 |
+  LDA $30                                   ; $1ED29F |\
+  CMP #$01                                  ; $1ED2A1 | | if player not in air,
+  BNE init_search_snake.ret                 ; $1ED2A3 |/  return
+  LDA #$A3                                  ; $1ED2A5 |\
+  CMP $05C0                                 ; $1ED2A7 | | if Mega Man already spinning,
+  BEQ init_search_snake.ret                 ; $1ED2AA |/  return
+  JSR reset_sprite_anim                     ; $1ED2AC | else set animation to spin
+  LDA #$2C                                  ; $1ED2AF |\ and play the top spin
+  JMP submit_sound_ID                       ; $1ED2B1 |/ sound
 
 init_search_snake:
   JSR init_weapon                           ; $1ED2B4 |
-  BCC code_1ED2D2                           ; $1ED2B7 |
+  BCC .ret                                  ; $1ED2B7 |
   LDA #$44                                  ; $1ED2B9 |
   STA $0440,y                               ; $1ED2BB |
   LDA #$03                                  ; $1ED2BE |
@@ -2415,7 +2415,7 @@ init_search_snake:
   STA $0420,y                               ; $1ED2CA |
   LDA #$13                                  ; $1ED2CD |
   STA $0500,y                               ; $1ED2CF |
-code_1ED2D2:
+.ret:
   RTS                                       ; $1ED2D2 |
 
 init_shadow_blade:
