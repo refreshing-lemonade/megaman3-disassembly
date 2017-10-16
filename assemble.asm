@@ -29,8 +29,7 @@ incsrc bank16.asm
 incsrc bank17.asm
 incsrc bank18.asm
 incsrc bank19.asm
-incsrc bank1A.asm
-incsrc bank1B.asm
+incsrc bank1A_1B.asm
 incsrc bank1C_1D.asm
 incsrc bank1E_1F.asm
 
