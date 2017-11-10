@@ -2,7 +2,7 @@ bank $06
 org $A000
 
 main_needle_man_j:
-  JMP code_06A01C                           ; $06A000 |
+  JMP main_needle_man                       ; $06A000 |
 
 main_magnet_man_j:
   JMP code_06A24E                           ; $06A003 |
@@ -19,50 +19,65 @@ main_shadow_man_j:
 
   JMP code_06A8E0                           ; $06A012 |
 
-  JMP code_06A01C                           ; $06A015 |
+  JMP main_needle_man                       ; $06A015 |
 
   JMP code_06A698                           ; $06A018 |
 
   RTS                                       ; $06A01B |
 
-code_06A01C:
-  LDA $0300,x                               ; $06A01C |
-  AND #$0F                                  ; $06A01F |
-  TAY                                       ; $06A021 |
-  LDA $A02F,y                               ; $06A022 |
-  STA $00                                   ; $06A025 |
-  LDA $A034,y                               ; $06A027 |
-  STA $01                                   ; $06A02A |
-  JMP ($0000)                               ; $06A02C |
+main_needle_man:
+  LDA $0300,x                               ; $06A01C |\
+  AND #$0F                                  ; $06A01F | |
+  TAY                                       ; $06A021 | | load Needle Man's
+  LDA needle_man_state_ptr_lo,y             ; $06A022 | | AI pointer based on state
+  STA $00                                   ; $06A025 | | jump to it
+  LDA needle_man_state_ptr_hi,y             ; $06A027 | |
+  STA $01                                   ; $06A02A | |
+  JMP ($0000)                               ; $06A02C |/
 
-  db $39, $4D, $68, $F4, $50, $A0, $A0, $A0 ; $06A02F |
-  db $A0, $A1                               ; $06A037 |
+needle_man_state_ptr_lo:
+  db init_needle_man                        ; $06A02F | state $00: init
+  db $4D                                    ; $06A030 | state $01: wait for B press
+  db $68                                    ; $06A031 |
+  db $F4                                    ; $06A032 |
+  db $50                                    ; $06A033 |
 
-  LDA #$78                                  ; $06A039 |
-  STA $0500,x                               ; $06A03B |
+needle_man_state_ptr_hi:
+  db init_needle_man>>8                     ; $06A034 | state $00: init
+  db $A0                                    ; $06A035 | state $01: wait for B press
+  db $A0                                    ; $06A036 |
+  db $A0                                    ; $06A037 |
+  db $A1                                    ; $06A038 |
+
+; state $00: one-frame state for init
+init_needle_man:
+  LDA #$78                                  ; $06A039 |\ AI timer
+  STA $0500,x                               ; $06A03B |/
   JSR code_06A188                           ; $06A03E |
-  LDA $0300,x                               ; $06A041 |
-  ORA #$40                                  ; $06A044 |
-  STA $0300,x                               ; $06A046 |
-  INC $0300,x                               ; $06A049 |
+  LDA $0300,x                               ; $06A041 |\
+  ORA #$40                                  ; $06A044 | | set boss flag
+  STA $0300,x                               ; $06A046 |/
+  INC $0300,x                               ; $06A049 | next state
   RTS                                       ; $06A04C |
 
-  LDA #$00                                  ; $06A04D |
-  STA $05E0,x                               ; $06A04F |
-  STA $05A0,x                               ; $06A052 |
-  DEC $0500,x                               ; $06A055 |
-  BNE code_06A05E                           ; $06A058 |
-  INC $0300,x                               ; $06A05A |
-  RTS                                       ; $06A05D |
+; state $01: waiting for B press at beginning of battle
+  LDA #$00                                  ; $06A04D |\
+  STA $05E0,x                               ; $06A04F | | clear animation
+  STA $05A0,x                               ; $06A052 |/
+  DEC $0500,x                               ; $06A055 |\
+  BNE .check_B_press                        ; $06A058 | | if timer expires,
+  INC $0300,x                               ; $06A05A | | go to next state
+  RTS                                       ; $06A05D |/
 
-code_06A05E:
-  LDA $14                                   ; $06A05E |
-  AND #$40                                  ; $06A060 |
-  BEQ code_06A067                           ; $06A062 |
-  INC $0300,x                               ; $06A064 |
-code_06A067:
+.check_B_press:
+  LDA $14                                   ; $06A05E |\
+  AND #$40                                  ; $06A060 | | if player presses B,
+  BEQ .ret                                  ; $06A062 | | go to next state
+  INC $0300,x                               ; $06A064 |/
+.ret:
   RTS                                       ; $06A067 |
 
+; state $02
   LDA $05C0,x                               ; $06A068 |
   CMP #$28                                  ; $06A06B |
   BEQ code_06A0AD                           ; $06A06D |
@@ -71,14 +86,14 @@ code_06A067:
   BCC code_06A093                           ; $06A074 |
   LDA #$29                                  ; $06A076 |
   JSR reset_sprite_anim                     ; $06A078 |
-  LDA #$02                                  ; $06A07B |
-  STA $05A0,x                               ; $06A07D |
-  LDA #$00                                  ; $06A080 |
-  STA $05E0,x                               ; $06A082 |
-  LDA #$08                                  ; $06A085 |
-  STA $0540,x                               ; $06A087 |
-  INC $0300,x                               ; $06A08A |
-  JSR face_player                           ; $06A08D |
+  LDA #$02                                  ; $06A07B |\
+  STA $05A0,x                               ; $06A07D | | set up animation frame
+  LDA #$00                                  ; $06A080 | | for ???
+  STA $05E0,x                               ; $06A082 |/
+  LDA #$08                                  ; $06A085 |\ 8 frame timer for ???
+  STA $0540,x                               ; $06A087 |/
+  INC $0300,x                               ; $06A08A | next state
+  JSR face_player                           ; $06A08D | face toward player
   JMP code_06A1A2                           ; $06A090 |
 
 code_06A093:

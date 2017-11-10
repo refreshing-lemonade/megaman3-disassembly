@@ -2066,8 +2066,8 @@ code_1ECFDF:
   JMP reset_sprite_anim                     ; $1ED004 |
 
 code_1ED007:
-  LDA $0460                                 ; $1ED007 |
-  BMI code_1ED019                           ; $1ED00A |
+  LDA $0460                                 ; $1ED007 |\ player moving up?
+  BMI code_1ED019                           ; $1ED00A |/
   LDA $3A                                   ; $1ED00C |
   BNE code_1ED01D                           ; $1ED00E |
   LDA $16                                   ; $1ED010 |
