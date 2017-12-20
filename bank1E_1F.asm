@@ -7458,61 +7458,73 @@ code_1FFAD6:
   SBC $03E0,x                               ; $1FFADE |
   RTS                                       ; $1FFAE1 |
 
-code_1FFAE2:
-  LDA $30                                   ; $1FFAE2 |
-  CMP #$0E                                  ; $1FFAE4 |
-  BEQ code_1FFB3A                           ; $1FFAE6 |
-  CMP #$04                                  ; $1FFAE8 |
-  BEQ code_1FFB3A                           ; $1FFAEA |
+; tests if a sprite is colliding
+; with the player (Mega Man)
+; parameters:
+; X: sprite slot to check player collision for
+; returns:
+; Carry flag off = collision, on = no collision
+check_player_collision:
+  LDA $30                                   ; $1FFAE2 |\
+  CMP #$0E                                  ; $1FFAE4 | | is player dead
+  BEQ .ret                                  ; $1FFAE6 | | or teleporting in?
+  CMP #$04                                  ; $1FFAE8 | | return
+  BEQ .ret                                  ; $1FFAEA |/
   SEC                                       ; $1FFAEC |
-  LDA $0580,x                               ; $1FFAED |
-  BPL code_1FFB3A                           ; $1FFAF0 |
-  AND #$04                                  ; $1FFAF2 |
-  BNE code_1FFB3A                           ; $1FFAF4 |
-code_1FFAF6:
-  LDA $0480,x                               ; $1FFAF6 |
-  AND #$1F                                  ; $1FFAF9 |
-  TAY                                       ; $1FFAFB |
-  LDA $FB3B,y                               ; $1FFAFC |
-  STA $00                                   ; $1FFAFF |
-  LDA $05C0                                 ; $1FFB01 |
-  CMP #$10                                  ; $1FFB04 |
-  BNE code_1FFB0F                           ; $1FFB06 |
-  LDA $00                                   ; $1FFB08 |
-  SEC                                       ; $1FFB0A |
-  SBC #$08                                  ; $1FFB0B |
-  STA $00                                   ; $1FFB0D |
-code_1FFB0F:
-  LDA $0360                                 ; $1FFB0F |
-  SEC                                       ; $1FFB12 |
-  SBC $0360,x                               ; $1FFB13 |
-  PHA                                       ; $1FFB16 |
-  LDA $0380                                 ; $1FFB17 |
-  SBC $0380,x                               ; $1FFB1A |
-  PLA                                       ; $1FFB1D |
-  BCS code_1FFB24                           ; $1FFB1E |
-  EOR #$FF                                  ; $1FFB20 |
-  ADC #$01                                  ; $1FFB22 |
-code_1FFB24:
-  CMP $FB5B,y                               ; $1FFB24 |
-  BCS code_1FFB3A                           ; $1FFB27 |
-  LDA $03C0                                 ; $1FFB29 |
-  SEC                                       ; $1FFB2C |
-  SBC $03C0,x                               ; $1FFB2D |
-  BCS code_1FFB36                           ; $1FFB30 |
-  EOR #$FF                                  ; $1FFB32 |
-  ADC #$01                                  ; $1FFB34 |
-code_1FFB36:
-  CMP $00                                   ; $1FFB36 |
-  BCC code_1FFB3A                           ; $1FFB38 |
-code_1FFB3A:
+  LDA $0580,x                               ; $1FFAED |\
+  BPL .ret                                  ; $1FFAF0 | | if ??? sprite flag off
+  AND #$04                                  ; $1FFAF2 | | or ??? sprite flag on
+  BNE .ret                                  ; $1FFAF4 |/  return
+.height:
+  LDA $0480,x                               ; $1FFAF6 |\
+  AND #$1F                                  ; $1FFAF9 | | y = hitbox ID
+  TAY                                       ; $1FFAFB |/
+  LDA hitbox_mega_man_heights,y             ; $1FFAFC |\ Mega Man hitbox height
+  STA $00                                   ; $1FFAFF |/ -> $00
+  LDA $05C0                                 ; $1FFB01 |\
+  CMP #$10                                  ; $1FFB04 | |
+  BNE .x_delta                              ; $1FFB06 | | if Mega Man is sliding,
+  LDA $00                                   ; $1FFB08 | | adjust hitbox height
+  SEC                                       ; $1FFB0A | | by subtracting 8
+  SBC #$08                                  ; $1FFB0B | |
+  STA $00                                   ; $1FFB0D |/
+.x_delta:
+  LDA $0360                                 ; $1FFB0F |\
+  SEC                                       ; $1FFB12 | |
+  SBC $0360,x                               ; $1FFB13 | | grab X delta
+  PHA                                       ; $1FFB16 | | player X - sprite X
+  LDA $0380                                 ; $1FFB17 | | taking screen into account
+  SBC $0380,x                               ; $1FFB1A | | via carry
+  PLA                                       ; $1FFB1D | | then take absolute value
+  BCS .test_x_collision                     ; $1FFB1E | |
+  EOR #$FF                                  ; $1FFB20 | |
+  ADC #$01                                  ; $1FFB22 |/
+.test_x_collision:
+  CMP hitbox_mega_man_widths,y              ; $1FFB24 |\ if abs(X delta) > hitbox X delta
+  BCS .ret                                  ; $1FFB27 |/ return
+  LDA $03C0                                 ; $1FFB29 |\
+  SEC                                       ; $1FFB2C | | get Y delta between
+  SBC $03C0,x                               ; $1FFB2D | | the two sprites
+  BCS .test_y_collision                     ; $1FFB30 | | A = player sprite Y
+  EOR #$FF                                  ; $1FFB32 | | - current sprite Y
+  ADC #$01                                  ; $1FFB34 |/  take absolute value
+.test_y_collision:
+  CMP $00                                   ; $1FFB36 |\ return
+  BCC .ret                                  ; $1FFB38 |/ abs(Y delta) < hitbox delta
+.ret:
   RTS                                       ; $1FFB3A |
 
+; sprite hitbox heights for Mega Man collision
+; the actual height is double this, cause it compares delta
+hitbox_mega_man_heights:
   db $13, $1C, $18, $14, $1C, $28, $16, $1C ; $1FFB3B |
   db $18, $18, $1C, $10, $24, $24, $34, $14 ; $1FFB43 |
   db $20, $0E, $1C, $1C, $3C, $1C, $2C, $14 ; $1FFB4B |
   db $2C, $2C, $14, $34, $0C, $0C, $0C, $0C ; $1FFB53 |
 
+; sprite hitbox widths for Mega Man collision
+; the actual width is double this, cause it compares delta
+hitbox_mega_man_widths:
   db $0F, $14, $14, $14, $10, $20, $18, $14 ; $1FFB5B |
   db $10, $18, $18, $0C, $14, $20, $10, $18 ; $1FFB63 |
   db $1C, $14, $40, $0C, $0C, $0F, $0C, $10 ; $1FFB6B |

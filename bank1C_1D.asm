@@ -121,7 +121,7 @@ check_player_hit:
   BEQ code_1C80F9                           ; $1C80B8 |
   CMP #$0C                                  ; $1C80BA |
   BEQ code_1C80F9                           ; $1C80BC |
-  JSR code_1FFAE2                           ; $1C80BE |
+  JSR check_player_collision                ; $1C80BE |
   BCS code_1C80F9                           ; $1C80C1 |
   LDA #$06                                  ; $1C80C3 |
   STA $30                                   ; $1C80C5 |
@@ -169,7 +169,7 @@ check_weapon_hit:
   LDA $05C0                                 ; $1C8109 |\
   CMP #$A3                                  ; $1C810C | | if Mega Man OAM ID == $A3
   BNE .collision                            ; $1C810E | | he is top spinning
-  JMP .code_1C825E                          ; $1C8110 |/
+  JMP .check_top_spin                       ; $1C8110 |/
 .collision:
   JSR check_sprite_weapon_collision         ; $1C8113 |\ if no weapon collision
   BCS .ret_carry_on                         ; $1C8116 |/ return
@@ -339,19 +339,19 @@ check_weapon_hit:
 .ret:
   RTS                                       ; $1C825D | if not, return
 
-.code_1C825E:
-  LDA $0480,x                               ; $1C825E |
-  AND #$20                                  ; $1C8261 |
-  BNE .ret                                  ; $1C8263 |
-  JSR code_1FFAE2                           ; $1C8265 |
-  BCS .ret                                  ; $1C8268 |
-  STX $0F                                   ; $1C826A |
-  LDA $F5                                   ; $1C826C |
-  PHA                                       ; $1C826E |
-  LDA #$0A                                  ; $1C826F |
-  STA $F5                                   ; $1C8271 |
-  JSR select_PRG_banks                      ; $1C8273 |
-  LDX $0F                                   ; $1C8276 |
+.check_top_spin:
+  LDA $0480,x                               ; $1C825E |\  shot tink flag also
+  AND #$20                                  ; $1C8261 | | implies invulnerable
+  BNE .ret                                  ; $1C8263 |/  to top spin, return
+  JSR check_player_collision                ; $1C8265 |\ check if enemy collidiog with
+  BCS .ret                                  ; $1C8268 |/ player, if not return
+  STX $0F                                   ; $1C826A | preserve X
+  LDA $F5                                   ; $1C826C |\
+  PHA                                       ; $1C826E | | preserve $A000-$BFFF bank
+  LDA #$0A                                  ; $1C826F | | select $0A as new bank
+  STA $F5                                   ; $1C8271 | |
+  JSR select_PRG_banks                      ; $1C8273 |/
+  LDX $0F                                   ; $1C8276 | restore X
   LDY $0320,x                               ; $1C8278 |
   LDA weapon_damage_ptr_lo                  ; $1C827B |
   STA $00                                   ; $1C827E |
@@ -2295,7 +2295,7 @@ main_cloud_platform:
   LDA $0300,x                               ; $1C8F8A |
   AND #$0F                                  ; $1C8F8D |
   BNE code_1C8FCF                           ; $1C8F8F |
-  JSR code_1FFAF6                           ; $1C8F91 |
+  JSR check_player_collision.height         ; $1C8F91 |
   BCC code_1C8F97                           ; $1C8F94 |
   RTS                                       ; $1C8F96 |
 
@@ -2778,7 +2778,7 @@ code_1C9348:
   db $00, $00, $40, $40, $40, $40, $40, $40 ; $1C93F9 |
   db $00, $00, $00, $00, $00, $00, $00, $00 ; $1C9401 |
 
-  JSR code_1FFAE2                           ; $1C9409 |
+  JSR check_player_collision                ; $1C9409 |
   BCC code_1C9459                           ; $1C940C |
   LDA #$00                                  ; $1C940E |
   STA $00                                   ; $1C9410 |
@@ -6588,7 +6588,7 @@ code_1DB2AF:
   LDA $03C0,x                               ; $1DB2AF |
   PHA                                       ; $1DB2B2 |
   DEC $03C0,x                               ; $1DB2B3 |
-  JSR code_1FFAE2                           ; $1DB2B6 |
+  JSR check_player_collision                ; $1DB2B6 |
   PLA                                       ; $1DB2B9 |
   STA $03C0,x                               ; $1DB2BA |
   BCS code_1DB2F0                           ; $1DB2BD |
@@ -7309,7 +7309,7 @@ main_spinning_wheel:
   LDA $03C0,x                               ; $1DB8F8 |
   PHA                                       ; $1DB8FB |
   DEC $03C0,x                               ; $1DB8FC |
-  JSR code_1FFAE2                           ; $1DB8FF |
+  JSR check_player_collision                ; $1DB8FF |
   PLA                                       ; $1DB902 |
   STA $03C0,x                               ; $1DB903 |
   BCS code_1DB92A                           ; $1DB906 |
@@ -7936,7 +7936,7 @@ main_item_pickup:
   LDY #$2D                                  ; $1DBDFD |
 code_1DBDFF:
   JSR code_1FF67C                           ; $1DBDFF |
-  JSR code_1FFAE2                           ; $1DBE02 |
+  JSR check_player_collision                ; $1DBE02 |
   BCS code_1DBE3A                           ; $1DBE05 |
   LDA $0500,x                               ; $1DBE07 |
   BNE code_1DBE25                           ; $1DBE0A |

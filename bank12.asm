@@ -1893,7 +1893,7 @@ code_12B17B:
   LDA $03C0                                 ; $12B18C |
   PHA                                       ; $12B18F |
   INC $03C0                                 ; $12B190 |
-  JSR code_1FFAE2                           ; $12B193 |
+  JSR check_player_collision                ; $12B193 |
   BCS code_12B1A7                           ; $12B196 |
   LDA $041F                                 ; $12B198 |
   STA $37                                   ; $12B19B |
@@ -1909,7 +1909,7 @@ code_12B1A7:
   BEQ code_12B1BF                           ; $12B1B0 |
   LDA $39                                   ; $12B1B2 |
   BNE code_12B1BF                           ; $12B1B4 |
-  JSR code_1FFAE2                           ; $12B1B6 |
+  JSR check_player_collision                ; $12B1B6 |
   BCS code_12B1BF                           ; $12B1B9 |
   LDA #$0E                                  ; $12B1BB |
   STA $30                                   ; $12B1BD |
@@ -1931,7 +1931,7 @@ code_12B1DA:
   db $80, $40, $10                          ; $12B1DB |
 
 code_12B1DE:
-  JSR code_1FFAE2                           ; $12B1DE |
+  JSR check_player_collision                ; $12B1DE |
   BCS code_12B20F                           ; $12B1E1 |
   JSR code_1FF8C2                           ; $12B1E3 |
   CMP #$02                                  ; $12B1E6 |
@@ -1970,7 +1970,7 @@ code_12B224:
   LDA $03C0,x                               ; $12B227 |
   PHA                                       ; $12B22A |
   DEC $03C0,x                               ; $12B22B |
-  JSR code_1FFAE2                           ; $12B22E |
+  JSR check_player_collision                ; $12B22E |
   PLA                                       ; $12B231 |
   STA $03C0,x                               ; $12B232 |
   BCS code_12B244                           ; $12B235 |
