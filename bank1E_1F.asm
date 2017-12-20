@@ -1875,30 +1875,30 @@ code_1ECE88:
   BEQ code_1ECE35                           ; $1ECE99 |
   JMP code_1ED38E                           ; $1ECE9B |
 
-code_1ECE9E:
-  LDA $14                                   ; $1ECE9E |
-  AND #$80                                  ; $1ECEA0 |
-  BEQ code_1ECECD                           ; $1ECEA2 |
-  LDA $16                                   ; $1ECEA4 |
-  AND #$04                                  ; $1ECEA6 |
-  BEQ code_1ECEAD                           ; $1ECEA8 |
+check_jump:
+  LDA $14                                   ; $1ECE9E |\
+  AND #$80                                  ; $1ECEA0 | | newpressing A
+  BEQ code_1ECECD                           ; $1ECEA2 | | and not holding down
+  LDA $16                                   ; $1ECEA4 | | means jumping
+  AND #$04                                  ; $1ECEA6 | |
+  BEQ .jump                                 ; $1ECEA8 |/
   JMP code_1ED38E                           ; $1ECEAA |
 
-code_1ECEAD:
-  LDA $17                                   ; $1ECEAD |
-  AND #$01                                  ; $1ECEAF |
-  BNE code_1ECEC0                           ; $1ECEB1 |
-  LDA #$E5                                  ; $1ECEB3 |
-  STA $0440,x                               ; $1ECEB5 |
-  LDA #$04                                  ; $1ECEB8 |
-  STA $0460,x                               ; $1ECEBA |
+.jump:
+  LDA $17                                   ; $1ECEAD |\  check controller 2
+  AND #$01                                  ; $1ECEAF | | holding Right for
+  BNE .super_jump                           ; $1ECEB1 |/  super jump
+  LDA #$E5                                  ; $1ECEB3 |\
+  STA $0440,x                               ; $1ECEB5 | | jump speed
+  LDA #$04                                  ; $1ECEB8 | | $04E5
+  STA $0460,x                               ; $1ECEBA |/
   JMP code_1ED007                           ; $1ECEBD |
 
-code_1ECEC0:
-  LDA #$00                                  ; $1ECEC0 |
-  STA $0440                                 ; $1ECEC2 |
-  LDA #$08                                  ; $1ECEC5 |
-  STA $0460                                 ; $1ECEC7 |
+.super_jump:
+  LDA #$00                                  ; $1ECEC0 |\
+  STA $0440                                 ; $1ECEC2 | | super jump speed
+  LDA #$08                                  ; $1ECEC5 | | $0800
+  STA $0460                                 ; $1ECEC7 |/
   JMP code_1ED007                           ; $1ECECA |
 
 code_1ECECD:
