@@ -1751,20 +1751,63 @@ code_1ECD76:
   ORA #$40                                  ; $1ECD87 |
   STA $14                                   ; $1ECD89 |
 code_1ECD8B:
-  LDY $30                                   ; $1ECD8B |
-  LDA $CD9A,y                               ; $1ECD8D |
-  STA $00                                   ; $1ECD90 |
-  LDA $CDB0,y                               ; $1ECD92 |
-  STA $01                                   ; $1ECD95 |
-  JMP ($0000)                               ; $1ECD97 |
+  LDY $30                                   ; $1ECD8B |\
+  LDA $CD9A,y                               ; $1ECD8D | | grab player state
+  STA $00                                   ; $1ECD90 | | index into state ptr tables
+  LDA $CDB0,y                               ; $1ECD92 | | jump to address
+  STA $01                                   ; $1ECD95 | |
+  JMP ($0000)                               ; $1ECD97 |/
 
-  db $36, $07, $FD, $EB, $BA, $13, $AB, $31 ; $1ECD9A |
-  db $58, $29, $91, $BE, $D3, $E1, $79, $CC ; $1ECDA2 |
-  db $14, $AA, $52, $33, $8A, $8C, $CE, $D0 ; $1ECDAA |
-  db $D3, $D4, $D5, $D6, $D6, $D8, $D8, $D9 ; $1ECDB2 |
-  db $D9, $D9, $D9, $DB, $D7, $CD, $DD, $DD ; $1ECDBA |
-  db $DE, $DF, $DF, $E0, $66, $61, $E0, $CF ; $1ECDC2 |
-  db $CE, $CF                               ; $1ECDCA |
+; routine addresses for player state handling
+player_state_ptr_lo:
+  db player_on_ground                       ; $1ECD98 |
+  db $07                                    ; $1ECD99 |
+  db $FD                                    ; $1ECD9A |
+  db $EB                                    ; $1ECD9B |
+  db $BA                                    ; $1ECD9C |
+  db $13                                    ; $1ECD9D |
+  db $AB                                    ; $1ECD9E |
+  db $31                                    ; $1ECD9F |
+  db $58                                    ; $1ECDA0 |
+  db $29                                    ; $1ECDA1 |
+  db $91                                    ; $1ECDA2 |
+  db $BE                                    ; $1ECDA3 |
+  db $D3                                    ; $1ECDA4 |
+  db $E1                                    ; $1ECDA5 |
+  db $79                                    ; $1ECDA6 |
+  db $CC                                    ; $1ECDA7 |
+  db $14                                    ; $1ECDA8 |
+  db $AA                                    ; $1ECDA9 |
+  db $52                                    ; $1ECDAA |
+  db $33                                    ; $1ECDAB |
+  db $8A                                    ; $1ECDAC |
+  db $8C                                    ; $1ECDAD |
+
+player_state_ptr_hi:
+  db player_on_ground>>8                    ; $1ECDAE |
+  db $D0                                    ; $1ECDAF |
+  db $D3                                    ; $1ECDB0 |
+  db $D4                                    ; $1ECDB1 |
+  db $D5                                    ; $1ECDB2 |
+  db $D6                                    ; $1ECDB3 |
+  db $D6                                    ; $1ECDB4 |
+  db $D8                                    ; $1ECDB5 |
+  db $D8                                    ; $1ECDB6 |
+  db $D9                                    ; $1ECDB7 |
+  db $D9                                    ; $1ECDB8 |
+  db $D9                                    ; $1ECDB9 |
+  db $D9                                    ; $1ECDBA |
+  db $DB                                    ; $1ECDBB |
+  db $D7                                    ; $1ECDBC |
+  db $CD                                    ; $1ECDBD |
+  db $DD                                    ; $1ECDBE |
+  db $DD                                    ; $1ECDBF |
+  db $DE                                    ; $1ECDC0 |
+  db $DF                                    ; $1ECDC1 |
+  db $DF                                    ; $1ECDC2 |
+  db $E0                                    ; $1ECDC3 |
+
+  db $66, $61, $E0, $CF, $CE, $CF           ; $1ECDC6 |
 
   LDA $5A                                   ; $1ECDCC |
   BMI code_1ECDE6                           ; $1ECDCE |
@@ -1827,20 +1870,22 @@ code_1ECE1A:
 code_1ECE35:
   RTS                                       ; $1ECE35 |
 
+; player state $00 routine: on ground
+player_on_ground:
   JSR code_1ED007                           ; $1ECE36 |
   BCC code_1ECE35                           ; $1ECE39 |
   LDY $5D                                   ; $1ECE3B |
   CPY #$01                                  ; $1ECE3D |
   BNE code_1ECE88                           ; $1ECE3F |
-  LDA $05C0                                 ; $1ECE41 |
-  CMP #$11                                  ; $1ECE44 |
-  BNE code_1ECE4D                           ; $1ECE46 |
-  LDA #$01                                  ; $1ECE48 |
-  JSR reset_sprite_anim                     ; $1ECE4A |
+  LDA $05C0                                 ; $1ECE41 |\
+  CMP #$11                                  ; $1ECE44 | | reset Mega Man's animation
+  BNE code_1ECE4D                           ; $1ECE46 | | to idle if taking damage
+  LDA #$01                                  ; $1ECE48 | |
+  JSR reset_sprite_anim                     ; $1ECE4A |/
 code_1ECE4D:
-  LDY $05C1                                 ; $1ECE4D |
-  CPY #$D7                                  ; $1ECE50 |
-  BCC code_1ECE88                           ; $1ECE52 |
+  LDY $05C1                                 ; $1ECE4D |\
+  CPY #$D7                                  ; $1ECE50 | | is rush animating?
+  BCC code_1ECE88                           ; $1ECE52 |/
   LDA $CCEF,y                               ; $1ECE54 |
   STA $00                                   ; $1ECE57 |
   LDA $CCF2,y                               ; $1ECE59 |
@@ -1863,26 +1908,26 @@ code_1ECE4D:
   JSR decrease_ammo.check_frames            ; $1ECE82 |
   JMP code_1ED007                           ; $1ECE85 |
 
-code_1ECE88:
-  LDA $05C0                                 ; $1ECE88 |
-  CMP #$10                                  ; $1ECE8B |
-  BNE code_1ECE9E                           ; $1ECE8D |
-  LDA $14                                   ; $1ECE8F |
-  AND #$80                                  ; $1ECE91 |
-  BEQ code_1ECE35                           ; $1ECE93 |
-  LDA $16                                   ; $1ECE95 |
-  AND #$04                                  ; $1ECE97 |
-  BEQ code_1ECE35                           ; $1ECE99 |
-  JMP code_1ED38E                           ; $1ECE9B |
+.check_slide_jump:
+  LDA $05C0                                 ; $1ECE88 |\
+  CMP #$10                                  ; $1ECE8B | | player sliding?
+  BNE .check_jump                           ; $1ECE8D |/
+  LDA $14                                   ; $1ECE8F |\
+  AND #$80                                  ; $1ECE91 | | if so,
+  BEQ code_1ECE35                           ; $1ECE93 | | newpressing A
+  LDA $16                                   ; $1ECE95 | | and not holding down?
+  AND #$04                                  ; $1ECE97 | | return, else go on
+  BEQ code_1ECE35                           ; $1ECE99 | | to ???
+  JMP code_1ED38E                           ; $1ECE9B |/
 
-check_jump:
+.check_jump:
   LDA $14                                   ; $1ECE9E |\
   AND #$80                                  ; $1ECEA0 | | newpressing A
   BEQ code_1ECECD                           ; $1ECEA2 | | and not holding down
   LDA $16                                   ; $1ECEA4 | | means jumping
-  AND #$04                                  ; $1ECEA6 | |
-  BEQ .jump                                 ; $1ECEA8 |/
-  JMP code_1ED38E                           ; $1ECEAA |
+  AND #$04                                  ; $1ECEA6 | | else go on to ???
+  BEQ .jump                                 ; $1ECEA8 | |
+  JMP code_1ED38E                           ; $1ECEAA |/
 
 .jump:
   LDA $17                                   ; $1ECEAD |\  check controller 2

@@ -352,11 +352,11 @@ check_weapon_hit:
   STA $F5                                   ; $1C8271 | |
   JSR select_PRG_banks                      ; $1C8273 |/
   LDX $0F                                   ; $1C8276 | restore X
-  LDY $0320,x                               ; $1C8278 |
-  LDA weapon_damage_ptr_lo                  ; $1C827B |
-  STA $00                                   ; $1C827E |
-  LDA weapon_damage_ptr_hi                  ; $1C8280 |
-  STA $01                                   ; $1C8283 |
+  LDY $0320,x                               ; $1C8278 | y = main ID
+  LDA weapon_damage_ptr_lo                  ; $1C827B |\
+  STA $00                                   ; $1C827E | |
+  LDA weapon_damage_ptr_hi                  ; $1C8280 | |
+  STA $01                                   ; $1C8283 |/
   LDA $A7                                   ; $1C8285 |
   AND #$1F                                  ; $1C8287 |
   SEC                                       ; $1C8289 |
