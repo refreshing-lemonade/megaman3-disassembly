@@ -36,24 +36,24 @@ main_needle_man:
   JMP ($0000)                               ; $06A02C |/
 
 needle_man_state_ptr_lo:
-  db init_needle_man                        ; $06A02F | state $00: init
-  db $4D                                    ; $06A030 | state $01: wait for B press
-  db $68                                    ; $06A031 |
-  db $F4                                    ; $06A032 |
-  db $50                                    ; $06A033 |
+  db needle_man_init                        ; $06A02F | state $00: init
+  db needle_man_wait_B                      ; $06A030 | state $01: wait for B press
+  db needle_man_throw                       ; $06A031 | state $02: jumping & throwing needles
+  db needle_man_jump_player                 ; $06A032 | state $03: jump toward player (or pause)
+  db needle_man_headbutt                    ; $06A033 | state $04: head butt
 
 needle_man_state_ptr_hi:
-  db init_needle_man>>8                     ; $06A034 | state $00: init
-  db $A0                                    ; $06A035 | state $01: wait for B press
-  db $A0                                    ; $06A036 |
-  db $A0                                    ; $06A037 |
-  db $A1                                    ; $06A038 |
+  db needle_man_init>>8                     ; $06A034 | state $00: init
+  db needle_man_wait_B>>8                   ; $06A035 | state $01: wait for B press
+  db needle_man_throw>>8                    ; $06A036 | state $02: jumping & throwing needles
+  db needle_man_jump_player>>8              ; $06A037 | state $03: jump toward player (or pause)
+  db needle_man_headbutt>>8                 ; $06A038 | state $04: head butt
 
 ; state $00: one-frame state for init
-init_needle_man:
-  LDA #$78                                  ; $06A039 |\ AI timer
-  STA $0500,x                               ; $06A03B |/
-  JSR code_06A188                           ; $06A03E |
+needle_man_init:
+  LDA #$78                                  ; $06A039 |\ timer: 120 frames
+  STA $0500,x                               ; $06A03B |/ to wait before acting
+  JSR needle_man_setup_throw                ; $06A03E |
   LDA $0300,x                               ; $06A041 |\
   ORA #$40                                  ; $06A044 | | set boss flag
   STA $0300,x                               ; $06A046 |/
@@ -61,6 +61,7 @@ init_needle_man:
   RTS                                       ; $06A04C |
 
 ; state $01: waiting for B press at beginning of battle
+needle_man_wait_B:
   LDA #$00                                  ; $06A04D |\
   STA $05E0,x                               ; $06A04F | | clear animation
   STA $05A0,x                               ; $06A052 |/
@@ -77,121 +78,126 @@ init_needle_man:
 .ret:
   RTS                                       ; $06A067 |
 
-; state $02
-  LDA $05C0,x                               ; $06A068 |
-  CMP #$28                                  ; $06A06B |
-  BEQ code_06A0AD                           ; $06A06D |
-  LDY #$1E                                  ; $06A06F |
-  JSR code_1FF67C                           ; $06A071 |
-  BCC code_06A093                           ; $06A074 |
-  LDA #$29                                  ; $06A076 |
-  JSR reset_sprite_anim                     ; $06A078 |
+; state $02: jumping & throwing needles
+needle_man_throw:
+  LDA $05C0,x                               ; $06A068 |\
+  CMP #$28                                  ; $06A06B | | if his animation is throwing
+  BEQ .check_first_needle                   ; $06A06D |/  needle, skip some stuff
+  LDY #$1E                                  ; $06A06F |\
+  JSR code_1FF67C                           ; $06A071 | | I believe this checks for his
+  BCC .check_moving_down                    ; $06A074 |/  Y value to be back on ground?
+  LDA #$29                                  ; $06A076 |\ start animation sequence
+  JSR reset_sprite_anim                     ; $06A078 |/ for jumping before needle throw
   LDA #$02                                  ; $06A07B |\
   STA $05A0,x                               ; $06A07D | | set up animation frame
   LDA #$00                                  ; $06A080 | | for ???
   STA $05E0,x                               ; $06A082 |/
-  LDA #$08                                  ; $06A085 |\ 8 frame timer for ???
+  LDA #$08                                  ; $06A085 |\ 8 frame timer for a brief pause
   STA $0540,x                               ; $06A087 |/
   INC $0300,x                               ; $06A08A | next state
   JSR face_player                           ; $06A08D | face toward player
-  JMP code_06A1A2                           ; $06A090 |
+  JMP needle_man_setup_jump                 ; $06A090 | setup jump values
 
-code_06A093:
-  LDA $0460,x                               ; $06A093 |
-  BMI code_06A0A3                           ; $06A096 |
-  LDA #$01                                  ; $06A098 |
-  STA $05A0,x                               ; $06A09A |
-  LDA #$00                                  ; $06A09D |
-  STA $05E0,x                               ; $06A09F |
+.check_moving_down:
+  LDA $0460,x                               ; $06A093 |\ if he is moving down
+  BMI .moving_down_timer                    ; $06A096 |/
+  LDA #$01                                  ; $06A098 |\
+  STA $05A0,x                               ; $06A09A | | if not, set up animation
+  LDA #$00                                  ; $06A09D | | frame for ???
+  STA $05E0,x                               ; $06A09F |/
   RTS                                       ; $06A0A2 |
 
-code_06A0A3:
-  LDA $0540,x                               ; $06A0A3 |
-  BNE code_06A0EE                           ; $06A0A6 |
-  LDA #$28                                  ; $06A0A8 |
-  JSR reset_sprite_anim                     ; $06A0AA |
-code_06A0AD:
-  JSR code_06A836                           ; $06A0AD |
-  LDA $0500,x                               ; $06A0B0 |
-  BNE code_06A0C2                           ; $06A0B3 |
-  LDA $05A0,x                               ; $06A0B5 |
-  CMP #$01                                  ; $06A0B8 |
-  BNE code_06A0D4                           ; $06A0BA |
-  JSR code_06A1E0                           ; $06A0BC |
-  INC $0500,x                               ; $06A0BF |
-code_06A0C2:
-  LDA $0520,x                               ; $06A0C2 |
-  BNE code_06A0D4                           ; $06A0C5 |
-  LDA $05A0,x                               ; $06A0C7 |
-  CMP #$03                                  ; $06A0CA |
-  BNE code_06A0D4                           ; $06A0CC |
-  JSR code_06A1E0                           ; $06A0CE |
-  INC $0520,x                               ; $06A0D1 |
-code_06A0D4:
-  LDA $05A0,x                               ; $06A0D4 |
-  CMP #$03                                  ; $06A0D7 |
-  BNE code_06A0F3                           ; $06A0D9 |
-  LDA #$00                                  ; $06A0DB |
-  STA $0500,x                               ; $06A0DD |
-  STA $0520,x                               ; $06A0E0 |
-  LDA #$29                                  ; $06A0E3 |
-  JSR reset_sprite_anim                     ; $06A0E5 |
-  LDA #$10                                  ; $06A0E8 |
-  STA $0540,x                               ; $06A0EA |
+.moving_down_timer:
+  LDA $0540,x                               ; $06A0A3 |\ if timer hasn't expired
+  BNE .dec_timer                            ; $06A0A6 |/ for moving down
+  LDA #$28                                  ; $06A0A8 |\ if it has, set up animation
+  JSR reset_sprite_anim                     ; $06A0AA |/ for throwing needle
+.check_first_needle:
+  JSR test_facing_change                    ; $06A0AD | handle facing change
+  LDA $0500,x                               ; $06A0B0 |\ if first needle has
+  BNE .check_second_needle                  ; $06A0B3 |/ been thrown, skip
+  LDA $05A0,x                               ; $06A0B5 |\
+  CMP #$01                                  ; $06A0B8 | | if animation frame is not ???
+  BNE .check_next_jump                      ; $06A0BA |/
+  JSR spawn_needle                          ; $06A0BC |\ else spawn a needle and set
+  INC $0500,x                               ; $06A0BF |/ "first needle thrown" flag
+.check_second_needle:
+  LDA $0520,x                               ; $06A0C2 |\ if second needle has
+  BNE .check_next_jump                      ; $06A0C5 |/ been thrown, skip
+  LDA $05A0,x                               ; $06A0C7 |\
+  CMP #$03                                  ; $06A0CA | | if animation frame is not ???
+  BNE .check_next_jump                      ; $06A0CC |/
+  JSR spawn_needle                          ; $06A0CE |\ else spawn a needle and set
+  INC $0520,x                               ; $06A0D1 |/ "second needle thrown" flag
+.check_next_jump:
+  LDA $05A0,x                               ; $06A0D4 |\
+  CMP #$03                                  ; $06A0D7 | | if animation frame is not ???
+  BNE .ret                                  ; $06A0D9 |/
+  LDA #$00                                  ; $06A0DB |\
+  STA $0500,x                               ; $06A0DD | | clear needle thrown flags
+  STA $0520,x                               ; $06A0E0 |/
+  LDA #$29                                  ; $06A0E3 |\ start animation sequence
+  JSR reset_sprite_anim                     ; $06A0E5 |/ for jumping between needle throws
+  LDA #$10                                  ; $06A0E8 |\ give 16 frames between throws
+  STA $0540,x                               ; $06A0EA |/ timer
   RTS                                       ; $06A0ED |
 
-code_06A0EE:
-  DEC $0540,x                               ; $06A0EE |
-  BNE code_06A0F3                           ; $06A0F1 |
-code_06A0F3:
+.dec_timer:
+  DEC $0540,x                               ; $06A0EE | tick timer down
+  BNE .ret                                  ; $06A0F1 | useless branch
+.ret:
   RTS                                       ; $06A0F3 |
 
-  LDA $05A0,x                               ; $06A0F4 |
-  CMP #$02                                  ; $06A0F7 |
-  BEQ code_06A132                           ; $06A0F9 |
-  LDA #$01                                  ; $06A0FB |
-  STA $05A0,x                               ; $06A0FD |
-  LDA #$00                                  ; $06A100 |
-  STA $05E0,x                               ; $06A102 |
-  LDA $04A0,x                               ; $06A105 |
-  AND #$01                                  ; $06A108 |
-  BEQ code_06A114                           ; $06A10A |
-  LDY #$20                                  ; $06A10C |
-  JSR code_1FF580                           ; $06A10E |
-  JMP code_06A119                           ; $06A111 |
+; state $03: jump toward player (or pause)
+needle_man_jump_player:
+  LDA $05A0,x                               ; $06A0F4 |\
+  CMP #$02                                  ; $06A0F7 | | if animation frame is ???
+  BEQ .check_done                           ; $06A0F9 |/
+  LDA #$01                                  ; $06A0FB |\
+  STA $05A0,x                               ; $06A0FD | | set up animation frame
+  LDA #$00                                  ; $06A100 | | for ???
+  STA $05E0,x                               ; $06A102 |/
+  LDA $04A0,x                               ; $06A105 |\
+  AND #$01                                  ; $06A108 | | if he's not facing right
+  BEQ .move_left                            ; $06A10A |/
+  LDY #$20                                  ; $06A10C |\ move right
+  JSR code_1FF580                           ; $06A10E |/
+  JMP .check_ground                         ; $06A111 |
 
-code_06A114:
-  LDY #$21                                  ; $06A114 |
-  JSR code_1FF5C4                           ; $06A116 |
-code_06A119:
-  LDY #$1E                                  ; $06A119 |
-  JSR code_1FF67C                           ; $06A11B |
-  BCC code_06A14F                           ; $06A11E |
-  LDA #$02                                  ; $06A120 |
-  STA $05A0,x                               ; $06A122 |
-  LDA #$00                                  ; $06A125 |
-  STA $05E0,x                               ; $06A127 |
-  JSR code_06A836                           ; $06A12A |
-  LDA #$08                                  ; $06A12D |
-  STA $0540,x                               ; $06A12F |
-code_06A132:
-  DEC $0540,x                               ; $06A132 |
-  BNE code_06A14F                           ; $06A135 |
-  LDA $0560,x                               ; $06A137 |
-  BNE code_06A145                           ; $06A13A |
-  LDA #$C2                                  ; $06A13C |
-  STA $0300,x                               ; $06A13E |
-  JSR code_06A188                           ; $06A141 |
+.move_left:
+  LDY #$21                                  ; $06A114 |\ move left
+  JSR code_1FF5C4                           ; $06A116 |/
+.check_ground:
+  LDY #$1E                                  ; $06A119 |\
+  JSR code_1FF67C                           ; $06A11B | | I believe this checks for his
+  BCC .ret                                  ; $06A11E |/  Y value to be back on ground?
+  LDA #$02                                  ; $06A120 |\
+  STA $05A0,x                               ; $06A122 | | set up animation frame
+  LDA #$00                                  ; $06A125 | | for ???
+  STA $05E0,x                               ; $06A127 |/
+  JSR test_facing_change                    ; $06A12A |
+  LDA #$08                                  ; $06A12D |\ 8-frame timer
+  STA $0540,x                               ; $06A12F |/ for extra pause when ground reached
+.check_done:
+  DEC $0540,x                               ; $06A132 |\ tick timer down
+  BNE .ret                                  ; $06A135 |/ check if done
+  LDA $0560,x                               ; $06A137 |\ test if state value from table
+  BNE .switch_to_headbutt                   ; $06A13A |/ was $FF
+  LDA #$C2                                  ; $06A13C |\  if it was $00 instead
+  STA $0300,x                               ; $06A13E | | go to throw needles state
+  JSR needle_man_setup_throw                ; $06A141 |/  and setup values for it
   RTS                                       ; $06A144 |
 
-code_06A145:
-  LDA #$2A                                  ; $06A145 |
-  JSR reset_sprite_anim                     ; $06A147 |
-  LDA #$C4                                  ; $06A14A |
-  STA $0300,x                               ; $06A14C |
-code_06A14F:
+.switch_to_headbutt:
+  LDA #$2A                                  ; $06A145 |\ set up headbutt
+  JSR reset_sprite_anim                     ; $06A147 |/ animation
+  LDA #$C4                                  ; $06A14A |\ go to headbutt state
+  STA $0300,x                               ; $06A14C |/
+.ret:
   RTS                                       ; $06A14F |
 
+; state $04: head butt
+needle_man_headbutt:
   LDA $05A0,x                               ; $06A150 |
   CMP #$04                                  ; $06A153 |
   BNE code_06A176                           ; $06A155 |
@@ -204,7 +210,7 @@ code_06A14F:
   JSR reset_sprite_anim                     ; $06A165 |
   LDA #$C3                                  ; $06A168 |
   STA $0300,x                               ; $06A16A |
-  JSR code_06A1A2                           ; $06A16D |
+  JSR needle_man_setup_jump                 ; $06A16D |
 code_06A170:
   LDA #$CA                                  ; $06A170 |
   STA $0480,x                               ; $06A172 |
@@ -220,43 +226,60 @@ code_06A176:
   STA $0320,x                               ; $06A184 |
   RTS                                       ; $06A187 |
 
-code_06A188:
-  LDA $E4                                   ; $06A188 |
-  ADC $E5                                   ; $06A18A |
-  STA $E5                                   ; $06A18C |
-  AND #$01                                  ; $06A18E |
-  TAY                                       ; $06A190 |
-  LDA $A19E,y                               ; $06A191 |
-  STA $0440,x                               ; $06A194 |
-  LDA $A1A0,y                               ; $06A197 |
-  STA $0460,x                               ; $06A19A |
+needle_man_setup_throw:
+  LDA $E4                                   ; $06A188 |\
+  ADC $E5                                   ; $06A18A | | grab RNG value
+  STA $E5                                   ; $06A18C |/  and update it as well
+  AND #$01                                  ; $06A18E |\ y = random index from 0 to 1
+  TAY                                       ; $06A190 |/ 50/50
+  LDA needle_man_throw_vel_y_sub,y          ; $06A191 |\
+  STA $0440,x                               ; $06A194 | | Y velocity = either
+  LDA needle_man_throw_vel_y,y              ; $06A197 | | $093C or $0688
+  STA $0460,x                               ; $06A19A |/  50/50 chance
   RTS                                       ; $06A19D |
 
-  db $88, $3C, $06, $09                     ; $06A19E |
+; values for needle man's throwing of needles
+; indexed randomly 0 through 1 (50/50 chance each one)
+; contains Y speed (both subpixel and pixel)
+; so, jump heights
+needle_man_throw_vel_y_sub:
+  db $88, $3C                               ; $06A19E |
 
-code_06A1A2:
-  LDA #$88                                  ; $06A1A2 |
-  STA $0440,x                               ; $06A1A4 |
-  LDA #$06                                  ; $06A1A7 |
-  STA $0460,x                               ; $06A1A9 |
-  LDA $E4                                   ; $06A1AC |
-  ADC $E5                                   ; $06A1AE |
-  STA $E5                                   ; $06A1B0 |
-  AND #$07                                  ; $06A1B2 |
-  TAY                                       ; $06A1B4 |
-  LDA $A1C8,y                               ; $06A1B5 |
-  STA $0400,x                               ; $06A1B8 |
-  LDA $A1D0,y                               ; $06A1BB |
-  STA $0420,x                               ; $06A1BE |
-  LDA $A1D8,y                               ; $06A1C1 |
-  STA $0560,x                               ; $06A1C4 |
+needle_man_throw_vel_y:
+  db $06, $09                               ; $06A1A0 |
+
+needle_man_setup_jump:
+  LDA #$88                                  ; $06A1A2 |\
+  STA $0440,x                               ; $06A1A4 | | Y velocity = $0688
+  LDA #$06                                  ; $06A1A7 | |
+  STA $0460,x                               ; $06A1A9 |/
+  LDA $E4                                   ; $06A1AC |\
+  ADC $E5                                   ; $06A1AE | | grab RNG value
+  STA $E5                                   ; $06A1B0 |/  and update it as well
+  AND #$07                                  ; $06A1B2 |\ y = random index from 0 to 7
+  TAY                                       ; $06A1B4 |/
+  LDA needle_man_jump_vel_x_sub,y           ; $06A1B5 |\
+  STA $0400,x                               ; $06A1B8 | | one of 8 random X velocity
+  LDA needle_man_jump_vel_x,y               ; $06A1BB | | values
+  STA $0420,x                               ; $06A1BE |/
+  LDA needle_man_jump_states,y              ; $06A1C1 |\ one of 8 random state values
+  STA $0560,x                               ; $06A1C4 |/ to go onto after jump
   RTS                                       ; $06A1C7 |
 
+; values for needle man's jump toward player
+; indexed randomly 0 through 7 (8 possible values)
+; contains X speed (both subpixel and pixel) and states
+; to move onto after the jump is completed
+needle_man_jump_vel_x_sub:
   db $00, $80, $80, $00, $00, $80, $80, $80 ; $06A1C8 |
+
+needle_man_jump_vel_x:
   db $00, $01, $02, $00, $00, $01, $03, $02 ; $06A1D0 |
+
+needle_man_jump_states:
   db $FF, $00, $FF, $FF, $00, $FF, $00, $FF ; $06A1D8 |
 
-code_06A1E0:
+spawn_needle:
   JSR find_enemy_freeslot_y                 ; $06A1E0 |
   BCS code_06A245                           ; $06A1E3 |
   STY $00                                   ; $06A1E5 |
@@ -885,7 +908,7 @@ code_06A6EF:
   LDA #$04                                  ; $06A6FB |
   STA $0520,x                               ; $06A6FD |
   JSR code_06A84C                           ; $06A700 |
-  JSR code_06A836                           ; $06A703 |
+  JSR test_facing_change                    ; $06A703 |
   INC $0500,x                               ; $06A706 |
   LDA $0500,x                               ; $06A709 |
   CMP #$03                                  ; $06A70C |
@@ -956,7 +979,7 @@ code_06A743:
   LDA $05A0,x                               ; $06A798 |
   CMP #$00                                  ; $06A79B |
   BNE code_06A7ED                           ; $06A79D |
-  JSR code_06A836                           ; $06A79F |
+  JSR test_facing_change                    ; $06A79F |
   LDA #$00                                  ; $06A7A2 |
   STA $01                                   ; $06A7A4 |
   JSR code_06A874                           ; $06A7A6 |
@@ -1031,23 +1054,23 @@ code_06A81E:
   STA $0300,x                               ; $06A825 |
   LDA #$CA                                  ; $06A828 |
   STA $0480,x                               ; $06A82A |
-  JSR code_06A836                           ; $06A82D |
+  JSR test_facing_change                    ; $06A82D |
   LDA #$C3                                  ; $06A830 |
   STA $0320,x                               ; $06A832 |
 code_06A835:
   RTS                                       ; $06A835 |
 
-code_06A836:
-  LDA $04A0,x                               ; $06A836 |
-  PHA                                       ; $06A839 |
-  JSR face_player                           ; $06A83A |
-  PLA                                       ; $06A83D |
-  CMP $04A0,x                               ; $06A83E |
-  BEQ code_06A84B                           ; $06A841 |
-  LDA $0580,x                               ; $06A843 |
-  EOR #$40                                  ; $06A846 |
-  STA $0580,x                               ; $06A848 |
-code_06A84B:
+test_facing_change:
+  LDA $04A0,x                               ; $06A836 |\
+  PHA                                       ; $06A839 | | faces toward player then
+  JSR face_player                           ; $06A83A | | tests if the facing
+  PLA                                       ; $06A83D | | has changed (left to right
+  CMP $04A0,x                               ; $06A83E | | or right to left)
+  BEQ .ret                                  ; $06A841 |/
+  LDA $0580,x                               ; $06A843 |\  if so,
+  EOR #$40                                  ; $06A846 | | flip facing-lock flag
+  STA $0580,x                               ; $06A848 |/  to simulate proper facing
+.ret:
   RTS                                       ; $06A84B |
 
 code_06A84C:

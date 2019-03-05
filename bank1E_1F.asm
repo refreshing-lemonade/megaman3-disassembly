@@ -1876,16 +1876,16 @@ player_on_ground:
   BCC code_1ECE35                           ; $1ECE39 |
   LDY $5D                                   ; $1ECE3B |
   CPY #$01                                  ; $1ECE3D |
-  BNE code_1ECE88                           ; $1ECE3F |
+  BNE .check_slide_jump                     ; $1ECE3F |
   LDA $05C0                                 ; $1ECE41 |\
   CMP #$11                                  ; $1ECE44 | | reset Mega Man's animation
-  BNE code_1ECE4D                           ; $1ECE46 | | to idle if taking damage
+  BNE .code_1ECE4D                          ; $1ECE46 | | to idle if taking damage
   LDA #$01                                  ; $1ECE48 | |
   JSR reset_sprite_anim                     ; $1ECE4A |/
-code_1ECE4D:
+.code_1ECE4D:
   LDY $05C1                                 ; $1ECE4D |\
   CPY #$D7                                  ; $1ECE50 | | is rush animating?
-  BCC code_1ECE88                           ; $1ECE52 |/
+  BCC .check_slide_jump                     ; $1ECE52 |/
   LDA $CCEF,y                               ; $1ECE54 |
   STA $00                                   ; $1ECE57 |
   LDA $CCF2,y                               ; $1ECE59 |
@@ -1893,7 +1893,7 @@ code_1ECE4D:
   JMP ($0000)                               ; $1ECE5E |
 
   LDA $05A1                                 ; $1ECE61 |
-  BNE code_1ECE88                           ; $1ECE64 |
+  BNE .check_slide_jump                     ; $1ECE64 |
   INC $3A                                   ; $1ECE66 |
   LDA #$EE                                  ; $1ECE68 |
   STA $0440                                 ; $1ECE6A |
@@ -2044,7 +2044,7 @@ code_1ECF7B:
   LDA $14                                   ; $1ECF7B |
   AND #$80                                  ; $1ECF7D |
   BEQ code_1ECF84                           ; $1ECF7F |
-  JMP code_1ECEAD                           ; $1ECF81 |
+  JMP player_on_ground.jump                 ; $1ECF81 |
 
 code_1ECF84:
   LDA $16                                   ; $1ECF84 |
@@ -2744,7 +2744,7 @@ code_1ED471:
   STA $0400                                 ; $1ED473 |
   LDA #$01                                  ; $1ED476 |
   STA $0420                                 ; $1ED478 |
-  JMP code_1ECEAD                           ; $1ED47B |
+  JMP player_on_ground.jump                 ; $1ED47B |
 
 code_1ED47E:
   LDA $03E0                                 ; $1ED47E |
@@ -3010,7 +3010,7 @@ code_1ED656:
   LDA $14                                   ; $1ED65E |
   AND #$80                                  ; $1ED660 |
   BEQ code_1ED667                           ; $1ED662 |
-  JMP code_1ECEAD                           ; $1ED664 |
+  JMP player_on_ground.jump                 ; $1ED664 |
 
 code_1ED667:
   LDA #$00                                  ; $1ED667 |
