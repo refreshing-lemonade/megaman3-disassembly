@@ -1,12 +1,16 @@
 bank $04
 org $A000
 
+main_doc_flash_j:
   JMP code_04A030                           ; $04A000 |
 
+main_doc_wood_j:
   JMP code_04A250                           ; $04A003 |
 
+main_doc_crash_j:
   JMP code_04A49A                           ; $04A006 |
 
+main_doc_metal_j:
   JMP code_04A6E5                           ; $04A009 |
 
   JMP code_04A13C                           ; $04A00C |

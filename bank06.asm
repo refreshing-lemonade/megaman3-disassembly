@@ -40,14 +40,14 @@ needle_man_state_ptr_lo:
   db needle_man_wait_B                      ; $06A030 | state $01: wait for B press
   db needle_man_throw                       ; $06A031 | state $02: jumping & throwing needles
   db needle_man_jump_player                 ; $06A032 | state $03: jump toward player (or pause)
-  db needle_man_headbutt                    ; $06A033 | state $04: head butt
+  db needle_man_headbutt                    ; $06A033 | state $04: headbutt
 
 needle_man_state_ptr_hi:
   db needle_man_init>>8                     ; $06A034 | state $00: init
   db needle_man_wait_B>>8                   ; $06A035 | state $01: wait for B press
   db needle_man_throw>>8                    ; $06A036 | state $02: jumping & throwing needles
   db needle_man_jump_player>>8              ; $06A037 | state $03: jump toward player (or pause)
-  db needle_man_headbutt>>8                 ; $06A038 | state $04: head butt
+  db needle_man_headbutt>>8                 ; $06A038 | state $04: headbutt
 
 ; state $00: one-frame state for init
 needle_man_init:
@@ -150,9 +150,9 @@ needle_man_throw:
 
 ; state $03: jump toward player (or pause)
 needle_man_jump_player:
-  LDA $05A0,x                               ; $06A0F4 |\
-  CMP #$02                                  ; $06A0F7 | | if animation frame is ???
-  BEQ .check_done                           ; $06A0F9 |/
+  LDA $05A0,x                               ; $06A0F4 |\  if animation frame is ???
+  CMP #$02                                  ; $06A0F7 | | this is to skip movement
+  BEQ .check_done                           ; $06A0F9 |/  if this is just a pause state
   LDA #$01                                  ; $06A0FB |\
   STA $05A0,x                               ; $06A0FD | | set up animation frame
   LDA #$00                                  ; $06A100 | | for ???

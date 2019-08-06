@@ -671,14 +671,14 @@ sprite_main_ptr_lo:
   db $65                                    ; $1C8454 |
   db $95                                    ; $1C8455 |
   db $34                                    ; $1C8456 |
-  db main_doc_robot                         ; $1C8457 |
-  db main_doc_robot                         ; $1C8458 |
-  db main_doc_robot                         ; $1C8459 |
-  db main_doc_robot                         ; $1C845A |
-  db main_doc_robot                         ; $1C845B |
-  db main_doc_robot                         ; $1C845C |
-  db main_doc_robot                         ; $1C845D |
-  db main_doc_robot                         ; $1C845E |
+  db main_doc_robot_intro                   ; $1C8457 |
+  db main_doc_robot_intro                   ; $1C8458 |
+  db main_doc_robot_intro                   ; $1C8459 |
+  db main_doc_robot_intro                   ; $1C845A |
+  db main_doc_robot_intro                   ; $1C845B |
+  db main_doc_robot_intro                   ; $1C845C |
+  db main_doc_robot_intro                   ; $1C845D |
+  db main_doc_robot_intro                   ; $1C845E |
   db $C8                                    ; $1C845F |
   db $C8                                    ; $1C8460 |
   db $C8                                    ; $1C8461 |
@@ -687,10 +687,10 @@ sprite_main_ptr_lo:
   db $C8                                    ; $1C8464 |
   db $C8                                    ; $1C8465 |
   db $C8                                    ; $1C8466 |
-  db $00                                    ; $1C8467 |
-  db $03                                    ; $1C8468 |
-  db $06                                    ; $1C8469 |
-  db $09                                    ; $1C846A |
+  db main_doc_flash_j                       ; $1C8467 |
+  db main_doc_wood_j                        ; $1C8468 |
+  db main_doc_crash_j                       ; $1C8469 |
+  db main_doc_metal_j                       ; $1C846A |
   db $0C                                    ; $1C846B |
   db $0F                                    ; $1C846C |
   db $12                                    ; $1C846D |
@@ -703,10 +703,10 @@ sprite_main_ptr_lo:
   db $27                                    ; $1C8474 |
   db $2A                                    ; $1C8475 |
   db $2D                                    ; $1C8476 |
-  db $00                                    ; $1C8477 |
-  db $03                                    ; $1C8478 |
-  db $06                                    ; $1C8479 |
-  db $09                                    ; $1C847A |
+  db main_doc_bubble_j                      ; $1C8477 |
+  db main_doc_heat_j                        ; $1C8478 |
+  db main_doc_quick_j                       ; $1C8479 |
+  db main_doc_air_j                         ; $1C847A |
   db $0C                                    ; $1C847B |
   db $0F                                    ; $1C847C |
   db $12                                    ; $1C847D |
@@ -930,14 +930,14 @@ sprite_main_ptr_hi:
   db $BD                                    ; $1C8554 |
   db $BD                                    ; $1C8555 |
   db $BB                                    ; $1C8556 |
-  db main_doc_robot>>8                      ; $1C8557 |
-  db main_doc_robot>>8                      ; $1C8558 |
-  db main_doc_robot>>8                      ; $1C8559 |
-  db main_doc_robot>>8                      ; $1C855A |
-  db main_doc_robot>>8                      ; $1C855B |
-  db main_doc_robot>>8                      ; $1C855C |
-  db main_doc_robot>>8                      ; $1C855D |
-  db main_doc_robot>>8                      ; $1C855E |
+  db main_doc_robot_intro>>8                ; $1C8557 |
+  db main_doc_robot_intro>>8                ; $1C8558 |
+  db main_doc_robot_intro>>8                ; $1C8559 |
+  db main_doc_robot_intro>>8                ; $1C855A |
+  db main_doc_robot_intro>>8                ; $1C855B |
+  db main_doc_robot_intro>>8                ; $1C855C |
+  db main_doc_robot_intro>>8                ; $1C855D |
+  db main_doc_robot_intro>>8                ; $1C855E |
   db $85                                    ; $1C855F |
   db $85                                    ; $1C8560 |
   db $85                                    ; $1C8561 |
@@ -946,10 +946,10 @@ sprite_main_ptr_hi:
   db $85                                    ; $1C8564 |
   db $85                                    ; $1C8565 |
   db $85                                    ; $1C8566 |
-  db $A0                                    ; $1C8567 |
-  db $A0                                    ; $1C8568 |
-  db $A0                                    ; $1C8569 |
-  db $A0                                    ; $1C856A |
+  db main_doc_flash_j>>8                    ; $1C8567 |
+  db main_doc_wood_j>>8                     ; $1C8568 |
+  db main_doc_crash_j>>8                    ; $1C8569 |
+  db main_doc_metal_j>>8                    ; $1C856A |
   db $A0                                    ; $1C856B |
   db $A0                                    ; $1C856C |
   db $A0                                    ; $1C856D |
@@ -962,10 +962,10 @@ sprite_main_ptr_hi:
   db $A0                                    ; $1C8574 |
   db $A0                                    ; $1C8575 |
   db $A0                                    ; $1C8576 |
-  db $A0                                    ; $1C8577 |
-  db $A0                                    ; $1C8578 |
-  db $A0                                    ; $1C8579 |
-  db $A0                                    ; $1C857A |
+  db main_doc_bubble_j>>8                   ; $1C8577 |
+  db main_doc_heat_j>>8                     ; $1C8578 |
+  db main_doc_quick_j>>8                    ; $1C8579 |
+  db main_doc_air_j>>8                      ; $1C857A |
   db $A0                                    ; $1C857B |
   db $A0                                    ; $1C857C |
   db $A0                                    ; $1C857D |
@@ -7098,8 +7098,8 @@ code_1DB6C9:
   db $0A, $0B, $0C, $0D, $0E, $0F, $22, $2A ; $1DB6DE |
   db $26, $2E                               ; $1DB6E6 |
 
-; entry point for all 8
-main_doc_robot:
+; same intro for all 8
+main_doc_robot_intro:
   LDA #$00                                  ; $1DB6E8 |
   STA $05E0,x                               ; $1DB6EA |
   LDA $0300,x                               ; $1DB6ED |
@@ -7112,11 +7112,11 @@ main_doc_robot:
   ORA #$40                                  ; $1DB6FD |
   STA $0300,x                               ; $1DB6FF |
   STX $00                                   ; $1DB702 |
-  LDA $0320,x                               ; $1DB704 |
-  AND #$07                                  ; $1DB707 |
-  TAY                                       ; $1DB709 |
-  LDA $B7FB,y                               ; $1DB70A |
-  STA $0320,x                               ; $1DB70D |
+  LDA $0320,x                               ; $1DB704 |\
+  AND #$07                                  ; $1DB707 | | fetch doc robot master's
+  TAY                                       ; $1DB709 | | main routine index
+  LDA doc_robot_master_main_indices,y       ; $1DB70A | | morph this sprite into it
+  STA $0320,x                               ; $1DB70D |/
   LDA #$CA                                  ; $1DB710 |
   STA $0480,x                               ; $1DB712 |
   LDA #$1C                                  ; $1DB715 |
@@ -7225,7 +7225,12 @@ code_1DB7DF:
   RTS                                       ; $1DB7F2 |
 
   db $16, $1A, $14, $18, $15, $13, $19, $17 ; $1DB7F3 |
+
+; doc robot AI indices, as opposed to the intro docs
+; Flash, Bubble, Quick, Wood, Crash, Air, Metal, Heat
+doc_robot_master_main_indices:
   db $A0, $B0, $B2, $A1, $A2, $B3, $A3, $B1 ; $1DB7FB |
+
   db $23, $10, $23, $23, $23, $23, $10, $23 ; $1DB803 |
   db $30, $11, $30, $19, $27, $15, $37, $17 ; $1DB80B |
   db $30, $26, $27, $11, $27, $15, $27, $15 ; $1DB813 |

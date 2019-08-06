@@ -1,12 +1,16 @@
 bank $05
 org $A000
 
+main_doc_bubble_j:
   JMP code_05A1DD                           ; $05A000 |
 
+main_doc_heat_j:
   JMP code_05A022                           ; $05A003 |
 
+main_doc_quick_j:
   JMP code_05A393                           ; $05A006 |
 
+main_doc_air_j:
   JMP code_05A561                           ; $05A009 |
 
   JMP code_05A1B4                           ; $05A00C |
